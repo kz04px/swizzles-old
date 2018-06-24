@@ -223,10 +223,6 @@ void uci()
                 quit = true;
                 break;
             }
-            else
-            {
-                std::cout << "Unknown token (" << tokens[n] << ")" << std::endl;
-            }
         }
     }
 
