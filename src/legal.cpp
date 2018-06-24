@@ -1,5 +1,7 @@
 #include "legal.hpp"
 #include "movegen.hpp"
+#include "makemove.hpp"
+#include "attacks.hpp"
 
 bool legal_move(const Position &pos, const Move &move)
 {
@@ -10,7 +12,9 @@ bool legal_move(const Position &pos, const Move &move)
     {
         if(move == moves[i])
         {
-            return true;
+            Position npos = pos;
+            make_move(npos, moves[i]);
+            return !check(npos, Colour::THEM);
         }
     }
 
@@ -26,7 +30,9 @@ bool legal_move(const Position &pos, const std::string &move)
     {
         if(move == move_uci(moves[i], pos.flipped))
         {
-            return true;
+            Position npos = pos;
+            make_move(npos, moves[i]);
+            return !check(npos, Colour::THEM);
         }
     }
 
