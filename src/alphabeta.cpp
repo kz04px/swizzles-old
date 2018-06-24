@@ -70,6 +70,8 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
 {
     assert(ss);
     assert(beta > alpha);
+    assert(depth >= 0);
+    assert(depth < MAX_DEPTH);
 
     if(*info.stop == true || clock() > info.end)
     {
@@ -94,7 +96,7 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
     Move best_move = NO_MOVE;
     int alpha_original = alpha;
 
-    if(in_check == true)
+    if(in_check == true && depth < MAX_DEPTH)
     {
         depth++;
     }

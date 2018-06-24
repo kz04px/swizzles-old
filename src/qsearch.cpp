@@ -10,6 +10,9 @@
 
 int qsearch(const Position &pos, SearchInfo &info, SearchStack *ss, int alpha, int beta)
 {
+    assert(ss);
+    assert(beta > alpha);
+
     if(ss->ply >= 256)
     {
         return eval(pos);
