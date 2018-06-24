@@ -35,10 +35,10 @@ int qsearch(const Position &pos, SearchInfo &info, SearchStack *ss, int alpha, i
         alpha = stand_pat;
     }
 
-    Move moves[256];
+    Move moves[128];
     int num_moves = movegen_captures(pos, moves);
     if(num_moves == 0) {return alpha;}
-    //int scores[256];
+    //int scores[128];
     //sort_see(pos, moves, scores, num_moves);
 
     for(int i = 0; i < num_moves; ++i)

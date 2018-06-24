@@ -186,7 +186,7 @@ int movegen_captures(const Position &pos, Move *movelist)
     }
 
     assert(num_moves >= 0);
-    assert(num_moves < 256);
+    assert(num_moves <= 128);
 
 #ifndef NDEBUG
     for(int n = 0; n < num_moves; ++n)
