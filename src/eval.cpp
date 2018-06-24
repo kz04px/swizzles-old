@@ -60,16 +60,16 @@ int eval(const Position &pos)
             score += 20;
         }
 
-        uint64_t pawns = npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
-        uint64_t pawns_attacking = pawn_attacks(npos, Colour::US);
-        uint64_t pawns_attacking_them = pawn_attacks(npos, Colour::THEM);
-        uint64_t pawn_holes = ~( pawns_attacking      |
-                                (pawns_attacking<<8)  |
-                                (pawns_attacking<<16) |
-                                (pawns_attacking<<24) |
-                                (pawns_attacking<<32) |
-                                (pawns_attacking<<40) |
-                                (pawns_attacking<<48));
+        const uint64_t pawns = npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
+        const uint64_t pawns_attacking = pawn_attacks(npos, Colour::US);
+        const uint64_t pawns_attacking_them = pawn_attacks(npos, Colour::THEM);
+        const uint64_t pawn_holes = ~( pawns_attacking      |
+                                      (pawns_attacking<<8)  |
+                                      (pawns_attacking<<16) |
+                                      (pawns_attacking<<24) |
+                                      (pawns_attacking<<32) |
+                                      (pawns_attacking<<40) |
+                                      (pawns_attacking<<48));
 
         // Knight outposts
         score += -20*popcountll(U64_CENTER & npos.pieces[PieceType::KNIGHT] & npos.colour[Colour::THEM] & pawn_holes & pawns_attacking_them);
@@ -77,9 +77,10 @@ int eval(const Position &pos)
         // Pawn chains
         //score += 10*popcountll(pawns & pawns_attacking);
 
-        while(pawns)
+        uint64_t copy = pawns;
+        while(copy)
         {
-            const int sq = lsbll(pawns);
+            const int sq = lsbll(copy);
             const int f = sq%8;
             const int r = sq/8;
             const uint64_t bb = 1ULL << sq;
@@ -105,7 +106,7 @@ int eval(const Position &pos)
                 score -= 20;
             }
 */
-            pawns &= pawns-1;
+            copy &= copy-1;
         }
 
 /*
