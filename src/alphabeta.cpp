@@ -231,8 +231,9 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
         }
         else
         {
-            //int r = reduction(pvnode, legal_moves-1, depth, in_check, move_type(moves[i]));
-            score = -alphabeta(npos, info, ss+1, npv, -alpha-1, -alpha, depth-1);
+            int r = reduction(pvnode, legal_moves-1, depth, in_check, move_type(moves[i]));
+            score = -alphabeta(npos, info, ss+1, npv, -alpha-1, -alpha, depth-1-r);
+
             if(alpha < score && score < beta)
             {
                 score = -alphabeta(npos, info, ss+1, npv, -beta, -score, depth-1);
