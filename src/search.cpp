@@ -111,6 +111,7 @@ void search(const Position &pos, Hashtable &tt, bool &stop, int depth, int movet
         pv.length = npv.length;
 
         assert(pv.length > 0);
+        assert(pv.legal(pos) == true);
 
         double time_taken = (double)(clock() - info.start)/CLOCKS_PER_SEC;
 
