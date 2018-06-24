@@ -27,6 +27,21 @@ struct PV
         return true;
     }
 
+    std::string string(bool flipped) const
+    {
+        std::string str = "";
+        for(int n = 0; n < length; ++n)
+        {
+            if(n > 0)
+            {
+                str += " ";
+            }
+            str += move_uci(moves[n], flipped);
+            flipped = !flipped;
+        }
+        return str;
+    }
+
     void add(const Move m)
     {
         moves[length] = m;

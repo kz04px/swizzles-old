@@ -131,12 +131,7 @@ void search(const Position &pos, Hashtable &tt, bool &stop, int depth, int movet
 
         if(pv.length > 0)
         {
-            std::cout << " pv";
-            for(int n = 0; n < pv.length; ++n)
-            {
-                std::cout << " " << move_uci(pv.moves[n], pos.flipped ^ (n % 2));
-            }
-            assert(pv.legal(pos) == true);
+            std::cout << " pv " + pv.string(pos.flipped);
         }
 
         std::cout << std::endl;
