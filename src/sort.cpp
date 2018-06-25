@@ -64,6 +64,13 @@ void sort(const Position &pos, Move *moves, const int num, const Move tt_move, c
         scores[idx] = scores[a];
         scores[a] = store2;
     }
+
+#ifndef NDEBUG
+    for(int i = 0; i < num-1; ++i)
+    {
+        assert(scores[i] >= scores[i+1]);
+    }
+#endif
 }
 
 void sort_see(const Position &pos, Move *moves, int *scores, const int num)
@@ -96,4 +103,11 @@ void sort_see(const Position &pos, Move *moves, int *scores, const int num)
         scores[idx] = scores[a];
         scores[a] = store2;
     }
+
+#ifndef NDEBUG
+    for(int i = 0; i < num-1; ++i)
+    {
+        assert(scores[i] >= scores[i+1]);
+    }
+#endif
 }
