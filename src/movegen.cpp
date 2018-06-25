@@ -296,7 +296,8 @@ int movegen(const Position &pos, Move *movelist)
         num_moves++;
     }
 
-    assert(num_moves < 256);
+    assert(num_moves >= 0);
+    assert(num_moves <= 256);
 
     return num_moves;
 }

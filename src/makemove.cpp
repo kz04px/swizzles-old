@@ -209,6 +209,7 @@ void make_move(Position &pos, const Move m)
     std::uint64_t hash = calculate_hash(pos);
     pos.history[pos.history_size] = hash;
     pos.history_size++;
+    assert(pos.history_size >= 1);
     assert(pos.history_size <= 128);
 
     assert(!invalid(pos));
