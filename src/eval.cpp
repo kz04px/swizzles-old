@@ -9,6 +9,21 @@
 #include "mobility.hpp"
 #include "other.hpp"
 
+const int turn_value = 10;
+const int open_file_value = 20;
+const int rook_7th_value = 10;
+// Piece pairs
+const int bishop_pair_value = 20;
+const int knight_pair_value = 15;
+// Outposts
+const int knight_outpost_value = 20;
+const int bishop_outpost_value = 20;
+const int rook_outpost_value = 20;
+// Pawns
+const int doubled_pawn_value   = -10;
+const int isolated_pawn_value  = -20;
+const int backward_pawn_value  = -10;
+const int pawn_chain_value     =  10;
 const int passed_pawn_value[8] = {0, 10, 10, 15, 25, 40, 60, 0};
 
 int eval(const Position &pos)
@@ -51,13 +66,13 @@ int eval(const Position &pos)
         // Knight pair
         if(popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::KNIGHT]) > 1)
         {
-            score += 15;
+            score += knight_pair_value;
         }
 
         // Bishop pair
         if(popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::BISHOP]) > 1)
         {
-            score += 20;
+            score += bishop_pair_value;
         }
 
         const uint64_t pawns = npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
@@ -72,10 +87,10 @@ int eval(const Position &pos)
                                       (pawns_attacking<<48));
 
         // Knight outposts
-        score += -20*popcountll(U64_CENTER & npos.pieces[PieceType::KNIGHT] & npos.colour[Colour::THEM] & pawn_holes & pawns_attacking_them);
+        score += -knight_outpost_value*popcountll(outposts & npos.pieces[PieceType::KNIGHT] & npos.colour[Colour::THEM]);
 
         // Pawn chains
-        //score += 10*popcountll(pawns & pawns_attacking);
+        //score += pawn_chain_value*popcountll(pawns & pawns_attacking);
 
         uint64_t copy = pawns;
         while(copy)
@@ -103,7 +118,7 @@ int eval(const Position &pos)
             // Isolated pawns
             if(!(adj_files & pawns))
             {
-                score -= 20;
+                score += isolated_pawn_value;
             }
 */
             copy &= copy-1;
@@ -118,7 +133,7 @@ int eval(const Position &pos)
         // Rook on the 7th
         if(U64_RANK_7 & npos.pieces[PieceType::ROOK] & npos.colour[Colour::US])
         {
-            score += 10;
+            score += rook_7th_value;
         }
 
         for(int f = 0; f < 8; ++f)
@@ -132,7 +147,7 @@ int eval(const Position &pos)
                 // Rook & Queen bonus
                 if((npos.colour[Colour::US] & (npos.pieces[PieceType::ROOK] | npos.pieces[PieceType::QUEEN]) & get_file(f)) != 0ULL)
                 {
-                    mid_score += 20;
+                    mid_score += open_file_value;
                 }
             }
         }
@@ -144,7 +159,7 @@ int eval(const Position &pos)
     }
 
     // Turn bonus
-    score += 10;
+    score += turn_value;
 
     int p = phase(pos);
     score += ((mid_score * (256 - p)) + (end_score * p)) / 256;
