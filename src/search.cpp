@@ -173,24 +173,32 @@ void search(const Position &pos, Hashtable &tt, bool &stop, int depth, int movet
     }
     else
     {
-#ifndef NDEBUG
+        // Ideally we should never find any legal moves here
+        // if it does happen then there's almost certainly a bug somewhere
+        // but playing the found move will be better than making a null move
+        Move best_move = NO_MOVE;
         Move moves[256];
         int num_moves = movegen(pos, moves);
 
-        bool legal_moves = false;
         for(int i = 0; i < num_moves; ++i)
         {
             Position npos = pos;
             make_move(npos, moves[i]);
             if(check(npos, Colour::THEM) == true) {continue;}
 
-            legal_moves = true;
+            best_move = moves[i];
             break;
         }
 
-        assert(legal_moves == false);
-#endif
+        assert(best_move == NO_MOVE);
 
-        std::cout << "bestmove 0000" << std::endl;
+        if(best_move != NO_MOVE)
+        {
+            std::cout << "bestmove " << move_uci(best_move, pos.flipped) << std::endl;
+        }
+        else
+        {
+            std::cout << "bestmove 0000" << std::endl;
+        }
     }
 }
