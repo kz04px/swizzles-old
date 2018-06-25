@@ -107,7 +107,8 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
         return qsearch(pos, info, ss, alpha, beta);
     }
 
-    uint64_t key = calculate_hash(pos);
+    assert(pos.history_size > 0);
+    const uint64_t key = pos.history[pos.history_size-1];
 
     // Check the hash table
     Entry entry = info.tt->probe(key);
