@@ -1,4 +1,5 @@
 #include "position.hpp"
+#include "zobrist.hpp"
 #include "other.hpp"
 
 int invalid(const Position &pos)
@@ -32,7 +33,6 @@ int invalid(const Position &pos)
     if(popcountll(pos.colour[THEM]) > 16) {return 22;}
 
     // En passant square
-    //if(enpassant != Square::OFFSQ && (enpassant < Square::A1 || enpassant > Square::H8)) {return 23;}
     if(pos.enpassant != Square::OFFSQ)
     {
         if(pos.enpassant < Square::A6 || pos.enpassant > Square::H6)
@@ -44,6 +44,45 @@ int invalid(const Position &pos)
     // Pawns in the wrong place
     if(pos.pieces[PieceType::PAWN] & U64_RANK_1) {return 24;}
     if(pos.pieces[PieceType::PAWN] & U64_RANK_8) {return 25;}
+
+    // At least the current position has to be in the history
+    if(pos.history_size < 1) {return 26;}
+
+    // These need to match
+    if(pos.history[pos.history_size-1] != calculate_hash(pos)) {return 27;}
+
+    // Needs to be a pawn below the EP square
+    if(pos.enpassant != Square::OFFSQ)
+    {
+        if(((1ULL << (pos.enpassant-8)) & (pos.pieces[PieceType::PAWN] & pos.colour[Colour::THEM])) == 0ULL)
+        {
+            return 28;
+        }
+    }
+
+    // Castling permissions
+    if(pos.castling[Castling::usKSC] == true)
+    {
+        if((pos.pieces[PieceType::KING] & pos.colour[Colour::US] & U64_E1) == 0ULL)
+        {
+            return 29;
+        }
+        if((pos.pieces[PieceType::ROOK] & pos.colour[Colour::US] & U64_H1) == 0ULL)
+        {
+            return 30;
+        }
+    }
+    if(pos.castling[Castling::usQSC] == true)
+    {
+        if((pos.pieces[PieceType::KING] & pos.colour[Colour::US] & U64_E1) == 0ULL)
+        {
+            return 31;
+        }
+        if((pos.pieces[PieceType::ROOK] & pos.colour[Colour::US] & U64_A1) == 0ULL)
+        {
+            return 32;
+        }
+    }
 
     return 0;
 }
