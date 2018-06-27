@@ -191,6 +191,7 @@ bool set_fen(Position &pos, std::string fen)
     if(pos.flipped == true)
     {
         flip(pos);
+        pos.flipped = true;
     }
 
     // Add position to history
