@@ -20,11 +20,24 @@ const int knight_outpost_value = 20;
 const int bishop_outpost_value = 20;
 const int rook_outpost_value = 20;
 // Pawns
-const int doubled_pawn_value   = -10;
-const int isolated_pawn_value  = -20;
-const int backward_pawn_value  = -10;
-const int pawn_chain_value     =  10;
-const int passed_pawn_value[8] = {0, 10, 10, 15, 25, 40, 60, 0};
+const int doubled_pawn_value     = -10;
+const int isolated_pawn_value    = -20;
+const int backward_pawn_value    = -10;
+const int pawn_chain_value       =  10;
+const int unreachable_pawn_value =  50;
+const int passed_pawn_value[8]   = {0, 10, 10, 15, 25, 40, 60, 0};
+
+int king_distance(const int sq1, const int sq2)
+{
+    assert(sq1 >= Square::A1);
+    assert(sq1 <= Square::H8);
+    assert(sq2 >= Square::A1);
+    assert(sq2 <= Square::H8);
+
+    const int dx = abs(sq1%8 - sq2%8);
+    const int dy = abs(sq1/8 - sq2/8);
+    return std::max(dx, dy);
+}
 
 int eval(const Position &pos)
 {
@@ -35,6 +48,9 @@ int eval(const Position &pos)
 
     for(int i = 0; i < 2; ++i)
     {
+        const bool our_turn = (i == 0);
+        const int their_king_sq = lsbll(npos.pieces[PieceType::KING] & npos.colour[Colour::THEM]);
+
         score += 100 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::PAWN]);
         score += 300 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::KNIGHT]);
         score += 325 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::BISHOP]);
@@ -105,8 +121,19 @@ int eval(const Position &pos)
             // Passed pawn
             if(is_passed_pawn(Colour::US, sq, npos.pieces[PieceType::PAWN] & npos.colour[Colour::THEM]) == true)
             {
+                const int promo_sq = Square::A8 + f;
+
+                assert(promo_sq >= Square::A8);
+                assert(promo_sq <= Square::H8);
+
                 //mid_score += passed_pawn_value[r]/2;
                 end_score += passed_pawn_value[r];
+
+                // Bonus when the enemy king can't reach us in time to promote
+                if(king_distance(promo_sq, their_king_sq) - (our_turn ? 0 : 1) > std::min(5, 7-r))
+                {
+                    end_score += unreachable_pawn_value;
+                }
 
                 // Defended passed pawn
                 if(bb & pawns_attacking)
