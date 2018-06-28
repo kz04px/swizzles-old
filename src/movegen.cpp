@@ -6,6 +6,7 @@
 #include "move.hpp"
 #include "attacks.hpp"
 #include "movegen.hpp"
+#include "legal.hpp"
 #include "other.hpp"
 
 int movegen(const Position &pos, Move *movelist)
@@ -298,6 +299,13 @@ int movegen(const Position &pos, Move *movelist)
 
     assert(num_moves >= 0);
     assert(num_moves <= 256);
+
+#ifndef NDEBUG
+    for(int i = 0; i < num_moves; ++i)
+    {
+        assert(pseudolegal_move(pos, movelist[i]) == true);
+    }
+#endif
 
     return num_moves;
 }
