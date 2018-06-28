@@ -336,8 +336,12 @@ void mcts_uct(const Position &pos, Hashtable &tt, bool &stop, int movetime, int 
                           << " nodes " << iteration
                           << " score " << 100.0*best_node->score/best_node->visits << "%"
                           << " visits " << best_node->visits
-                          << " time " << (uint64_t)(1000.0*time)
-                          << " pv " << move_uci(best_node->move, pos.flipped);
+                          << " time " << (uint64_t)(1000.0*time);
+                if(time > 0.0)
+                {
+                    std::cout << " nps " << (uint64_t)(root.visits/time);
+                }
+                std::cout << " pv " << move_uci(best_node->move, pos.flipped);
                 if(pv.length > 0)
                 {
                     std::cout << " " + pv_string;
