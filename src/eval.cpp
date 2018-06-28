@@ -102,6 +102,8 @@ int eval(const Position &pos)
                                       (pawns_attacking<<40) |
                                       (pawns_attacking<<48));
 
+        const uint64_t outposts = U64_CENTER & pawn_holes & pawns_attacking_them;
+
         // Knight outposts
         score += -knight_outpost_value*popcountll(outposts & npos.pieces[PieceType::KNIGHT] & npos.colour[Colour::THEM]);
 
