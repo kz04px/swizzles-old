@@ -85,6 +85,12 @@ void uci()
                         n += 2;
                         i += 1;
                     }
+                    else if(tokens[i] == "nodes")
+                    {
+                        nodes = std::stoi(tokens[i+1]);
+                        n += 2;
+                        i += 1;
+                    }
                     else if(tokens[i] == "movetime")
                     {
                         movetime = std::stoi(tokens[i+1]);
