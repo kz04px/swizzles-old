@@ -2,6 +2,7 @@
 #include "uci.hpp"
 #include "bitboards.hpp"
 #include "zobrist.hpp"
+#include "test.hpp"
 
 int main()
 {
@@ -19,6 +20,10 @@ int main()
     else if(mode == "xboard")
     {
         std::cout << "xboard protocol not supported" << std::endl;
+    }
+    else if(mode == "test")
+    {
+        test();
     }
     else if(mode == "about")
     {
