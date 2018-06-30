@@ -140,7 +140,7 @@ int eval(const Position &pos)
                 // Defended passed pawn
                 if(bb & pawns_attacking)
                 {
-                    end_score += passed_pawn_value[r]/2;
+                    score += passed_pawn_value[r]/2;
                 }
             }
 /*
