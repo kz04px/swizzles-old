@@ -174,7 +174,7 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
     }
 */
     // Nullmove
-    if(ss->nullmove && !in_check && !pvnode && depth > 4 && !is_endgame(pos))
+    if(ss->nullmove && !in_check && !pvnode && depth > 2 && !is_endgame(pos))
     {
         #define R 2
         Position npos = pos;
