@@ -45,25 +45,27 @@ std::uint64_t calculate_hash(const Position &pos)
     std::uint64_t hash = 0ULL;
 
     // Pieces
-    std::uint64_t copy = pos.colour[Colour::US];
-    while(copy)
+    for(int i = PieceType::PAWN; i <= PieceType::KING; ++i)
     {
-        int sq = lsbll(copy);
-        int piece = piece_get(pos, Square(sq));
+        std::uint64_t copy = pos.pieces[i] & pos.colour[Colour::US];
+        while(copy)
+        {
+            const int sq = lsbll(copy);
 
-        hash ^= keys_piece[sq][piece][Colour::US];
+            hash ^= keys_piece[sq][i][Colour::US];
 
-        copy &= copy -1;
-    }
-    copy = pos.colour[Colour::THEM];
-    while(copy)
-    {
-        int sq = lsbll(copy);
-        int piece = piece_get(pos, Square(sq));
+            copy &= copy -1;
+        }
 
-        hash ^= keys_piece[sq][piece][Colour::THEM];
+        copy = pos.pieces[i] & pos.colour[Colour::THEM];
+        while(copy)
+        {
+            const int sq = lsbll(copy);
 
-        copy &= copy -1;
+            hash ^= keys_piece[sq][i][Colour::THEM];
+
+            copy &= copy -1;
+        }
     }
 
     // En passant
