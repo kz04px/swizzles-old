@@ -6,6 +6,7 @@
 #include "move.hpp"
 #include "attacks.hpp"
 #include "movegen.hpp"
+#include "legal.hpp"
 #include "other.hpp"
 
 int movegen_captures(const Position &pos, Move *movelist)
@@ -191,6 +192,7 @@ int movegen_captures(const Position &pos, Move *movelist)
 #ifndef NDEBUG
     for(int n = 0; n < num_moves; ++n)
     {
+        assert(pseudolegal_move(pos, movelist[n]) == true);
         assert(move_captured(movelist[n]) != PieceType::NONE);
         assert(move_type(movelist[n]) == MoveType::CAPTURE ||
                move_type(movelist[n]) == MoveType::ENPASSANT ||

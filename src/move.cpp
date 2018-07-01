@@ -22,6 +22,12 @@ Move move(Square from, Square to, MoveType type, PieceType piece)
     // Captured
     m |= (PieceType::NONE & 0x7) << 23;
 
+    assert(move_to(m) == to);
+    assert(move_from(m) == from);
+    assert(move_type(m) == type);
+    assert(move_piece(m) == piece);
+    assert(move_captured(m) == PieceType::NONE);
+
     return m;
 }
 
@@ -43,6 +49,12 @@ Move move(Square from, Square to, MoveType type, PieceType piece, PieceType capt
 
     // Captured
     m |= (captured & 0x7) << 23;
+
+    assert(move_to(m) == to);
+    assert(move_from(m) == from);
+    assert(move_type(m) == type);
+    assert(move_piece(m) == piece);
+    assert(move_captured(m) == captured);
 
     return m;
 }
