@@ -18,7 +18,7 @@ const int knight_pair_value = 15;
 // Outposts
 const int knight_outpost_value = 20;
 const int bishop_outpost_value = 20;
-const int rook_outpost_value = 20;
+const int rook_outpost_value   = 20;
 // Pawns
 const int doubled_pawn_value     = -10;
 const int isolated_pawn_value    = -20;
@@ -50,7 +50,20 @@ int eval(const Position &pos)
     {
         const bool our_turn = (i == 0);
         const int their_king_sq = lsbll(npos.pieces[PieceType::KING] & npos.colour[Colour::THEM]);
+        const uint64_t pawns_attacking = pawn_attacks(npos, Colour::US);
+        const uint64_t pawns_attacking_them = pawn_attacks(npos, Colour::THEM);
+        const uint64_t pawns = npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
+        const uint64_t pawn_holes = ~( pawns_attacking      |
+                                      (pawns_attacking<<8)  |
+                                      (pawns_attacking<<16) |
+                                      (pawns_attacking<<24) |
+                                      (pawns_attacking<<32) |
+                                      (pawns_attacking<<40) |
+                                      (pawns_attacking<<48));
+        const uint64_t outposts = U64_CENTER & pawn_holes & pawns_attacking_them;
+        uint64_t copy = 0ULL;
 
+        // Material
         score += 100 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::PAWN]);
         score += 300 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::KNIGHT]);
         score += 325 * popcountll(npos.colour[Colour::US] & npos.pieces[PieceType::BISHOP]);
@@ -91,26 +104,10 @@ int eval(const Position &pos)
             score += bishop_pair_value;
         }
 
-        const uint64_t pawns = npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
-        const uint64_t pawns_attacking = pawn_attacks(npos, Colour::US);
-        const uint64_t pawns_attacking_them = pawn_attacks(npos, Colour::THEM);
-        const uint64_t pawn_holes = ~( pawns_attacking      |
-                                      (pawns_attacking<<8)  |
-                                      (pawns_attacking<<16) |
-                                      (pawns_attacking<<24) |
-                                      (pawns_attacking<<32) |
-                                      (pawns_attacking<<40) |
-                                      (pawns_attacking<<48));
-
-        const uint64_t outposts = U64_CENTER & pawn_holes & pawns_attacking_them;
-
         // Knight outposts
         score += -knight_outpost_value*popcountll(outposts & npos.pieces[PieceType::KNIGHT] & npos.colour[Colour::THEM]);
 
-        // Pawn chains
-        //score += pawn_chain_value*popcountll(pawns & pawns_attacking);
-
-        uint64_t copy = pawns;
+        copy = pawns;
         while(copy)
         {
             const int sq = lsbll(copy);
@@ -123,10 +120,22 @@ int eval(const Position &pos)
             // Passed pawn
             if(is_passed_pawn(Colour::US, sq, npos.pieces[PieceType::PAWN] & npos.colour[Colour::THEM]) == true)
             {
+                assert(0 < r && r < 7);
+                assert(Square::A2 <= sq && sq <= Square::H7);
+                assert(8*(8-r) < 64);
+                assert(8*(r+1) < 64);
+
                 const int promo_sq = Square::A8 + f;
+                const uint64_t promo_bb = 1ULL << promo_sq;
+                const uint64_t behind  = file >> (8*(8-r));
+                const uint64_t infront = file << (8*(r+1));
 
                 assert(promo_sq >= Square::A8);
                 assert(promo_sq <= Square::H8);
+                assert(promo_bb & U64_RANK_8);
+                assert(infront);
+                assert(behind);
+                assert((behind | infront | bb) == file);
 
                 //mid_score += passed_pawn_value[r]/2;
                 end_score += passed_pawn_value[r];
@@ -143,21 +152,9 @@ int eval(const Position &pos)
                     score += passed_pawn_value[r]/2;
                 }
             }
-/*
-            // Isolated pawns
-            if(!(adj_files & pawns))
-            {
-                score += isolated_pawn_value;
-            }
-*/
+
             copy &= copy-1;
         }
-
-/*
-        // Blocked pawns
-        uint64_t blockers = (pawns << 8) & npos.colour[Colour::US];
-        score -= 10*popcountll(blockers);
-*/
 
         // Rook on the 7th
         if(U64_RANK_7 & npos.pieces[PieceType::ROOK] & npos.colour[Colour::US])
@@ -165,6 +162,7 @@ int eval(const Position &pos)
             score += rook_7th_value;
         }
 
+        // Each file
         for(int f = 0; f < 8; ++f)
         {
             const uint64_t file = get_file(f);
@@ -174,7 +172,7 @@ int eval(const Position &pos)
             if((npos.pieces[PieceType::PAWN] & file) == 0ULL)
             {
                 // Rook & Queen bonus
-                if((npos.colour[Colour::US] & (npos.pieces[PieceType::ROOK] | npos.pieces[PieceType::QUEEN]) & get_file(f)) != 0ULL)
+                if(file & npos.colour[Colour::US] & (npos.pieces[PieceType::ROOK] | npos.pieces[PieceType::QUEEN]))
                 {
                     mid_score += open_file_value;
                 }
@@ -192,6 +190,9 @@ int eval(const Position &pos)
 
     int p = phase(pos);
     score += ((mid_score * (256 - p)) + (end_score * p)) / 256;
+
+    assert(score >= -INF);
+    assert(score <= INF);
 
     return score;
 }
