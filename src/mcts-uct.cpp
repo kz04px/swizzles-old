@@ -11,7 +11,7 @@
 #include "rollout.hpp"
 #include "eval.hpp"
 #include "pv.hpp"
-#include "invalid.hpp"
+#include "valid.hpp"
 #include "attacks.hpp"
 
 struct State
@@ -51,7 +51,7 @@ struct State
 
     State(Position position) : pos(position)
     {
-        assert(invalid(position) == false);
+        assert(valid(position) == true);
         num_moves = movegen(position, moves);
 
         // FIXME:

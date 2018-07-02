@@ -2,7 +2,7 @@
 #include <cassert>
 #include "movegen.hpp"
 #include "makemove.hpp"
-#include "invalid.hpp"
+#include "valid.hpp"
 #include "zobrist.hpp"
 #include "flip.hpp"
 
@@ -212,7 +212,7 @@ void make_move(Position &pos, const Move m)
     assert(pos.history_size >= 1);
     assert(pos.history_size <= 128);
 
-    assert(!invalid(pos));
+    assert(valid(pos) == true);
 }
 
 bool make_move(Position &pos, const std::string &move_string)

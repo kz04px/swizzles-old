@@ -1,8 +1,14 @@
+#include "valid.hpp"
 #include "position.hpp"
 #include "zobrist.hpp"
 #include "other.hpp"
 
-int invalid(const Position &pos)
+bool valid(const Position &pos)
+{
+    return invalid_code(pos) == 0;
+}
+
+int invalid_code(const Position &pos)
 {
     // Piece overlaps
     if(pos.pieces[PieceType::PAWN]   & pos.pieces[PieceType::KNIGHT]) {return 1;}

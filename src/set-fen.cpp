@@ -1,6 +1,6 @@
 #include "fen.hpp"
 #include "position.hpp"
-#include "invalid.hpp"
+#include "valid.hpp"
 #include "flip.hpp"
 #include "zobrist.hpp"
 #include "other.hpp"
@@ -199,7 +199,7 @@ bool set_fen(Position &pos, std::string fen)
     pos.history[pos.history_size] = hash;
     pos.history_size++;
 
-    if(invalid(pos) == true)
+    if(valid(pos) == false)
     {
         return false;
     }

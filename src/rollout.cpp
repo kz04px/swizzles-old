@@ -3,7 +3,7 @@
 #include "movegen.hpp"
 #include "makemove.hpp"
 #include "attacks.hpp"
-#include "invalid.hpp"
+#include "valid.hpp"
 
 int repetitions2(const Position &pos)
 {
@@ -25,7 +25,7 @@ bool is_fifty_moves2(const Position &pos)
 
 float rollout(const Position &pos, const int length)
 {
-    assert(invalid(pos) == false);
+    assert(valid(pos) == true);
     assert(length > 0);
 
     Position main_pos = pos;
