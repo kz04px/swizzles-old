@@ -17,10 +17,10 @@ Move move(Square from, Square to, MoveType type, PieceType piece)
     m |= (type & 0xF) << 12;
 
     // Piece
-    m |= (piece & 0x7) << 20;
+    m |= (piece & 0x7) << 16;
 
     // Captured
-    m |= (PieceType::NONE & 0x7) << 23;
+    m |= (PieceType::NONE & 0x7) << 19;
 
     assert(move_to(m) == to);
     assert(move_from(m) == from);
@@ -45,10 +45,10 @@ Move move(Square from, Square to, MoveType type, PieceType piece, PieceType capt
     m |= (type & 0xF) << 12;
 
     // Piece
-    m |= (piece & 0x7) << 20;
+    m |= (piece & 0x7) << 16;
 
     // Captured
-    m |= (captured & 0x7) << 23;
+    m |= (captured & 0x7) << 19;
 
     assert(move_to(m) == to);
     assert(move_from(m) == from);
@@ -69,19 +69,19 @@ Square move_from(const Move &m)
     return Square((m >> 6) & 0x3F);
 }
 
-PieceType move_piece(const Move &m)
-{
-    return PieceType((m >> 20) & 0x7);
-}
-
 MoveType move_type(const Move &m)
 {
     return MoveType((m >> 12) & 0xF);
 }
 
+PieceType move_piece(const Move &m)
+{
+    return PieceType((m >> 16) & 0x7);
+}
+
 PieceType move_captured(const Move &m)
 {
-    return PieceType((m >> 23) & 0x7);
+    return PieceType((m >> 19) & 0x7);
 }
 
 std::string move_uci(const Move &m, const bool flipped)
