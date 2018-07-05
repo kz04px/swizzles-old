@@ -21,8 +21,7 @@ void make_move(Position &pos, const Move m)
     assert(captured != PieceType::KING);
 
     pos.enpassant = Square::OFFSQ;
-
-    if(pos.flipped == true) {pos.fullmoves++;}
+    pos.fullmoves += pos.flipped;
 
     // Remove the piece
     pos.pieces[piece]      ^= 1ULL << from;
@@ -44,6 +43,10 @@ void make_move(Position &pos, const Move m)
     {
         assert(piece == PieceType::PAWN);
         assert(captured == PieceType::NONE);
+        assert(Square::A4 <= to);
+        assert(to <= Square::H4);
+        assert(Square::A2 <= from);
+        assert(from <= Square::H2);
 
         // Add the enpassant square
         pos.enpassant = Square(to - 8);
@@ -51,8 +54,11 @@ void make_move(Position &pos, const Move m)
     else if(type == MoveType::QUEEN_PROMO)
     {
         assert(piece == PieceType::PAWN);
+        assert(captured == PieceType::NONE);
         assert(Square::A8 <= to);
         assert(to <= Square::H8);
+        assert(Square::A7 <= from);
+        assert(from <= Square::H7);
 
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
@@ -77,6 +83,7 @@ void make_move(Position &pos, const Move m)
     else if(type == MoveType::ROOK_PROMO)
     {
         assert(piece == PieceType::PAWN);
+        assert(captured == PieceType::NONE);
         assert(Square::A8 <= to);
         assert(to <= Square::H8);
 
@@ -103,6 +110,7 @@ void make_move(Position &pos, const Move m)
     else if(type == MoveType::BISHOP_PROMO)
     {
         assert(piece == PieceType::PAWN);
+        assert(captured == PieceType::NONE);
         assert(Square::A8 <= to);
         assert(to <= Square::H8);
 
@@ -129,6 +137,7 @@ void make_move(Position &pos, const Move m)
     else if(type == MoveType::KNIGHT_PROMO)
     {
         assert(piece == PieceType::PAWN);
+        assert(captured == PieceType::NONE);
         assert(Square::A8 <= to);
         assert(to <= Square::H8);
 
