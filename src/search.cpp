@@ -120,13 +120,17 @@ void search(const Position &pos, Hashtable &tt, bool &stop, int depth, int movet
                   << " nodes " << info.nodes
                   << " time " << (int)(1000*time_taken);
 
-        if(abs(score) < INF - MAX_DEPTH)
+        if(score > INF - MAX_DEPTH)
         {
-            std::cout << " score cp " << score;
+            std::cout << " score mate " << (INF - score + 1)/2;
+        }
+        else if(score < -INF + MAX_DEPTH)
+        {
+            std::cout << " score mate " << (-INF - score - 1)/2;
         }
         else
         {
-            std::cout << " score mate " << score;
+            std::cout << " score cp " << score;
         }
 
         if(pv.length > 0)
