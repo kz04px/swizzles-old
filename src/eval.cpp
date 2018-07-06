@@ -25,7 +25,8 @@ const int isolated_pawn_value    = -20;
 const int backward_pawn_value    = -10;
 const int pawn_chain_value       =  10;
 const int unreachable_pawn_value =  50;
-const int passed_pawn_value[8]   = {0, 10, 10, 15, 25, 40, 60, 0};
+// Pawns - passers
+const int passer_rank_value[8]        = {0, 10, 10, 15, 25, 40, 60, 0};
 
 int king_distance(const int sq1, const int sq2)
 {
@@ -87,7 +88,7 @@ int eval(const Position &pos)
         end_score += score_pst(npos, 1, PieceType::KING);
 
         // King safety
-        score += safety(npos);
+        mid_score += safety(npos);
 
         // Piece mobility
         mid_score += piece_mobility(npos);
@@ -117,6 +118,18 @@ int eval(const Position &pos)
             const uint64_t file = get_file(f);
             const uint64_t adj_files = get_adj_files(f);
 
+            // Isolated pawns
+            if(!(adj_files & pawns))
+            {
+                score += isolated_pawn_value;
+            }
+
+            // Doubled pawns
+            if(popcountll(pawns & file) > 1)
+            {
+                score += doubled_pawn_value;
+            }
+
             // Passed pawn
             if(is_passed_pawn(Colour::US, sq, npos.pieces[PieceType::PAWN] & npos.colour[Colour::THEM]) == true)
             {
@@ -137,8 +150,8 @@ int eval(const Position &pos)
                 assert(behind);
                 assert((behind | infront | bb) == file);
 
-                //mid_score += passed_pawn_value[r]/2;
-                end_score += passed_pawn_value[r];
+                // Bonus for how advanced we are
+                end_score += passer_rank_value[r];
 
                 // Bonus when the enemy king can't reach us in time to promote
                 if(king_distance(promo_sq, their_king_sq) - (our_turn ? 0 : 1) > std::min(5, 7-r))
@@ -149,7 +162,7 @@ int eval(const Position &pos)
                 // Defended passed pawn
                 if(bb & pawns_attacking)
                 {
-                    score += passed_pawn_value[r]/2;
+                    score += passer_rank_value[r]/2;
                 }
             }
 
