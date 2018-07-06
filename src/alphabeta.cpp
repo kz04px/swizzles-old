@@ -96,6 +96,7 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
     Move best_move = NO_MOVE;
     int alpha_original = alpha;
 
+    // Check extension
     if(in_check == true && depth < MAX_DEPTH)
     {
         depth++;
@@ -222,6 +223,8 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
         if(check(npos, Colour::THEM) == true) {continue;}
         PV npv;
 
+        //const bool move_checks = check(npos, Colour::US);
+
         info.nodes++;
         legal_moves++;
 
@@ -245,31 +248,31 @@ int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, in
         {
             best_score = score;
             best_move = moves[i];
-        }
-
-        if(score > alpha)
-        {
-            alpha = score;
 
             // Update PV
             pv.moves[0] = moves[i];
             memcpy(pv.moves + 1, npv.moves, npv.length * sizeof(Move));
             pv.length = npv.length + 1;
-        }
 
-        if(alpha >= beta)
-        {
-            if(move_type(moves[i]) != MoveType::CAPTURE)
+            if(score > alpha)
             {
-                ss->killer2 = ss->killer1;
-                ss->killer1 = moves[i];
-            }
+                alpha = score;
+
+                if(alpha >= beta)
+                {
+                    if(move_type(moves[i]) != MoveType::CAPTURE)
+                    {
+                        ss->killer2 = ss->killer1;
+                        ss->killer1 = moves[i];
+                    }
 
 #ifndef NDEBUG
-            info.cutoffs[legal_moves-1]++;
+                    info.cutoffs[legal_moves-1]++;
 #endif
 
-            break;
+                    break;
+                }
+            }
         }
     }
 
