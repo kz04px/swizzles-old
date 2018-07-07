@@ -51,7 +51,7 @@ void make_move(Position &pos, const Move m)
         // Add the enpassant square
         pos.enpassant = Square(to - 8);
     }
-    else if(type == MoveType::QUEEN_PROMO)
+    else if(type == MoveType::PROMO)
     {
         assert(piece == PieceType::PAWN);
         assert(captured == PieceType::NONE);
@@ -63,100 +63,21 @@ void make_move(Position &pos, const Move m)
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
         // Add the promoted piece
-        pos.pieces[PieceType::QUEEN] ^= 1ULL << to;
+        pos.pieces[move_promo(m)] ^= 1ULL << to;
     }
-    else if(type == MoveType::QUEEN_PROMO_CAPTURE)
+    else if(type == MoveType::PROMO_CAPTURE)
     {
         assert(piece == PieceType::PAWN);
         assert(captured != PieceType::NONE);
         assert(Square::A8 <= to);
         assert(to <= Square::H8);
+        assert(Square::A7 <= from);
+        assert(from <= Square::H7);
 
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
         // Add the promoted piece
-        pos.pieces[PieceType::QUEEN] ^= 1ULL << to;
-        // Remove the captured piece
-        pos.pieces[captured]     ^= 1ULL << to;
-        pos.colour[Colour::THEM] ^= 1ULL << to;
-    }
-    else if(type == MoveType::ROOK_PROMO)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::ROOK] ^= 1ULL << to;
-    }
-    else if(type == MoveType::ROOK_PROMO_CAPTURE)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured != PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::ROOK] ^= 1ULL << to;
-        // Remove the captured piece
-        pos.pieces[captured]     ^= 1ULL << to;
-        pos.colour[Colour::THEM] ^= 1ULL << to;
-    }
-    else if(type == MoveType::BISHOP_PROMO)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::BISHOP] ^= 1ULL << to;
-    }
-    else if(type == MoveType::BISHOP_PROMO_CAPTURE)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured != PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::BISHOP] ^= 1ULL << to;
-        // Remove the captured piece
-        pos.pieces[captured]     ^= 1ULL << to;
-        pos.colour[Colour::THEM] ^= 1ULL << to;
-    }
-    else if(type == MoveType::KNIGHT_PROMO)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::KNIGHT] ^= 1ULL << to;
-    }
-    else if(type == MoveType::KNIGHT_PROMO_CAPTURE)
-    {
-        assert(piece == PieceType::PAWN);
-        assert(captured != PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-
-        // Guess we should remove the pawn
-        pos.pieces[PieceType::PAWN]  ^= 1ULL << to;
-        // Add the promoted piece
-        pos.pieces[PieceType::KNIGHT] ^= 1ULL << to;
+        pos.pieces[move_promo(m)] ^= 1ULL << to;
         // Remove the captured piece
         pos.pieces[captured]     ^= 1ULL << to;
         pos.colour[Colour::THEM] ^= 1ULL << to;

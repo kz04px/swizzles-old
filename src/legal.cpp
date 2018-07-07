@@ -86,14 +86,8 @@ bool pseudolegal_move(const Position &pos, const Move &move)
            || type == MoveType::ENPASSANT
            || type == MoveType::KSC
            || type == MoveType::QSC
-           || type == MoveType::KNIGHT_PROMO
-           || type == MoveType::BISHOP_PROMO
-           || type == MoveType::ROOK_PROMO
-           || type == MoveType::QUEEN_PROMO
-           || type == MoveType::KNIGHT_PROMO_CAPTURE
-           || type == MoveType::BISHOP_PROMO_CAPTURE
-           || type == MoveType::ROOK_PROMO_CAPTURE
-           || type == MoveType::QUEEN_PROMO_CAPTURE);
+           || type == MoveType::PROMO
+           || type == MoveType::PROMO_CAPTURE);
 
     // Our piece needs to be there
     if(!(from_bb & pos.pieces[piece] & pos.colour[Colour::US]))
@@ -111,10 +105,7 @@ bool pseudolegal_move(const Position &pos, const Move &move)
                || captured == PieceType::QUEEN);
         assert(   type == MoveType::CAPTURE
                || type == MoveType::ENPASSANT
-               || type == MoveType::KNIGHT_PROMO_CAPTURE
-               || type == MoveType::BISHOP_PROMO_CAPTURE
-               || type == MoveType::ROOK_PROMO_CAPTURE
-               || type == MoveType::QUEEN_PROMO_CAPTURE);
+               || type == MoveType::PROMO_CAPTURE);
 
         if(type == MoveType::ENPASSANT)
         {
@@ -146,10 +137,7 @@ bool pseudolegal_move(const Position &pos, const Move &move)
                || type == MoveType::DOUBLE
                || type == MoveType::KSC
                || type == MoveType::QSC
-               || type == MoveType::KNIGHT_PROMO
-               || type == MoveType::BISHOP_PROMO
-               || type == MoveType::ROOK_PROMO
-               || type == MoveType::QUEEN_PROMO);
+               || type == MoveType::PROMO);
 
         // The destination square has to be empty
         if(to_bb & (pos.colour[Colour::US] | pos.colour[Colour::THEM]))

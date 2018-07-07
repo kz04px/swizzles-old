@@ -26,10 +26,10 @@ int movegen_noncaptures(const Position &pos, Move *movelist)
 
         if(Square::A8 <= to && to <= Square::H8)
         {
-            movelist[num_moves+0] = move(from, to, QUEEN_PROMO,  PieceType::PAWN);
-            movelist[num_moves+1] = move(from, to, ROOK_PROMO,   PieceType::PAWN);
-            movelist[num_moves+2] = move(from, to, BISHOP_PROMO, PieceType::PAWN);
-            movelist[num_moves+3] = move(from, to, KNIGHT_PROMO, PieceType::PAWN);
+            movelist[num_moves+0] = move(from, to, PROMO, PieceType::PAWN, PieceType::NONE, PieceType::QUEEN);
+            movelist[num_moves+1] = move(from, to, PROMO, PieceType::PAWN, PieceType::NONE, PieceType::ROOK);
+            movelist[num_moves+2] = move(from, to, PROMO, PieceType::PAWN, PieceType::NONE, PieceType::BISHOP);
+            movelist[num_moves+3] = move(from, to, PROMO, PieceType::PAWN, PieceType::NONE, PieceType::KNIGHT);
             num_moves += 4;
         }
         else
@@ -200,10 +200,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist)
                move_type(movelist[n]) == MoveType::DOUBLE ||
                move_type(movelist[n]) == MoveType::KSC ||
                move_type(movelist[n]) == MoveType::QSC ||
-               move_type(movelist[n]) == MoveType::KNIGHT_PROMO ||
-               move_type(movelist[n]) == MoveType::BISHOP_PROMO ||
-               move_type(movelist[n]) == MoveType::ROOK_PROMO ||
-               move_type(movelist[n]) == MoveType::QUEEN_PROMO
+               move_type(movelist[n]) == MoveType::PROMO
                );
     }
 #endif

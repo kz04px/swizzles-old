@@ -22,11 +22,15 @@ Move move(Square from, Square to, MoveType type, PieceType piece)
     // Captured
     m |= (PieceType::NONE & 0x7) << 19;
 
+    // Promotion
+    m |= (PieceType::NONE & 0x7) << 22;
+
     assert(move_to(m) == to);
     assert(move_from(m) == from);
     assert(move_type(m) == type);
     assert(move_piece(m) == piece);
     assert(move_captured(m) == PieceType::NONE);
+    assert(move_promo(m) == PieceType::NONE);
 
     return m;
 }
@@ -50,11 +54,47 @@ Move move(Square from, Square to, MoveType type, PieceType piece, PieceType capt
     // Captured
     m |= (captured & 0x7) << 19;
 
+    // Promotion
+    m |= (PieceType::NONE & 0x7) << 22;
+
     assert(move_to(m) == to);
     assert(move_from(m) == from);
     assert(move_type(m) == type);
     assert(move_piece(m) == piece);
     assert(move_captured(m) == captured);
+    assert(move_promo(m) == PieceType::NONE);
+
+    return m;
+}
+
+Move move(Square from, Square to, MoveType type, PieceType piece, PieceType captured, PieceType promo)
+{
+    Move m;
+
+    // To
+    m = to & 0x3F;
+
+    // From
+    m |= (from & 0x3F) << 6;
+
+    // Type
+    m |= (type & 0xF) << 12;
+
+    // Piece
+    m |= (piece & 0x7) << 16;
+
+    // Captured
+    m |= (captured & 0x7) << 19;
+
+    // Promotion
+    m |= (promo & 0x7) << 22;
+
+    assert(move_to(m) == to);
+    assert(move_from(m) == from);
+    assert(move_type(m) == type);
+    assert(move_piece(m) == piece);
+    assert(move_captured(m) == captured);
+    assert(move_promo(m) == promo);
 
     return m;
 }
@@ -84,6 +124,11 @@ PieceType move_captured(const Move &m)
     return PieceType((m >> 19) & 0x7);
 }
 
+PieceType move_promo(const Move &m)
+{
+    return PieceType((m >> 22) & 0x7);
+}
+
 std::string move_uci(const Move &m, const bool flipped)
 {
     Square from = move_from(m);
@@ -98,21 +143,26 @@ std::string move_uci(const Move &m, const bool flipped)
 
     std::string ans = SquareString[from] + SquareString[to];
 
-    if(type == MoveType::QUEEN_PROMO || type == MoveType::QUEEN_PROMO_CAPTURE)
+    if(type == MoveType::PROMO || type == MoveType::PROMO_CAPTURE)
     {
-        ans += "q";
-    }
-    else if(type == MoveType::ROOK_PROMO || type == MoveType::ROOK_PROMO_CAPTURE)
-    {
-        ans += "r";
-    }
-    else if(type == MoveType::BISHOP_PROMO || type == MoveType::BISHOP_PROMO_CAPTURE)
-    {
-        ans += "b";
-    }
-    else if(type == MoveType::KNIGHT_PROMO || type == MoveType::KNIGHT_PROMO_CAPTURE)
-    {
-        ans += "n";
+        switch(move_promo(m))
+        {
+            case PieceType::QUEEN:
+                ans += "q";
+                break;
+            case PieceType::ROOK:
+                ans += "r";
+                break;
+            case PieceType::BISHOP:
+                ans += "b";
+                break;
+            case PieceType::KNIGHT:
+                ans += "n";
+                break;
+            default:
+                assert(false);
+                break;
+        }
     }
 
     return ans;

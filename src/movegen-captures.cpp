@@ -27,10 +27,10 @@ int movegen_captures(const Position &pos, Move *movelist)
 
         if(Square::A8 <= to && to <= Square::H8)
         {
-            movelist[num_moves+0] = move(from, to, QUEEN_PROMO_CAPTURE,  PieceType::PAWN, captured);
-            movelist[num_moves+1] = move(from, to, ROOK_PROMO_CAPTURE,   PieceType::PAWN, captured);
-            movelist[num_moves+2] = move(from, to, BISHOP_PROMO_CAPTURE, PieceType::PAWN, captured);
-            movelist[num_moves+3] = move(from, to, KNIGHT_PROMO_CAPTURE, PieceType::PAWN, captured);
+            movelist[num_moves+0] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::QUEEN);
+            movelist[num_moves+1] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::ROOK);
+            movelist[num_moves+2] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::BISHOP);
+            movelist[num_moves+3] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::KNIGHT);
             num_moves += 4;
         }
         else
@@ -51,10 +51,10 @@ int movegen_captures(const Position &pos, Move *movelist)
 
         if(Square::A8 <= to && to <= Square::H8)
         {
-            movelist[num_moves+0] = move(from, to, QUEEN_PROMO_CAPTURE,  PieceType::PAWN, captured);
-            movelist[num_moves+1] = move(from, to, ROOK_PROMO_CAPTURE,   PieceType::PAWN, captured);
-            movelist[num_moves+2] = move(from, to, BISHOP_PROMO_CAPTURE, PieceType::PAWN, captured);
-            movelist[num_moves+3] = move(from, to, KNIGHT_PROMO_CAPTURE, PieceType::PAWN, captured);
+            movelist[num_moves+0] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::QUEEN);
+            movelist[num_moves+1] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::ROOK);
+            movelist[num_moves+2] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::BISHOP);
+            movelist[num_moves+3] = move(from, to, PROMO_CAPTURE, PieceType::PAWN, captured, PieceType::KNIGHT);
             num_moves += 4;
         }
         else
@@ -196,10 +196,7 @@ int movegen_captures(const Position &pos, Move *movelist)
         assert(move_captured(movelist[n]) != PieceType::NONE);
         assert(move_type(movelist[n]) == MoveType::CAPTURE ||
                move_type(movelist[n]) == MoveType::ENPASSANT ||
-               move_type(movelist[n]) == MoveType::KNIGHT_PROMO_CAPTURE ||
-               move_type(movelist[n]) == MoveType::BISHOP_PROMO_CAPTURE ||
-               move_type(movelist[n]) == MoveType::ROOK_PROMO_CAPTURE ||
-               move_type(movelist[n]) == MoveType::QUEEN_PROMO_CAPTURE
+               move_type(movelist[n]) == MoveType::PROMO_CAPTURE
                );
     }
 #endif
