@@ -50,6 +50,8 @@ int qsearch(const Position &pos, SearchInfo &info, SearchStack *ss, int alpha, i
         make_move(npos, moves[i]);
         if(check(npos, Colour::THEM) == true) {continue;}
 
+        info.nodes++;
+
         int score = -qsearch(npos, info, ss+1, -beta, -alpha);
 
         if(score >= beta)
