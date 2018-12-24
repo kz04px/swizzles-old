@@ -35,8 +35,8 @@ int king_distance(const int sq1, const int sq2)
     assert(sq2 >= Square::A1);
     assert(sq2 <= Square::H8);
 
-    const int dx = abs(sq1%8 - sq2%8);
-    const int dy = abs(sq1/8 - sq2/8);
+    const int dx = abs(sq_to_file(sq1) - sq_to_file(sq2));
+    const int dy = abs(sq_to_rank(sq1) - sq_to_rank(sq2));
     return std::max(dx, dy);
 }
 
@@ -112,8 +112,8 @@ int eval(const Position &pos)
         while(copy)
         {
             const int sq = lsbll(copy);
-            const int f = sq%8;
-            const int r = sq/8;
+            const int f = sq_to_file(sq);
+            const int r = sq_to_rank(sq);
             const uint64_t bb = 1ULL << sq;
             const uint64_t file = get_file(f);
             const uint64_t adj_files = get_adj_files(f);
