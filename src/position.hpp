@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include "types.hpp"
+#include "other.hpp"
 
 struct Position
 {
@@ -18,6 +19,9 @@ struct Position
 };
 
 PieceType piece_get(const Position &pos, const Square sq);
+int repetitions(const Position &pos);
+bool is_fifty_moves(const Position &pos);
+int is_endgame(const Position &pos);
 bool operator == (const Position &a, const Position &b);
 bool operator != (const Position &a, const Position &b);
 

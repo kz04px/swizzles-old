@@ -5,24 +5,6 @@
 #include "attacks.hpp"
 #include "valid.hpp"
 
-int repetitions2(const Position &pos)
-{
-    int count = 0;
-    for(int i = pos.history_size-3; i >= 0 ; --i)
-    {
-        if(pos.history[i] == pos.history[pos.history_size-1])
-        {
-            count++;
-        }
-    }
-    return count;
-}
-
-bool is_fifty_moves2(const Position &pos)
-{
-    return pos.halfmoves >= 100;
-}
-
 float rollout(const Position &pos, const int length)
 {
     assert(valid(pos) == true);
@@ -36,7 +18,7 @@ float rollout(const Position &pos, const int length)
     int n = 0;
     while(n < length)
     {
-        if(is_fifty_moves2(main_pos) || repetitions2(main_pos) == 2) //  || (repetitions(pos) == 1 && ss->ply > 2)
+        if(is_fifty_moves(main_pos) || repetitions(main_pos) == 2) //  || (repetitions(pos) == 1 && ss->ply > 2)
         {
             r = 0.5;
             break;

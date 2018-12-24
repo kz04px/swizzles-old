@@ -54,3 +54,26 @@ bool operator != (const Position &a, const Position &b)
 {
     return !(a == b);
 }
+
+int repetitions(const Position &pos)
+{
+    int count = 0;
+    for(int i = pos.history_size-3; i >= 0 ; --i)
+    {
+        if(pos.history[i] == pos.history[pos.history_size-1])
+        {
+            count++;
+        }
+    }
+    return count;
+}
+
+bool is_fifty_moves(const Position &pos)
+{
+    return pos.halfmoves >= 100;
+}
+
+int is_endgame(const Position &pos)
+{
+    return popcountll(pos.colour[pos.flipped] & (pos.pieces[PieceType::KNIGHT] | pos.pieces[PieceType::BISHOP] | pos.pieces[PieceType::ROOK] | pos.pieces[PieceType::QUEEN])) <= 2;
+}

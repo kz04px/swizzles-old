@@ -26,46 +26,6 @@ int reduction(const bool pvnode, const int move_num, const int depth, const int 
     return 1;
 }
 
-int is_endgame(const Position &pos)
-{
-    return popcountll(pos.colour[pos.flipped] & (pos.pieces[PieceType::KNIGHT] | pos.pieces[PieceType::BISHOP] | pos.pieces[PieceType::ROOK] | pos.pieces[PieceType::QUEEN])) <= 2;
-}
-
-bool is_threefold(const Position &pos)
-{
-    int count = 0;
-    for(int i = pos.history_size-3; i >= 0 ; --i)
-    {
-        if(pos.history[i] == pos.history[pos.history_size-1])
-        {
-            count++;
-            if(count >= 2)
-            {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-int repetitions(const Position &pos)
-{
-    int count = 0;
-    for(int i = pos.history_size-3; i >= 0 ; --i)
-    {
-        if(pos.history[i] == pos.history[pos.history_size-1])
-        {
-            count++;
-        }
-    }
-    return count;
-}
-
-bool is_fifty_moves(const Position &pos)
-{
-    return pos.halfmoves >= 100;
-}
-
 int alphabeta(const Position &pos, SearchInfo &info, SearchStack *ss, PV &pv, int alpha, int beta, int depth)
 {
     assert(ss);
