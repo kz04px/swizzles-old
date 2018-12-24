@@ -26,6 +26,17 @@ const uint64_t files[8] = {
     U64_FILE_H
 };
 
+const uint64_t ranks[8] = {
+    U64_RANK_1,
+    U64_RANK_2,
+    U64_RANK_3,
+    U64_RANK_4,
+    U64_RANK_5,
+    U64_RANK_6,
+    U64_RANK_7,
+    U64_RANK_8
+};
+
 const uint64_t adj_files[8] = {
     U64_FILE_B,
     U64_FILE_A | U64_FILE_C,
@@ -351,6 +362,11 @@ bool is_backward_pawn_them(int sq, uint64_t friendly, uint64_t enemy)
 uint64_t get_file(int file)
 {
     return files[file];
+}
+
+uint64_t get_rank(int rank)
+{
+    return ranks[rank];
 }
 
 uint64_t get_adj_files(int file)
