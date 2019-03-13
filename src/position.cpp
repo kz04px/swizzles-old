@@ -58,7 +58,7 @@ bool operator != (const Position &a, const Position &b)
 int repetitions(const Position &pos)
 {
     int count = 0;
-    for(int i = pos.history_size-3; i >= 0 ; --i)
+    for(int i = pos.history_size-3; i >= 0; --i)
     {
         if(pos.history[i] == pos.history[pos.history_size-1])
         {
