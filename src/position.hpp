@@ -27,5 +27,6 @@ bool operator!=(const Position &a, const Position &b);
 bool legal_move(const Position &pos, const Move &move);
 bool pseudolegal_move(const Position &pos, const Move &move);
 bool legal_move(const Position &pos, const std::string &move);
+bool legal_position(const Position &pos);
 
 #endif

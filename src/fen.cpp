@@ -3,7 +3,6 @@
 #include "flip.hpp"
 #include "other.hpp"
 #include "position.hpp"
-#include "valid.hpp"
 #include "zobrist.hpp"
 
 bool set_fen(Position &pos, const std::string &fen) {
@@ -178,11 +177,7 @@ bool set_fen(Position &pos, const std::string &fen) {
     pos.history[pos.history_size] = hash;
     pos.history_size++;
 
-    if (valid(pos) == false) {
-        return false;
-    }
-
-    return true;
+    return legal_position(pos);
 }
 
 std::string get_fen(const Position &pos) {

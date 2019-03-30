@@ -3,10 +3,9 @@
 #include "attacks.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
-#include "valid.hpp"
 
 float rollout(const Position &pos, const int length) {
-    assert(valid(pos) == true);
+    assert(legal_position(pos) == true);
     assert(length > 0);
 
     Position main_pos = pos;

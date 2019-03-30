@@ -3,7 +3,6 @@
 #include <cstdint>
 #include "flip.hpp"
 #include "movegen.hpp"
-#include "valid.hpp"
 #include "zobrist.hpp"
 
 void make_move(Position &pos, const Move m) {
@@ -131,7 +130,7 @@ void make_move(Position &pos, const Move m) {
     assert(pos.history_size >= 1);
     assert(pos.history_size <= 128);
 
-    assert(valid(pos) == true);
+    assert(legal_position(pos) == true);
 }
 
 bool make_move(Position &pos, const std::string &move_string) {

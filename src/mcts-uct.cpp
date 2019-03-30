@@ -12,7 +12,6 @@
 #include "movegen.hpp"
 #include "pv.hpp"
 #include "rollout.hpp"
-#include "valid.hpp"
 
 struct State {
    public:
@@ -21,7 +20,7 @@ struct State {
 
     State(Position position)
         : pos(position), num_moves(0), curr_move(0), moves{} {
-        assert(valid(position) == true);
+        assert(legal_position(position) == true);
         num_moves = movegen(position, moves);
 
         // FIXME:

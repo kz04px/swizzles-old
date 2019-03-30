@@ -5,6 +5,7 @@
 #include "makemove.hpp"
 #include "movegen.hpp"
 #include "types.hpp"
+#include "zobrist.hpp"
 
 PieceType piece_get(const Position &pos, const Square sq) {
     uint64_t bb = 1ULL << sq;
@@ -22,62 +23,62 @@ bool operator==(const Position &a, const Position &b) {
     // Flipped
     if (a.flipped != b.flipped) {
         return false;
-    };
+    }
 
     // Pieces
     if (a.pieces[PieceType::PAWN] != b.pieces[PieceType::PAWN]) {
         return false;
-    };
+    }
     if (a.pieces[PieceType::KNIGHT] != b.pieces[PieceType::KNIGHT]) {
         return false;
-    };
+    }
     if (a.pieces[PieceType::BISHOP] != b.pieces[PieceType::BISHOP]) {
         return false;
-    };
+    }
     if (a.pieces[PieceType::ROOK] != b.pieces[PieceType::ROOK]) {
         return false;
-    };
+    }
     if (a.pieces[PieceType::QUEEN] != b.pieces[PieceType::QUEEN]) {
         return false;
-    };
+    }
     if (a.pieces[PieceType::KING] != b.pieces[PieceType::KING]) {
         return false;
-    };
+    }
 
     // Colours
     if (a.colour[Colour::US] != b.colour[Colour::US]) {
         return false;
-    };
+    }
     if (a.colour[Colour::THEM] != b.colour[Colour::THEM]) {
         return false;
-    };
+    }
 
     // Castling
     if (a.castling[usKSC] != b.castling[usKSC]) {
         return false;
-    };
+    }
     if (a.castling[usQSC] != b.castling[usQSC]) {
         return false;
-    };
+    }
     if (a.castling[themKSC] != b.castling[themKSC]) {
         return false;
-    };
+    }
     if (a.castling[themQSC] != b.castling[themQSC]) {
         return false;
-    };
+    }
 
     // Enpassant
     if (a.enpassant != b.enpassant) {
         return false;
-    };
+    }
 
     // Move counts
     if (a.halfmoves != b.halfmoves) {
         return false;
-    };
+    }
     if (a.fullmoves != b.fullmoves) {
         return false;
-    };
+    }
 
     return true;
 }
@@ -269,6 +270,138 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
             attacked(pos, Square::E1, Colour::THEM) == true ||
             attacked(pos, Square::D1, Colour::THEM) == true ||
             attacked(pos, Square::C1, Colour::THEM) == true) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool legal_position(const Position &pos) {
+    // Piece overlaps
+    if (pos.pieces[PieceType::PAWN] & pos.pieces[PieceType::KNIGHT]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::PAWN] & pos.pieces[PieceType::BISHOP]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::PAWN] & pos.pieces[PieceType::ROOK]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::PAWN] & pos.pieces[PieceType::QUEEN]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::PAWN] & pos.pieces[PieceType::KING]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::KNIGHT] & pos.pieces[PieceType::BISHOP]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::KNIGHT] & pos.pieces[PieceType::ROOK]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::KNIGHT] & pos.pieces[PieceType::QUEEN]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::KNIGHT] & pos.pieces[PieceType::KING]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::BISHOP] & pos.pieces[PieceType::ROOK]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::BISHOP] & pos.pieces[PieceType::QUEEN]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::BISHOP] & pos.pieces[PieceType::KING]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::ROOK] & pos.pieces[PieceType::QUEEN]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::ROOK] & pos.pieces[PieceType::KING]) {
+        return false;
+    }
+    if (pos.pieces[PieceType::QUEEN] & pos.pieces[PieceType::KING]) {
+        return false;
+    }
+
+    // Colour overlaps
+    if (pos.colour[US] & pos.colour[THEM]) {
+        return false;
+    }
+
+    // Piece counts
+    if (popcountll(pos.pieces[PieceType::KING] & pos.colour[US]) != 1) {
+        return false;
+    }
+    if (popcountll(pos.pieces[PieceType::KING] & pos.colour[THEM]) != 1) {
+        return false;
+    }
+    if (popcountll(pos.pieces[PieceType::PAWN] & pos.colour[US]) > 8) {
+        return false;
+    }
+    if (popcountll(pos.pieces[PieceType::PAWN] & pos.colour[THEM]) > 8) {
+        return false;
+    }
+    if (popcountll(pos.colour[US]) > 16) {
+        return false;
+    }
+    if (popcountll(pos.colour[THEM]) > 16) {
+        return false;
+    }
+
+    // En passant square
+    if (pos.enpassant != Square::OFFSQ) {
+        if (pos.enpassant < Square::A6 || pos.enpassant > Square::H6) {
+            return false;
+        }
+    }
+
+    // Pawns in the wrong place
+    if (pos.pieces[PieceType::PAWN] & U64_RANK_1) {
+        return false;
+    }
+    if (pos.pieces[PieceType::PAWN] & U64_RANK_8) {
+        return false;
+    }
+
+    // At least the current position has to be in the history
+    if (pos.history_size < 1) {
+        return false;
+    }
+
+    // These need to match
+    if (pos.history[pos.history_size - 1] != calculate_hash(pos)) {
+        return false;
+    }
+
+    // Needs to be a pawn below the EP square
+    if (pos.enpassant != Square::OFFSQ) {
+        if (((1ULL << (pos.enpassant - 8)) &
+             (pos.pieces[PieceType::PAWN] & pos.colour[Colour::THEM])) ==
+            0ULL) {
+            return false;
+        }
+    }
+
+    // Castling permissions
+    if (pos.castling[Castling::usKSC] == true) {
+        if ((pos.pieces[PieceType::KING] & pos.colour[Colour::US] & U64_E1) ==
+            0ULL) {
+            return false;
+        }
+        if ((pos.pieces[PieceType::ROOK] & pos.colour[Colour::US] & U64_H1) ==
+            0ULL) {
+            return false;
+        }
+    }
+    if (pos.castling[Castling::usQSC] == true) {
+        if ((pos.pieces[PieceType::KING] & pos.colour[Colour::US] & U64_E1) ==
+            0ULL) {
+            return false;
+        }
+        if ((pos.pieces[PieceType::ROOK] & pos.colour[Colour::US] & U64_A1) ==
+            0ULL) {
             return false;
         }
     }
