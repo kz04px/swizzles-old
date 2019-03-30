@@ -2,68 +2,66 @@
 #include <iostream>
 #include "fen.hpp"
 #include "flip.hpp"
-#include "makemove.hpp"
 #include "perft.hpp"
-#include "position.hpp"
-#include "zobrist.hpp"
 
-struct Board {
-    std::string fen;
-    uint64_t nodes;
-};
-
-const Board boards[] = {
-    Board{"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", 197281},
-    Board{"r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/R3K2R w KQ - 5 10",
-          3626712},
-    Board{"rnbqk2r/pp3pbp/3p1np1/2pP4/4PP2/2N5/PP4PP/R1BQKBNR w KQkq - 1 8",
-          1635313}};
-
-bool test() {
-    for (auto &n : boards) {
+bool test_fen() {
+    const std::string fens[] = {
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq e3 40 60",
+    };
+    for (const auto &fen : fens) {
         Position pos;
-
-        // Test set_fen() -- 1
-        if (set_fen(pos, n.fen) == false) {
-            std::cout << "set_fen() fail on " << n.fen << std::endl;
-            return false;
-        }
-
-        // Test set_fen() -- 2
-        if (get_fen(pos) != n.fen) {
-            std::cout << "set_fen() get_fen() mismatch on " << n.fen
-                      << std::endl;
-            return false;
-        }
-
-        // Test flip()
-        uint64_t key1 = calculate_hash(pos);
-        flip(pos);
-        flip(pos);
-        uint64_t key2 = calculate_hash(pos);
-        if (key1 != key2) {
-            std::cout << "double flip() hash mismatch on " << n.fen
-                      << std::endl;
-            return false;
-        }
-
-        // Test Position operator ==
-        Position npos = pos;
-        flip(npos);
-        flip(npos);
-        if (pos != npos) {
-            std::cout << "position equality operator mismatch on " << n.fen
-                      << std::endl;
-            return false;
-        }
-
-        // Test perft()
-        if (perft(pos, 4) != n.nodes) {
-            std::cout << "perft() fail on " << n.fen << std::endl;
+        set_fen(pos, fen);
+        if (get_fen(pos) != fen) {
             return false;
         }
     }
-
-    std::cout << "All tests passed" << std::endl;
     return true;
+}
+
+bool test_perft() {
+    const std::pair<std::string, std::vector<std::uint64_t>> tests[] = {
+        {"startpos", {20, 400, 8902}},
+        {"r3k2r/8/8/8/8/8/8/1R2K2R w Kkq - 0 1", {25, 567, 14095}}};
+    for (const auto &[fen, nodes] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+
+        for (unsigned int i = 0; i < nodes.size(); ++i) {
+            if (nodes[i] != perft(pos, i + 1)) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool test_flip() {
+    const std::string fens[] = {
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+    };
+    for (const auto &fen : fens) {
+        Position pos;
+        set_fen(pos, fen);
+        Position npos = pos;
+        flip(npos);
+        flip(npos);
+        if (npos != pos) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void test() {
+    std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing" << std::endl;
+    std::cout << (test_perft() ? "Y" : "N") << " -- Perft" << std::endl;
+    std::cout << (test_flip() ? "Y" : "N") << " -- Flip" << std::endl;
 }
