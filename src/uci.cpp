@@ -67,37 +67,37 @@ void ucinewgame() {
 void go(std::stringstream& ss) {
     stop();
 
-    int depth = -1;
-    int movetime = -1;
-    int nodes = -1;
-    bool infinite = false;
-    int wtime = -1;
-    int btime = -1;
-    int winc = -1;
-    int binc = -1;
-    int movestogo = -1;
+    SearchOptions options;
 
     // Subcommands
     std::string word;
     while (ss >> word) {
         if (word == "infinite") {
-            depth = MAX_DEPTH;
+            options.type = SearchType::Depth;
+            options.depth = MAX_DEPTH;
         } else if (word == "depth") {
-            ss >> depth;
+            options.type = SearchType::Depth;
+            ss >> options.depth;
         } else if (word == "nodes") {
-            ss >> nodes;
+            options.type = SearchType::Nodes;
+            ss >> options.nodes;
         } else if (word == "movetime") {
-            ss >> movetime;
+            options.type = SearchType::Movetime;
+            ss >> options.movetime;
         } else if (word == "movestogo") {
-            ss >> movestogo;
+            ss >> options.movestogo;
         } else if (word == "wtime") {
-            ss >> wtime;
+            options.type = SearchType::Time;
+            ss >> options.wtime;
         } else if (word == "btime") {
-            ss >> btime;
+            options.type = SearchType::Time;
+            ss >> options.btime;
         } else if (word == "winc") {
-            ss >> winc;
+            options.type = SearchType::Time;
+            ss >> options.winc;
         } else if (word == "binc") {
-            ss >> binc;
+            options.type = SearchType::Time;
+            ss >> options.binc;
         }
     }
 
@@ -106,15 +106,7 @@ void go(std::stringstream& ss) {
                                 std::ref(pos),
                                 std::ref(tt),
                                 std::ref(stop_search),
-                                depth,
-                                movetime,
-                                nodes,
-                                infinite,
-                                wtime,
-                                btime,
-                                winc,
-                                binc,
-                                movestogo);
+                                std::ref(options));
 }
 
 void isready() {
@@ -137,7 +129,11 @@ void position(std::stringstream& ss) {
 
     // Gather fen string
     while (ss >> word && word != "moves") {
-        fen += word;
+        if (fen == "") {
+            fen = word;
+        } else {
+            fen += word;
+        }
     }
 
     // Replacements

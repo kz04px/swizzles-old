@@ -17,15 +17,7 @@
 void search(const Position &pos,
             Hashtable &tt,
             bool &stop,
-            int depth,
-            int movetime,
-            int nodes,
-            bool infinite,
-            int wtime,
-            int btime,
-            int winc,
-            int binc,
-            int movestogo) {
+            SearchOptions &options) {
     SearchInfo info;
     info.nodes = 0ULL;
     info.leafnodes = 0ULL;
@@ -46,37 +38,57 @@ void search(const Position &pos,
         ss[i].killer2 = 0;
     }
 
-    if (infinite) {
-        info.end = INT_MAX;
-        depth = INT_MAX;
-    } else if (movetime >= 0) {
-        info.end = info.start + ((double)movetime / 1000.0) * CLOCKS_PER_SEC;
-        depth = INT_MAX;
-    } else if (depth >= 0) {
-        info.end = INT_MAX;
-    } else if (nodes >= 0) {
-        info.end = INT_MAX;
-    } else if (wtime >= 0 && btime >= 0) {
-        if (pos.flipped) {
-            info.end =
-                info.start + ((double)(btime / 30) / 1000.0) * CLOCKS_PER_SEC;
-            depth = INT_MAX;
-        } else {
-            info.end =
-                info.start + ((double)(wtime / 30) / 1000.0) * CLOCKS_PER_SEC;
-            depth = INT_MAX;
-        }
-    } else {
-        info.end = info.start + 1.0 * CLOCKS_PER_SEC;
-        depth = INT_MAX;
+    options.depth = std::max(1, options.depth);
+    options.movetime = std::max(1, options.movetime);
+    options.movestogo = std::max(1, options.movestogo);
+    options.wtime = std::max(1, options.wtime);
+    options.btime = std::max(1, options.btime);
+    options.winc = std::max(0, options.binc);
+    options.binc = std::max(0, options.binc);
+
+    switch (options.type) {
+        case SearchType::Time:
+            options.depth = std::numeric_limits<int>::max();
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            if (pos.flipped) {
+                info.end =
+                    info.start +
+                    ((double)(options.btime / options.movestogo) / 1000.0) *
+                        CLOCKS_PER_SEC;
+            } else {
+                info.end =
+                    info.start +
+                    ((double)(options.wtime / options.movestogo) / 1000.0) *
+                        CLOCKS_PER_SEC;
+            }
+            break;
+        case SearchType::Movetime:
+            options.depth = std::numeric_limits<int>::max();
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            info.end = info.start +
+                       ((double)options.movetime / 1000.0) * CLOCKS_PER_SEC;
+            break;
+        case SearchType::Depth:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            info.end = std::numeric_limits<clock_t>::max();
+            break;
+        case SearchType::Nodes:
+            options.depth = std::numeric_limits<int>::max();
+            info.end = std::numeric_limits<clock_t>::max();
+            break;
+        default:
+            options.depth = std::numeric_limits<int>::max();
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            info.end = info.start + 1.0 * CLOCKS_PER_SEC;
+            return;
     }
 
     PV pv;
-    for (int d = 1; d <= depth && d < MAX_DEPTH; ++d) {
+    for (int d = 1; d <= options.depth && d < MAX_DEPTH; ++d) {
         PV npv;
 
         int score = 0;
-        if (depth < 3) {
+        if (d <= 3) {
             score = alphabeta(pos, info, ss, npv, -INF, INF, d);
         } else {
             for (auto &b : {50, 200, INF}) {
