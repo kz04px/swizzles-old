@@ -4,15 +4,12 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
-#include "alphabeta.hpp"
 #include "attacks.hpp"
 #include "display.hpp"
 #include "legal.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
 #include "pv.hpp"
-#include "searchinfo.hpp"
-#include "searchstack.hpp"
 
 void search(const Position &pos,
             Hashtable &tt,

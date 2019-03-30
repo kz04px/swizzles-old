@@ -1,4 +1,3 @@
-#include "alphabeta.hpp"
 #include <climits>
 #include <cstring>
 #include <iostream>
@@ -11,7 +10,7 @@
 #include "move.hpp"
 #include "movegen.hpp"
 #include "other.hpp"
-#include "qsearch.hpp"
+#include "search.hpp"
 #include "sort.hpp"
 #include "types.hpp"
 #include "zobrist.hpp"

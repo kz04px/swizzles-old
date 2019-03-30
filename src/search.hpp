@@ -3,7 +3,9 @@
 
 #include <cstdint>
 #include "hashtable.hpp"
+#include "move.hpp"
 #include "position.hpp"
+#include "pv.hpp"
 
 enum SearchType
 {
@@ -26,9 +28,49 @@ struct SearchOptions {
     int movestogo = 30;
 };
 
+struct SearchInfo {
+    SearchInfo()
+        : nodes(0ULL),
+          leafnodes(0ULL),
+          start(0),
+          end(0),
+          stop(nullptr),
+          tt(nullptr),
+          cutoffs{} {
+    }
+    std::uint64_t nodes;
+    std::uint64_t leafnodes;
+    clock_t start;
+    clock_t end;
+    bool *stop;
+    Hashtable *tt;
+#ifndef NDEBUG
+    std::uint64_t cutoffs[256];
+#endif
+};
+
+struct SearchStack {
+    int ply;
+    bool nullmove;
+    Move killer1;
+    Move killer2;
+};
+
 void search(const Position &pos,
             Hashtable &tt,
             bool &stop,
             SearchOptions &options);
+int alphabeta(const Position &pos,
+              SearchInfo &info,
+              SearchStack *ss,
+              PV &pv,
+              int alpha,
+              int beta,
+              int depth);
+int qsearch(const Position &pos,
+            SearchInfo &info,
+            SearchStack *ss,
+            int alpha,
+            int beta);
 
 #endif
