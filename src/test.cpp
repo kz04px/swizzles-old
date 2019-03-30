@@ -4,7 +4,9 @@
 #include <vector>
 #include "fen.hpp"
 #include "flip.hpp"
+#include "makemove.hpp"
 #include "perft.hpp"
+#include "zobrist.hpp"
 
 bool test_fen() {
     const std::string fens[] = {
@@ -27,7 +29,8 @@ bool test_fen() {
 bool test_perft() {
     const std::pair<std::string, std::vector<std::uint64_t>> tests[] = {
         {"startpos", {20, 400, 8902}},
-        {"r3k2r/8/8/8/8/8/8/1R2K2R w Kkq - 0 1", {25, 567, 14095}}};
+        {"r3k2r/8/8/8/8/8/8/1R2K2R w Kkq - 0 1", {25, 567, 14095}},
+    };
     for (const auto &[fen, nodes] : tests) {
         Position pos;
         set_fen(pos, fen);
@@ -62,8 +65,50 @@ bool test_flip() {
     return true;
 }
 
+bool test_hash() {
+    const std::string fens[] = {
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b - - 0 1",
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
+        "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1",
+    };
+
+    std::vector<uint64_t> hashes;
+
+    for (const auto &fen : fens) {
+        Position pos;
+        set_fen(pos, fen);
+        hashes.push_back(calculate_hash(pos));
+    }
+
+    for (unsigned int a = 0; a < hashes.size() - 1; ++a) {
+        for (unsigned int b = a + 1; b < hashes.size(); ++b) {
+            if (hashes[a] == hashes[b]) {
+                return false;
+            }
+        }
+    }
+
+    // Test repeated position
+    Position pos;
+    set_fen(pos, "startpos");
+    Position npos = pos;
+    make_move(pos, "g1f3");
+    make_move(pos, "g8f6");
+    make_move(pos, "f3g1");
+    make_move(pos, "f6g8");
+    if (calculate_hash(pos) != calculate_hash(npos)) {
+        return false;
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing" << std::endl;
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft" << std::endl;
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip" << std::endl;
+    std::cout << (test_hash() ? "Y" : "N") << " -- Hash" << std::endl;
 }
