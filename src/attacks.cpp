@@ -78,9 +78,8 @@ uint64_t pawn_attacks(const Position &pos, const Colour side) {
 
 uint64_t knight_attacks(const Position &pos, const Colour side) {
     uint64_t knights = pos.pieces[PieceType::KNIGHT] & pos.colour[side];
-    uint64_t attacks = 0ULL;
 
-    attacks = (knights << 17) & (~U64_FILE_A);                // Up 2 right 1
+    uint64_t attacks = (knights << 17) & (~U64_FILE_A);       // Up 2 right 1
     attacks |= (knights << 15) & (~U64_FILE_H);               // Up 2 left 1
     attacks |= (knights >> 17) & (~U64_FILE_H);               // Down 2 left 1
     attacks |= (knights >> 15) & (~U64_FILE_A);               // Down 2 right 1

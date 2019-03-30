@@ -7,7 +7,7 @@
 #include "move.hpp"
 
 struct PV {
-    PV() : length(0) {
+    PV() : length(0), moves{} {
     }
 
     bool legal(const Position &pos) const {

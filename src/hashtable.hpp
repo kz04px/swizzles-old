@@ -6,19 +6,14 @@
 
 enum FLAGS
 {
-    EXACT,
+    EXACT = 0,
     LOWERBOUND,
     UPPERBOUND
 };
 
 struct Entry {
-    uint64_t _key;
-    Move _move;
-    int _depth;
-    int _eval;
-    int _flag;
-
-    Entry() {
+   public:
+    Entry() : key_(0ULL), move_(0), depth_(0), eval_(0), flag_(FLAGS::EXACT) {
     }
 
     Entry(const uint64_t key,
@@ -26,30 +21,40 @@ struct Entry {
           const int depth,
           const int eval,
           const int flag)
-        : _key(key), _move(move), _depth(depth), _eval(eval), _flag(flag) {
-        assert(_depth == depth);
+        : key_(key), move_(move), depth_(depth), eval_(eval), flag_(flag) {
+        assert(depth_ >= 0);
+        assert(flag_ == FLAGS::EXACT || flag_ == FLAGS::LOWERBOUND ||
+               flag_ == FLAGS::UPPERBOUND);
+        assert(-INF <= eval && eval <= INF);
     }
 
-    uint64_t key() {
-        return _key;
+    uint64_t key() const {
+        return key_;
     }
-    Move move() {
-        return _move;
+    Move move() const {
+        return move_;
     }
-    int depth() {
-        return _depth;
+    int depth() const {
+        return depth_;
     }
-    int eval() {
-        return _eval;
+    int eval() const {
+        return eval_;
     }
-    uint8_t flag() {
-        return _flag;
+    uint8_t flag() const {
+        return flag_;
     }
 
     bool operator==(const Entry &rhs) const {
-        return _key == rhs._key && _move == rhs._move && _depth == rhs._depth &&
-               _eval == rhs._eval && _flag == rhs._flag;
+        return key_ == rhs.key_ && move_ == rhs.move_ && depth_ == rhs.depth_ &&
+               eval_ == rhs.eval_ && flag_ == rhs.flag_;
     }
+
+   private:
+    uint64_t key_;
+    Move move_;
+    int depth_;
+    int eval_;
+    int flag_;
 };
 
 class Hashtable {
@@ -57,7 +62,7 @@ class Hashtable {
     Hashtable() : num_entries(0), entries(nullptr) {
     }
 
-    Hashtable(const int mb) : num_entries(0), entries(nullptr) {
+    explicit Hashtable(const int mb) : num_entries(0), entries(nullptr) {
         create(mb);
     }
 
@@ -79,12 +84,12 @@ class Hashtable {
         }
     }
 
-    int index(const uint64_t key) {
-        assert(num_entries != 0);
+    int index(const uint64_t key) const {
+        assert(num_entries > 0);
         return key % num_entries;
     }
 
-    Entry probe(const uint64_t key) {
+    Entry probe(const uint64_t key) const {
         int idx = index(key);
         return entries[idx];
     }
@@ -95,12 +100,7 @@ class Hashtable {
              const Move move,
              const int flag) {
         int idx = index(key);
-        entries[idx]._key = key;
-        entries[idx]._move = move;
-        entries[idx]._depth = depth;
-        entries[idx]._eval = eval;
-        entries[idx]._flag = flag;
-        // entries[idx] = Entry(key, move, depth, eval, flag);
+        entries[idx] = Entry(key, move, depth, eval, flag);
     }
 
    private:

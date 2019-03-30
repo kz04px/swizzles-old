@@ -15,10 +15,30 @@
 #include "valid.hpp"
 
 struct State {
-    Position pos;
-    int num_moves;
-    int curr_move;
-    Move moves[256];
+   public:
+    State() : pos(), num_moves(0), curr_move(0), moves{} {
+    }
+
+    State(Position position)
+        : pos(position), num_moves(0), curr_move(0), moves{} {
+        assert(valid(position) == true);
+        num_moves = movegen(position, moves);
+
+        // FIXME:
+        // This is a dirty fix because we don't have legal movegen
+        for (int i = 0; i < num_moves; ++i) {
+            Position npos = position;
+            make_move(npos, moves[i]);
+            if (check(npos, Colour::THEM) == true) {
+                moves[i] = moves[num_moves - 1];
+                num_moves--;
+                i--;
+                continue;
+            }
+        }
+
+        curr_move = 0;
+    }
 
     int moves_left() const {
         assert(num_moves - curr_move >= 0);
@@ -41,37 +61,17 @@ struct State {
         make_move(pos, move);
     }
 
-    State() : pos(), num_moves(0), curr_move(0) {
-    }
-
-    State(Position position) : pos(position) {
-        assert(valid(position) == true);
-        num_moves = movegen(position, moves);
-
-        // FIXME:
-        // This is a dirty fix because we don't have legal movegen
-        for (int i = 0; i < num_moves; ++i) {
-            Position npos = position;
-            make_move(npos, moves[i]);
-            if (check(npos, Colour::THEM) == true) {
-                moves[i] = moves[num_moves - 1];
-                num_moves--;
-                i--;
-                continue;
-            }
-        }
-
-        curr_move = 0;
-    }
+    Position pos;
+    int num_moves;
+    int curr_move;
+    Move moves[256];
 };
 
 struct Node {
-    State state;
-    Move move;
-    float score;
-    int visits;
-    Node *parent;
-    std::vector<Node> children;
+   public:
+    Node(State s, Node *p, Move m)
+        : state(s), move(m), score(0.0), visits(0), parent(p), children({}) {
+    }
 
     Node *expand() {
         assert(state.moves_left() > 0);
@@ -90,9 +90,12 @@ struct Node {
         return children.size() == 0 && state.moves_left() == 0;
     }
 
-    Node(State s, Node *p, Move m)
-        : state(s), move(m), score(0.0), visits(0), parent(p), children({}) {
-    }
+    State state;
+    Move move;
+    float score;
+    int visits;
+    Node *parent;
+    std::vector<Node> children;
 };
 
 Node *best_child(Node *node, const float c) {

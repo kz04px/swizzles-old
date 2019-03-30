@@ -5,7 +5,14 @@
 #include "hashtable.hpp"
 
 struct SearchInfo {
-    SearchInfo() : nodes(0ULL), leafnodes(0ULL), stop(nullptr) {
+    SearchInfo()
+        : nodes(0ULL),
+          leafnodes(0ULL),
+          start(0),
+          end(0),
+          stop(nullptr),
+          tt(nullptr),
+          cutoffs{} {
     }
     std::uint64_t nodes;
     std::uint64_t leafnodes;
