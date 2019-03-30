@@ -2,6 +2,7 @@
 #define BOARD_HPP
 
 #include <cstdint>
+#include "move.hpp"
 #include "other.hpp"
 #include "types.hpp"
 
@@ -23,5 +24,8 @@ bool is_fifty_moves(const Position &pos);
 int is_endgame(const Position &pos);
 bool operator==(const Position &a, const Position &b);
 bool operator!=(const Position &a, const Position &b);
+bool legal_move(const Position &pos, const Move &move);
+bool pseudolegal_move(const Position &pos, const Move &move);
+bool legal_move(const Position &pos, const std::string &move);
 
 #endif

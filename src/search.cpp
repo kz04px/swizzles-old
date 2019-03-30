@@ -6,7 +6,6 @@
 #include <iostream>
 #include "attacks.hpp"
 #include "display.hpp"
-#include "legal.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
 #include "pv.hpp"

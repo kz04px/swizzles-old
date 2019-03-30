@@ -2,7 +2,6 @@
 #include <cstdint>
 #include "attacks.hpp"
 #include "bitboards.hpp"
-#include "legal.hpp"
 #include "move.hpp"
 #include "movegen.hpp"
 #include "other.hpp"

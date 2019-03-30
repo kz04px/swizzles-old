@@ -2,7 +2,6 @@
 #define PV_HPP
 
 #include <cassert>
-#include "legal.hpp"
 #include "makemove.hpp"
 #include "move.hpp"
 

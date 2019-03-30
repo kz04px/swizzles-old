@@ -1,13 +1,5 @@
 #include "movegen.hpp"
 #include <cassert>
-#include <cstdint>
-#include "attacks.hpp"
-#include "bitboards.hpp"
-#include "legal.hpp"
-#include "move.hpp"
-#include "other.hpp"
-#include "position.hpp"
-#include "types.hpp"
 
 int movegen(const Position &pos, Move *movelist) {
     assert(movelist);

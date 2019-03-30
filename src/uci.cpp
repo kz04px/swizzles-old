@@ -6,7 +6,6 @@
 #include "display.hpp"
 #include "fen.hpp"
 #include "hashtable.hpp"
-#include "legal.hpp"
 #include "makemove.hpp"
 #include "perft.hpp"
 #include "position.hpp"
