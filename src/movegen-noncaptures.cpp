@@ -10,7 +10,7 @@
 #include "types.hpp"
 
 int movegen_noncaptures(const Position &pos, Move *movelist) {
-    assert(movelist != NULL);
+    assert(movelist);
 
     int num_moves = 0;
     uint64_t copy = 0ULL;

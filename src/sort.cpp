@@ -12,7 +12,7 @@ void sort(const Position &pos,
           const Move tt_move,
           const Move killer1,
           const Move killer2) {
-    assert(moves != NULL);
+    assert(moves);
     assert(num < 256);
 
     int scores[num] = {0};
@@ -65,7 +65,7 @@ void sort(const Position &pos,
 }
 
 void sort_see(const Position &pos, Move *moves, int *scores, const int num) {
-    assert(moves != NULL);
+    assert(moves);
     assert(num < 256);
 
     for (int i = 0; i < num; ++i) {

@@ -10,7 +10,7 @@
 #include "types.hpp"
 
 int movegen(const Position &pos, Move *movelist) {
-    assert(movelist != NULL);
+    assert(movelist);
 
     int num_moves = 0;
     num_moves += movegen_captures(pos, &movelist[0]);

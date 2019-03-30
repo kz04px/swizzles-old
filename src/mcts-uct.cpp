@@ -96,7 +96,7 @@ struct Node {
 };
 
 Node *best_child(Node *node, const float c) {
-    assert(node != NULL);
+    assert(node);
     assert(node->visits > 0);
     assert(node->children.size() > 0);
     assert(node->state.moves_left() == 0);
@@ -134,7 +134,7 @@ Node *best_child(Node *node, const float c) {
 }
 
 Node *tree_policy(Node *node) {
-    assert(node != NULL);
+    assert(node);
 
     while (node->terminal() == false) {
         if (node->state.moves_left() > 0) {
@@ -145,7 +145,7 @@ Node *tree_policy(Node *node) {
         }
     }
 
-    assert(node != NULL);
+    assert(node);
 
     return node;
 }
@@ -155,11 +155,11 @@ float default_policy(Hashtable &tt, const Position &pos) {
 }
 
 void backup_negamax(Node *node, float delta) {
-    assert(node != NULL);
+    assert(node);
     assert(0.0 <= delta);
     assert(delta <= 1.0);
 
-    while (node != NULL) {
+    while (node) {
         node->visits += 1;
         node->score += delta;
         delta = 1.0 - delta;
@@ -168,7 +168,7 @@ void backup_negamax(Node *node, float delta) {
 }
 
 PV get_pv(Node *node) {
-    assert(node != NULL);
+    assert(node);
 
     PV pv;
     while (node->children.size() > 0) {
@@ -230,7 +230,7 @@ void mcts_uct(const Position &pos,
               int winc,
               int binc,
               int movestogo) {
-    Node root = Node(pos, NULL, NO_MOVE);
+    Node root = Node(pos, nullptr, NO_MOVE);
     int iteration = 0;
 
     clock_t start = clock();
@@ -269,7 +269,7 @@ void mcts_uct(const Position &pos,
             double time = (double)(clock() - start) / CLOCKS_PER_SEC;
             int last_best = std::numeric_limits<int>::max();
             for (int i = 0; i < 4; ++i) {
-                Node *best_node = NULL;
+                Node *best_node = nullptr;
                 int current_best = std::numeric_limits<int>::lowest();
                 for (auto &node : root.children) {
                     if (node.visits > current_best && node.visits < last_best) {
@@ -282,7 +282,7 @@ void mcts_uct(const Position &pos,
                     break;
                 }
 
-                assert(best_node != NULL);
+                assert(best_node);
 
                 if (best_node->visits == 0) {
                     break;
