@@ -38,15 +38,14 @@ struct SearchInfo {
           tt(nullptr),
           cutoffs{} {
     }
+
     std::uint64_t nodes;
     std::uint64_t leafnodes;
     clock_t start;
     clock_t end;
     bool *stop;
     Hashtable *tt;
-#ifndef NDEBUG
     std::uint64_t cutoffs[256];
-#endif
 };
 
 struct SearchStack {
