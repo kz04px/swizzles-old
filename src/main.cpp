@@ -13,7 +13,7 @@ int main() {
     std::cin >> mode;
 
     if (mode == "uci") {
-        uci();
+        UCI::listen();
     } else if (mode == "xboard") {
         std::cout << "xboard protocol not supported" << std::endl;
     } else if (mode == "test") {

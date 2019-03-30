@@ -1,203 +1,225 @@
 #include "uci.hpp"
-#include <ctime>
+#include <chrono>
 #include <iostream>
-#include <string>
+#include <sstream>
 #include <thread>
-#include <vector>
-#include "attacks.hpp"
 #include "display.hpp"
 #include "fen.hpp"
 #include "hashtable.hpp"
 #include "legal.hpp"
 #include "makemove.hpp"
-#include "move.hpp"
-#include "movegen.hpp"
-#include "other.hpp"
 #include "perft.hpp"
 #include "position.hpp"
 #include "search.hpp"
 
-void uci() {
+Position pos;
+Hashtable tt;
+std::thread search_thread;
+bool stop_search = false;
+
+namespace UCI {
+
+namespace Extension {
+
+void print() {
+    display(pos);
+}
+
+void perft(std::stringstream& ss) {
+    int depth = 0;
+    ss >> depth;
+
+    uint64_t nodes = 0ULL;
+    for (int i = 1; i <= depth; ++i) {
+        auto start = std::chrono::high_resolution_clock::now();
+        nodes = perft(pos, i);
+        auto finish = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> elapsed = finish - start;
+
+        std::cout << "info"
+                  << " depth " << i << " nodes " << nodes << " time "
+                  << static_cast<int>(elapsed.count() * 1000) << " nps "
+                  << static_cast<int>(nodes / elapsed.count()) << std::endl;
+    }
+
+    std::cout << "nodes " << nodes << std::endl;
+}
+
+void ttperft(std::stringstream& ss) {
+}
+
+}  // namespace Extension
+
+void stop() {
+    if (search_thread.joinable()) {
+        stop_search = true;
+        search_thread.join();
+    }
+    stop_search = false;
+}
+
+void ucinewgame() {
+    stop();
+    set_fen(pos, "startpos");
+    tt.clear();
+}
+
+void go(std::stringstream& ss) {
+    stop();
+
+    int depth = -1;
+    int movetime = -1;
+    int nodes = -1;
+    bool infinite = false;
+    int wtime = -1;
+    int btime = -1;
+    int winc = -1;
+    int binc = -1;
+    int movestogo = -1;
+
+    // Subcommands
+    std::string word;
+    while (ss >> word) {
+        if (word == "infinite") {
+            depth = MAX_DEPTH;
+        } else if (word == "depth") {
+            ss >> depth;
+        } else if (word == "nodes") {
+            ss >> nodes;
+        } else if (word == "movetime") {
+            ss >> movetime;
+        } else if (word == "movestogo") {
+            ss >> movestogo;
+        } else if (word == "wtime") {
+            ss >> wtime;
+        } else if (word == "btime") {
+            ss >> btime;
+        } else if (word == "winc") {
+            ss >> winc;
+        } else if (word == "binc") {
+            ss >> binc;
+        }
+    }
+
+    // Alpha-beta
+    search_thread = std::thread(search,
+                                std::ref(pos),
+                                std::ref(tt),
+                                std::ref(stop_search),
+                                depth,
+                                movetime,
+                                nodes,
+                                infinite,
+                                wtime,
+                                btime,
+                                winc,
+                                binc,
+                                movestogo);
+}
+
+void isready() {
+    std::cout << "readyok" << std::endl;
+}
+
+void moves(std::stringstream& ss) {
+    std::string word;
+    while (ss >> word) {
+        if (legal_move(pos, word) == false) {
+            break;
+        }
+        make_move(pos, word);
+    }
+}
+
+void position(std::stringstream& ss) {
+    std::string fen = "";
+    std::string word;
+
+    // Gather fen string
+    while (ss >> word && word != "moves") {
+        fen += word;
+    }
+
+    // Replacements
+    if (fen == "startpos") {
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    }
+
+    // Set fen
+    if (fen != "") {
+        bool r = set_fen(pos, fen);
+        if (r == false) {
+            std::cout << "WARNING: set position error (" << r << ")"
+                      << std::endl;
+        }
+    }
+
+    // Call moves() if found
+    if (word == "moves") {
+        moves(ss);
+    }
+}
+
+void setoption(std::stringstream& ss) {
+}
+
+void listen() {
     std::cout << "id name Swizzles" << std::endl;
     std::cout << "id author kz04px" << std::endl;
     std::cout << "uciok" << std::endl;
 
-    Position pos;
-    set_fen(pos, "startpos");
+    std::string word;
+    std::string line;
+    while (true) {
+        std::getline(std::cin, line);
+        std::stringstream ss{line};
+        ss >> word;
 
-    Hashtable tt = Hashtable(128);
-    tt.clear();
-
-    bool stop = false;
-    std::thread search_thread;
-
-    bool quit = false;
-    while (quit == false) {
-        std::string input;
-        getline(std::cin, input);
-
-        std::vector<std::string> tokens = split(input, ' ');
-
-        for (unsigned int n = 0; n < tokens.size(); ++n) {
-            if (tokens[n] == "isready") {
-                std::cout << "readyok" << std::endl;
-            } else if (tokens[n] == "ucinewgame") {
-                set_fen(pos, "startpos");
-                tt.clear();
-            } else if (tokens[n] == "go") {
-                // Stop the search if there's already one going
-                if (search_thread.joinable()) {
-                    stop = true;
-                    search_thread.join();
-                    stop = false;
-                }
-
-                int depth = -1;
-                int movetime = -1;
-                int nodes = -1;
-                bool infinite = false;
-                int wtime = -1;
-                int btime = -1;
-                int winc = -1;
-                int binc = -1;
-                int movestogo = -1;
-
-                // Subcommands
-                for (unsigned int i = n + 1; i < tokens.size(); ++i) {
-                    if (tokens[i] == "infinite") {
-                        infinite = true;
-                        n += 1;
-                    } else if (tokens[i] == "depth") {
-                        depth = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "nodes") {
-                        nodes = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "movetime") {
-                        movetime = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "movestogo") {
-                        movestogo = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "wtime") {
-                        wtime = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "btime") {
-                        btime = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "winc") {
-                        winc = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    } else if (tokens[i] == "binc") {
-                        binc = std::stoi(tokens[i + 1]);
-                        n += 2;
-                        i += 1;
-                    }
-                }
-
-                // Alpha-beta
-                search_thread = std::thread(search,
-                                            std::ref(pos),
-                                            std::ref(tt),
-                                            std::ref(stop),
-                                            depth,
-                                            movetime,
-                                            nodes,
-                                            infinite,
-                                            wtime,
-                                            btime,
-                                            winc,
-                                            binc,
-                                            movestogo);
-            } else if (tokens[n] == "stop") {
-                if (search_thread.joinable()) {
-                    stop = true;
-                    search_thread.join();
-                    stop = false;
-                }
-            } else if (tokens[n] == "perft") {
-                int depth = 5;
-
-                // Subcommands
-                if (n + 1 < tokens.size()) {
-                    depth = std::stoi(tokens[n + 1]);
-                    n += 1;
-                }
-
-                // Subcommand checking
-                if (depth < 1) {
-                    depth = 1;
-                }
-
-                uint64_t nodes = 0ULL;
-                for (int i = 1; i <= depth; ++i) {
-                    clock_t start = clock();
-                    nodes = perft(pos, i);
-                    clock_t end = clock();
-                    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
-
-                    std::cout << "info"
-                              << " depth " << i << " nodes " << nodes << " nps "
-                              << (int)((double)nodes / time_taken) << " time "
-                              << (int)(1000.0 * time_taken) << std::endl;
-                }
-                std::cout << "nodes " << nodes << std::endl;
-            } else if (tokens[n] == "print" || tokens[n] == "display") {
-                display(pos);
-            } else if (tokens[n] == "position") {
-                if (n + 1 < tokens.size()) {
-                    n += 1;
-                    if (tokens[n] == "startpos") {
-                        bool r = set_fen(pos, "startpos");
-                        if (r == false) {
-                            std::cout << "WARNING: set position error (" << r
-                                      << ")" << std::endl;
-                        }
-                    } else if (tokens[n] == "fen") {
-                        if (n + 1 < tokens.size()) {
-                            n += 1;
-                            std::string fen_string = tokens[n];
-
-                            while (n + 1 < tokens.size() &&
-                                   tokens[n + 1] != "moves") {
-                                n += 1;
-                                fen_string += " " + tokens[n];
-                            }
-
-                            bool r = set_fen(pos, fen_string);
-                            if (r == false) {
-                                std::cout << "WARNING: set position error ("
-                                          << r << ")" << std::endl;
-                            }
-                        }
-                    }
-                }
-            } else if (tokens[n] == "moves") {
-                for (unsigned int i = n + 1; i < tokens.size(); ++i) {
-                    if (legal_move(pos, tokens[i]) == false) {
-                        break;
-                    }
-
-                    make_move(pos, tokens[i]);
-                    n += 1;
-                }
-            } else if (tokens[n] == "quit") {
-                quit = true;
-                break;
-            }
+        if (word == "isready") {
+            isready();
+            break;
+        } else if (word == "setoption") {
+            setoption(ss);
+        } else if (word == "quit") {
+            return;
         }
     }
 
-    if (search_thread.joinable()) {
-        stop = true;
-        search_thread.join();
-        stop = false;
+    set_fen(pos, "startpos");
+
+    tt.create(128);
+    ucinewgame();
+
+    bool quit = false;
+    while (!quit) {
+        std::getline(std::cin, line);
+        std::stringstream ss{line};
+        ss >> word;
+
+        if (word == "go") {
+            go(ss);
+        } else if (word == "isready") {
+            isready();
+        } else if (word == "moves") {
+            moves(ss);
+        } else if (word == "perft") {
+            Extension::perft(ss);
+        } else if (word == "position") {
+            position(ss);
+        } else if (word == "print") {
+            Extension::print();
+        } else if (word == "quit") {
+            quit = true;
+        } else if (word == "stop") {
+            stop();
+        } else if (word == "ttperft") {
+            Extension::ttperft(ss);
+        } else if (word == "ucinewgame") {
+            ucinewgame();
+        }
     }
+
+    stop();
 }
+
+}  // namespace UCI

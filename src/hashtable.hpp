@@ -54,7 +54,14 @@ struct Entry {
 
 class Hashtable {
    public:
-    Hashtable(const int mb) {
+    Hashtable() : num_entries(0), entries(nullptr) {
+    }
+
+    Hashtable(const int mb) : num_entries(0), entries(nullptr) {
+        create(mb);
+    }
+
+    void create(const int mb) {
         num_entries = mb * (1024 * 1024) / sizeof(Entry);
         entries = new Entry[num_entries];
         assert(entries != NULL);
@@ -97,8 +104,8 @@ class Hashtable {
     }
 
    private:
-    Entry *entries;
     int num_entries;
+    Entry *entries;
 };
 
 int eval_to_tt(int eval, int ply);
