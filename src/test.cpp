@@ -1,5 +1,7 @@
 #include "test.hpp"
 #include <iostream>
+#include <string>
+#include <vector>
 #include "fen.hpp"
 #include "flip.hpp"
 #include "perft.hpp"

@@ -1,23 +1,5 @@
 #include "other.hpp"
 #include <iostream>
-#include <iterator>
-#include <sstream>
-#include <string>
-
-template <typename Out>
-void split(const std::string &s, char delim, Out result) {
-    std::stringstream ss(s);
-    std::string item;
-    while (std::getline(ss, item, delim)) {
-        *(result++) = item;
-    }
-}
-
-std::vector<std::string> split(const std::string &s, char delim) {
-    std::vector<std::string> elems;
-    split(s, delim, std::back_inserter(elems));
-    return elems;
-}
 
 int popcountll(const uint64_t n) {
     return __builtin_popcountll(n);
