@@ -1,5 +1,7 @@
 CC         = g++
-CFLAGS     = -std=c++17 -Wall -Wextra -O3 -flto
+CFLAGS     = -std=c++17 -Wall -Wextra
+RFLAGS     = -O3 -flto -march=native -DNDEBUG
+DFLAGS     = -g
 
 LINKER     = g++ -o
 LFLAGS     = -pthread
@@ -20,10 +22,10 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 release:
-	$(MAKE) CFLAGS="$(CFLAGS) -DNDEBUG"
+	$(MAKE) CFLAGS="$(CFLAGS) $(RFLAGS)"
 
 debug:
-	$(MAKE) TARGET="$(TARGET)-debug"
+	$(MAKE) CFLAGS="$(CFLAGS) $(DFLAGS)" TARGET="$(TARGET)-debug"
 
 bin:
 	mkdir -p $(BINDIR)
@@ -32,6 +34,6 @@ obj:
 	mkdir -p $(OBJDIR)
 
 clean:
-	rm -r $(OBJDIR)
+	rm -r $(OBJDIR) $(BINDIR)/$(TARGET) $(BINDIR)/$(TARGET)-debug
 
 .PHONY: clean
