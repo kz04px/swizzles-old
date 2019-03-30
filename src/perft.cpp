@@ -1,10 +1,9 @@
-#include "perft.hpp"
 #include <cstdint>
-#include <iostream>
 #include "attacks.hpp"
 #include "makemove.hpp"
 #include "move.hpp"
 #include "movegen.hpp"
+#include "search.hpp"
 #include "types.hpp"
 
 uint64_t perft(const Position &pos, const int depth) {

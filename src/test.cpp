@@ -4,7 +4,7 @@
 #include <vector>
 #include "fen.hpp"
 #include "makemove.hpp"
-#include "perft.hpp"
+#include "search.hpp"
 #include "zobrist.hpp"
 
 bool test_fen() {

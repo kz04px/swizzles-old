@@ -71,5 +71,6 @@ int qsearch(const Position &pos,
             SearchStack *ss,
             int alpha,
             int beta);
+uint64_t perft(const Position &pos, const int depth);
 
 #endif

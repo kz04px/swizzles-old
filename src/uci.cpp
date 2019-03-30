@@ -7,7 +7,6 @@
 #include "fen.hpp"
 #include "hashtable.hpp"
 #include "makemove.hpp"
-#include "perft.hpp"
 #include "position.hpp"
 #include "search.hpp"
 
