@@ -1,6 +1,5 @@
 #include "fen.hpp"
 #include <sstream>
-#include "flip.hpp"
 #include "other.hpp"
 #include "position.hpp"
 #include "zobrist.hpp"

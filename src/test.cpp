@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include "fen.hpp"
-#include "flip.hpp"
 #include "makemove.hpp"
 #include "perft.hpp"
 #include "zobrist.hpp"

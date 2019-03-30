@@ -4,7 +4,6 @@
 #include "attacks.hpp"
 #include "display.hpp"
 #include "eval.hpp"
-#include "flip.hpp"
 #include "hashtable.hpp"
 #include "makemove.hpp"
 #include "move.hpp"

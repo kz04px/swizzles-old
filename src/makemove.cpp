@@ -1,7 +1,6 @@
 #include "makemove.hpp"
 #include <cassert>
 #include <cstdint>
-#include "flip.hpp"
 #include "movegen.hpp"
 #include "zobrist.hpp"
 

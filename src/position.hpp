@@ -3,7 +3,6 @@
 
 #include <cstdint>
 #include "move.hpp"
-#include "other.hpp"
 #include "types.hpp"
 
 struct Position {
@@ -28,5 +27,6 @@ bool legal_move(const Position &pos, const Move &move);
 bool pseudolegal_move(const Position &pos, const Move &move);
 bool legal_move(const Position &pos, const std::string &move);
 bool legal_position(const Position &pos);
+void flip(Position &pos);
 
 #endif

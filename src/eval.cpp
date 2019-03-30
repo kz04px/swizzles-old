@@ -2,7 +2,6 @@
 #include <cassert>
 #include "attacks.hpp"
 #include "bitboards.hpp"
-#include "flip.hpp"
 #include "king-safety.hpp"
 #include "mobility.hpp"
 #include "other.hpp"

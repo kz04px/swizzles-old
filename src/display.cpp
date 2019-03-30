@@ -1,6 +1,5 @@
 #include "display.hpp"
 #include <iostream>
-#include "flip.hpp"
 #include "other.hpp"
 #include "phase.hpp"
 #include "position.hpp"
