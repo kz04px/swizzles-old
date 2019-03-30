@@ -1,16 +1,15 @@
-#include <cstdint>
-#include <cassert>
-#include "position.hpp"
-#include "bitboards.hpp"
-#include "types.hpp"
-#include "move.hpp"
-#include "attacks.hpp"
 #include "movegen.hpp"
+#include <cassert>
+#include <cstdint>
+#include "attacks.hpp"
+#include "bitboards.hpp"
 #include "legal.hpp"
+#include "move.hpp"
 #include "other.hpp"
+#include "position.hpp"
+#include "types.hpp"
 
-int movegen(const Position &pos, Move *movelist)
-{
+int movegen(const Position &pos, Move *movelist) {
     assert(movelist != NULL);
 
     int num_moves = 0;

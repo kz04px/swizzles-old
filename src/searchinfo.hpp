@@ -4,10 +4,8 @@
 #include <cstdint>
 #include "hashtable.hpp"
 
-struct SearchInfo
-{
-    SearchInfo() : nodes(0ULL), leafnodes(0ULL), stop(NULL)
-    {
+struct SearchInfo {
+    SearchInfo() : nodes(0ULL), leafnodes(0ULL), stop(NULL) {
     }
     std::uint64_t nodes;
     std::uint64_t leafnodes;

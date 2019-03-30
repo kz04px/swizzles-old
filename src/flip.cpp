@@ -1,26 +1,24 @@
 #include "flip.hpp"
+#include "other.hpp"
 #include "position.hpp"
 #include "types.hpp"
-#include "other.hpp"
 
-void flip(Position &pos)
-{
+void flip(Position &pos) {
     // Pieces
-    pos.pieces[PieceType::PAWN]   = swapll(pos.pieces[PieceType::PAWN]);
+    pos.pieces[PieceType::PAWN] = swapll(pos.pieces[PieceType::PAWN]);
     pos.pieces[PieceType::KNIGHT] = swapll(pos.pieces[PieceType::KNIGHT]);
     pos.pieces[PieceType::BISHOP] = swapll(pos.pieces[PieceType::BISHOP]);
-    pos.pieces[PieceType::ROOK]   = swapll(pos.pieces[PieceType::ROOK]);
-    pos.pieces[PieceType::QUEEN]  = swapll(pos.pieces[PieceType::QUEEN]);
-    pos.pieces[PieceType::KING]   = swapll(pos.pieces[PieceType::KING]);
+    pos.pieces[PieceType::ROOK] = swapll(pos.pieces[PieceType::ROOK]);
+    pos.pieces[PieceType::QUEEN] = swapll(pos.pieces[PieceType::QUEEN]);
+    pos.pieces[PieceType::KING] = swapll(pos.pieces[PieceType::KING]);
 
     // Colours
     const uint64_t store = swapll(pos.colour[Colour::US]);
-    pos.colour[Colour::US]   = swapll(pos.colour[Colour::THEM]);
+    pos.colour[Colour::US] = swapll(pos.colour[Colour::THEM]);
     pos.colour[Colour::THEM] = store;
 
     // Enpassant
-    if(pos.enpassant != Square::OFFSQ)
-    {
+    if (pos.enpassant != Square::OFFSQ) {
         pos.enpassant = Square(pos.enpassant ^ 56);
     }
 

@@ -3,8 +3,7 @@
 
 #include "move.hpp"
 
-struct SearchStack
-{
+struct SearchStack {
     int ply;
     bool nullmove;
     Move killer1;

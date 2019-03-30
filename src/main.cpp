@@ -1,11 +1,10 @@
 #include <iostream>
-#include "uci.hpp"
 #include "bitboards.hpp"
-#include "zobrist.hpp"
 #include "test.hpp"
+#include "uci.hpp"
+#include "zobrist.hpp"
 
-int main()
-{
+int main() {
     srand(time(0));
     bitboards_init();
     zobrist_init();
@@ -13,20 +12,13 @@ int main()
     std::string mode;
     std::cin >> mode;
 
-    if(mode == "uci")
-    {
+    if (mode == "uci") {
         uci();
-    }
-    else if(mode == "xboard")
-    {
+    } else if (mode == "xboard") {
         std::cout << "xboard protocol not supported" << std::endl;
-    }
-    else if(mode == "test")
-    {
+    } else if (mode == "test") {
         test();
-    }
-    else if(mode == "about")
-    {
+    } else if (mode == "about") {
         std::cout << "Chess engine written in C++" << std::endl;
         std::cout << "By kz04px" << std::endl;
         std::cout << "Date: " << __DATE__ << std::endl;
@@ -36,9 +28,7 @@ int main()
 #else
         std::cout << "Debug build" << std::endl;
 #endif
-    }
-    else
-    {
+    } else {
         std::cout << "Unknown command" << std::endl;
     }
 

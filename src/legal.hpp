@@ -2,8 +2,8 @@
 #define LEGAL_HPP
 
 #include <string>
-#include "position.hpp"
 #include "move.hpp"
+#include "position.hpp"
 
 bool legal_move(const Position &pos, const Move &move);
 bool pseudolegal_move(const Position &pos, const Move &move);

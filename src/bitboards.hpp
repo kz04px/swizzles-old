@@ -1,6 +1,8 @@
 #ifndef BITBOARDS_HPP
 #define BITBOARDS_HPP
 
+#include <cstdint>
+
 void bitboards_init();
 uint64_t get_file(int file);
 uint64_t get_rank(int rank);

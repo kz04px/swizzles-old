@@ -1,10 +1,9 @@
-#include <cassert>
 #include "move.hpp"
+#include <cassert>
 #include "position.hpp"
 #include "types.hpp"
 
-Move move(Square from, Square to, MoveType type, PieceType piece)
-{
+Move move(Square from, Square to, MoveType type, PieceType piece) {
     Move m;
 
     // To
@@ -35,8 +34,11 @@ Move move(Square from, Square to, MoveType type, PieceType piece)
     return m;
 }
 
-Move move(Square from, Square to, MoveType type, PieceType piece, PieceType captured)
-{
+Move move(Square from,
+          Square to,
+          MoveType type,
+          PieceType piece,
+          PieceType captured) {
     Move m;
 
     // To
@@ -67,8 +69,12 @@ Move move(Square from, Square to, MoveType type, PieceType piece, PieceType capt
     return m;
 }
 
-Move move(Square from, Square to, MoveType type, PieceType piece, PieceType captured, PieceType promo)
-{
+Move move(Square from,
+          Square to,
+          MoveType type,
+          PieceType piece,
+          PieceType captured,
+          PieceType promo) {
     Move m;
 
     // To
@@ -99,54 +105,44 @@ Move move(Square from, Square to, MoveType type, PieceType piece, PieceType capt
     return m;
 }
 
-Square move_to(const Move &m)
-{
+Square move_to(const Move &m) {
     return Square(m & 0x3F);
 }
 
-Square move_from(const Move &m)
-{
+Square move_from(const Move &m) {
     return Square((m >> 6) & 0x3F);
 }
 
-MoveType move_type(const Move &m)
-{
+MoveType move_type(const Move &m) {
     return MoveType((m >> 12) & 0xF);
 }
 
-PieceType move_piece(const Move &m)
-{
+PieceType move_piece(const Move &m) {
     return PieceType((m >> 16) & 0x7);
 }
 
-PieceType move_captured(const Move &m)
-{
+PieceType move_captured(const Move &m) {
     return PieceType((m >> 19) & 0x7);
 }
 
-PieceType move_promo(const Move &m)
-{
+PieceType move_promo(const Move &m) {
     return PieceType((m >> 22) & 0x7);
 }
 
-std::string move_uci(const Move &m, const bool flipped)
-{
+std::string move_uci(const Move &m, const bool flipped) {
     Square from = move_from(m);
     Square to = move_to(m);
     MoveType type = move_type(m);
 
-    if(flipped == true)
-    {
+    if (flipped == true) {
         from = Square(from ^ 56);
         to = Square(to ^ 56);
     }
 
     std::string ans = SquareString[from] + SquareString[to];
 
-    if(type == MoveType::PROMO || type == MoveType::PROMO_CAPTURE)
-    {
-        switch(move_promo(m))
-        {
+    if (type == MoveType::PROMO || type == MoveType::PROMO_CAPTURE) {
+        switch (move_promo(m)) {
             case PieceType::QUEEN:
                 ans += "q";
                 break;
@@ -168,10 +164,8 @@ std::string move_uci(const Move &m, const bool flipped)
     return ans;
 }
 
-std::string move_details(const Move &m, const bool flipped)
-{
-    return move_uci(m, flipped) +
-           "  (piece "    + std::to_string(move_piece(m))    + ")" +
-           "  (type "     + std::to_string(move_type(m))     + ")" +
+std::string move_details(const Move &m, const bool flipped) {
+    return move_uci(m, flipped) + "  (piece " + std::to_string(move_piece(m)) +
+           ")" + "  (type " + std::to_string(move_type(m)) + ")" +
            "  (captured " + std::to_string(move_captured(m)) + ")";
 }

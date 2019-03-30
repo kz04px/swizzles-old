@@ -1,14 +1,13 @@
 #include "fen.hpp"
+#include "flip.hpp"
+#include "other.hpp"
 #include "position.hpp"
 #include "valid.hpp"
-#include "flip.hpp"
 #include "zobrist.hpp"
-#include "other.hpp"
 
 #define STARTPOS "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
-bool set_fen(Position &pos, std::string fen)
-{
+bool set_fen(Position &pos, std::string fen) {
     // Clear the board
     pos.colour[US] = 0ULL;
     pos.colour[THEM] = 0ULL;
@@ -29,26 +28,22 @@ bool set_fen(Position &pos, std::string fen)
     pos.history_size = 0;
 
     // Protocol requires we parse "startpos"
-    if(fen == "startpos")
-    {
+    if (fen == "startpos") {
         fen = STARTPOS;
     }
 
     // Split the fen into its 6 parts
     std::vector<std::string> parts = split(fen, ' ');
-    if(parts.size() != 6)
-    {
+    if (parts.size() != 6) {
         return false;
     }
 
     // Part 0 -- Piece locations
     int sq = A8;
-    for(auto &c : parts[0])
-    {
+    for (auto &c : parts[0]) {
         uint64_t bb = 1ULL << sq;
 
-        switch(c)
-        {
+        switch (c) {
             case 'P':
                 pos.pieces[PAWN] ^= bb;
                 pos.colour[US] ^= bb;
@@ -118,24 +113,17 @@ bool set_fen(Position &pos, std::string fen)
     }
 
     // Part 1 -- Side to move
-    if(parts[1] == "w" || parts[1] == "W")
-    {
+    if (parts[1] == "w" || parts[1] == "W") {
         pos.flipped = false;
-    }
-    else if(parts[1] == "b" || parts[1] == "B")
-    {
+    } else if (parts[1] == "b" || parts[1] == "B") {
         pos.flipped = true;
-    }
-    else
-    {
+    } else {
         return false;
     }
 
     // Part 2 -- Castling permissions
-    for(auto &c : parts[2])
-    {
-        switch(c)
-        {
+    for (auto &c : parts[2]) {
+        switch (c) {
             case 'K':
                 pos.castling[usKSC] = true;
                 break;
@@ -157,16 +145,11 @@ bool set_fen(Position &pos, std::string fen)
     }
 
     // Part 3 -- En passant square
-    if(parts[3] == "-")
-    {
+    if (parts[3] == "-") {
         pos.enpassant = OFFSQ;
-    }
-    else
-    {
-        for(int sq = 0; sq < 64; ++sq)
-        {
-            if(SquareString[sq] == parts[3])
-            {
+    } else {
+        for (int sq = 0; sq < 64; ++sq) {
+            if (SquareString[sq] == parts[3]) {
                 pos.enpassant = Square(sq);
                 break;
             }
@@ -175,21 +158,18 @@ bool set_fen(Position &pos, std::string fen)
 
     // Part 4 -- Halfmove clock
     pos.halfmoves = std::stoi(parts[4]);
-    if(pos.halfmoves < 0)
-    {
+    if (pos.halfmoves < 0) {
         return false;
     }
 
     // Part 5 -- Fullmove number
     pos.fullmoves = std::stoi(parts[5]);
-    if(pos.fullmoves < 0)
-    {
+    if (pos.fullmoves < 0) {
         return false;
     }
 
     // Flip the board to match the fen
-    if(pos.flipped == true)
-    {
+    if (pos.flipped == true) {
         flip(pos);
         pos.flipped = true;
     }
@@ -199,8 +179,7 @@ bool set_fen(Position &pos, std::string fen)
     pos.history[pos.history_size] = hash;
     pos.history_size++;
 
-    if(valid(pos) == false)
-    {
+    if (valid(pos) == false) {
         return false;
     }
 

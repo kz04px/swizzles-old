@@ -5,6 +5,10 @@
 #include "searchinfo.hpp"
 #include "searchstack.hpp"
 
-int qsearch(const Position &pos, SearchInfo &info, SearchStack *ss, int alpha, int beta);
+int qsearch(const Position &pos,
+            SearchInfo &info,
+            SearchStack *ss,
+            int alpha,
+            int beta);
 
 #endif

@@ -2,23 +2,18 @@
 #define PV_HPP
 
 #include <cassert>
-#include "move.hpp"
 #include "legal.hpp"
 #include "makemove.hpp"
+#include "move.hpp"
 
-struct PV
-{
-    PV() : length(0)
-    {
+struct PV {
+    PV() : length(0) {
     }
 
-    bool legal(const Position &pos) const
-    {
+    bool legal(const Position &pos) const {
         Position npos = pos;
-        for(int i = 0; i < length; ++i)
-        {
-            if(legal_move(npos, moves[i]) == false)
-            {
+        for (int i = 0; i < length; ++i) {
+            if (legal_move(npos, moves[i]) == false) {
                 return false;
             }
 
@@ -27,13 +22,10 @@ struct PV
         return true;
     }
 
-    std::string string(bool flipped) const
-    {
+    std::string string(bool flipped) const {
         std::string str = "";
-        for(int n = 0; n < length; ++n)
-        {
-            if(n > 0)
-            {
+        for (int n = 0; n < length; ++n) {
+            if (n > 0) {
                 str += " ";
             }
             str += move_uci(moves[n], flipped);
@@ -42,8 +34,7 @@ struct PV
         return str;
     }
 
-    void add(const Move m)
-    {
+    void add(const Move m) {
         moves[length] = m;
         length++;
         assert(length < 64);

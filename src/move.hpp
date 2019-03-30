@@ -10,8 +10,17 @@ typedef uint32_t Move;
 #define NO_MOVE 0
 
 Move move(Square from, Square to, MoveType type, PieceType piece);
-Move move(Square from, Square to, MoveType type, PieceType piece, PieceType captured);
-Move move(Square from, Square to, MoveType type, PieceType piece, PieceType captured, PieceType promo);
+Move move(Square from,
+          Square to,
+          MoveType type,
+          PieceType piece,
+          PieceType captured);
+Move move(Square from,
+          Square to,
+          MoveType type,
+          PieceType piece,
+          PieceType captured,
+          PieceType promo);
 Square move_to(const Move &m);
 Square move_from(const Move &m);
 PieceType move_piece(const Move &m);

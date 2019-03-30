@@ -3,6 +3,7 @@
 
 #include "position.hpp"
 
+// clang-format off
 const int PST[6][2][64] =
 {
     { // Pawns
@@ -139,6 +140,7 @@ const int PST[6][2][64] =
         }
     }
 };
+// clang-format on
 
 int score_pst(const Position &pos, const int stage, const int piece);
 
