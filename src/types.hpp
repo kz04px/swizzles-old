@@ -35,6 +35,7 @@
 
 #define INF 1000000
 #define MAX_DEPTH 256
+#define MAX_MOVES 256
 
 // clang-format off
 const std::string SquareString[] = {

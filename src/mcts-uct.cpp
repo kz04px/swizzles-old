@@ -63,7 +63,7 @@ struct State {
     Position pos;
     int num_moves;
     int curr_move;
-    Move moves[256];
+    Move moves[MAX_MOVES];
 };
 
 struct Node {
@@ -326,7 +326,7 @@ void mcts_uct(const Position &pos,
                   << std::endl;
     } else {
         // Play a random move
-        Move moves[256];
+        Move moves[MAX_MOVES];
         int num_moves = movegen(pos, moves);
 
         // Remove illegal moves

@@ -3,6 +3,7 @@
 #include "attacks.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
+#include "types.hpp"
 
 float rollout(const Position &pos, const int length) {
     assert(legal_position(pos) == true);
@@ -10,7 +11,7 @@ float rollout(const Position &pos, const int length) {
 
     Position main_pos = pos;
     Position npos;
-    Move moves[256];
+    Move moves[MAX_MOVES];
 
     float r = 0.5;
     int n = 0;

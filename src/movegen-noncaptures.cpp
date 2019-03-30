@@ -207,7 +207,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
     }
 
     assert(num_moves >= 0);
-    assert(num_moves <= 256);
+    assert(num_moves < MAX_MOVES);
 
 #ifndef NDEBUG
     for (int n = 0; n < num_moves; ++n) {

@@ -9,7 +9,7 @@ int movegen(const Position &pos, Move *movelist) {
     num_moves += movegen_noncaptures(pos, &movelist[num_moves]);
 
     assert(num_moves >= 0);
-    assert(num_moves <= 256);
+    assert(num_moves < MAX_MOVES);
 
     return num_moves;
 }

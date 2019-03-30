@@ -16,7 +16,7 @@ int qsearch(const Position &pos,
     assert(ss);
     assert(beta > alpha);
 
-    if (ss->ply >= 256) {
+    if (ss->ply >= MAX_DEPTH) {
         return eval(pos);
     }
 

@@ -111,7 +111,7 @@ int is_endgame(const Position &pos) {
 }
 
 bool legal_move(const Position &pos, const Move &move) {
-    Move moves[256];
+    Move moves[MAX_MOVES];
     int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
@@ -126,7 +126,7 @@ bool legal_move(const Position &pos, const Move &move) {
 }
 
 bool legal_move(const Position &pos, const std::string &move) {
-    Move moves[256];
+    Move moves[MAX_MOVES];
     int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {

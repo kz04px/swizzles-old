@@ -13,7 +13,7 @@ void sort(const Position &pos,
           const Move killer1,
           const Move killer2) {
     assert(moves);
-    assert(num < 256);
+    assert(num < MAX_MOVES);
 
     int scores[num] = {0};
 
@@ -66,7 +66,7 @@ void sort(const Position &pos,
 
 void sort_see(const Position &pos, Move *moves, int *scores, const int num) {
     assert(moves);
-    assert(num < 256);
+    assert(num < MAX_MOVES);
 
     for (int i = 0; i < num; ++i) {
         scores[i] = see_capture(pos, moves[i]);

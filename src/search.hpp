@@ -6,6 +6,7 @@
 #include "move.hpp"
 #include "position.hpp"
 #include "pv.hpp"
+#include "types.hpp"
 
 enum SearchType
 {
@@ -45,7 +46,7 @@ struct SearchInfo {
     clock_t end;
     bool *stop;
     Hashtable *tt;
-    std::uint64_t cutoffs[256];
+    std::uint64_t cutoffs[MAX_MOVES];
 };
 
 struct SearchStack {

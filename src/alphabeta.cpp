@@ -44,7 +44,7 @@ int alphabeta(const Position &pos,
         return 0;
     }
 
-    if (ss->ply >= 256) {
+    if (ss->ply >= MAX_DEPTH) {
         info.leafnodes++;
         return eval(pos);
     }
@@ -169,7 +169,7 @@ int alphabeta(const Position &pos,
             tt_move = npv.moves[0];
         }
     */
-    Move moves[256];
+    Move moves[MAX_MOVES];
     int num_moves = movegen(pos, moves);
     sort(pos, moves, num_moves, tt_move, ss->killer1, ss->killer2);
 

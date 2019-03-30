@@ -21,7 +21,7 @@ void search(const Position &pos,
     info.stop = &stop;
     info.tt = &tt;
 #ifndef NDEBUG
-    for (int i = 0; i < 256; ++i) {
+    for (int i = 0; i < MAX_MOVES; ++i) {
         info.cutoffs[i] = 0ULL;
     }
 #endif
@@ -137,7 +137,7 @@ void search(const Position &pos,
 
 #ifndef NDEBUG
     uint64_t sum = 0ULL;
-    for (int i = 0; i < 256; ++i) {
+    for (int i = 0; i < MAX_MOVES; ++i) {
         sum += info.cutoffs[i];
     }
     for (int i = 0; i < 8; ++i) {
@@ -160,7 +160,7 @@ void search(const Position &pos,
         // if it does happen then there's almost certainly a bug somewhere
         // but playing the found move will be better than making a null move
         Move best_move = NO_MOVE;
-        Move moves[256];
+        Move moves[MAX_MOVES];
         int num_moves = movegen(pos, moves);
 
         for (int i = 0; i < num_moves; ++i) {

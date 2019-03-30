@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdint>
 #include "movegen.hpp"
+#include "types.hpp"
 #include "zobrist.hpp"
 
 void make_move(Position &pos, const Move m) {
@@ -100,6 +101,8 @@ void make_move(Position &pos, const Move m) {
         // Remove the enemy pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << (to - 8);
         pos.colour[Colour::THEM] ^= 1ULL << (to - 8);
+    } else {
+        assert(type == MoveType::QUIET);
     }
 
     // Castling permissions
@@ -133,7 +136,7 @@ void make_move(Position &pos, const Move m) {
 }
 
 bool make_move(Position &pos, const std::string &move_string) {
-    Move moves[256];
+    Move moves[MAX_MOVES];
     int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
