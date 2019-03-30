@@ -1,11 +1,20 @@
 #ifndef OTHER_HPP_INCLUDED
 #define OTHER_HPP_INCLUDED
 
+#include <cassert>
 #include <cstdint>
 
-int popcountll(const uint64_t n);
-int lsbll(const uint64_t n);
-uint64_t swapll(const uint64_t n);
-void print_u64(const uint64_t n);
+inline int popcountll(const uint64_t n) {
+    return __builtin_popcountll(n);
+}
+
+inline int lsbll(const uint64_t n) {
+    assert(n);
+    return __builtin_ctzll(n);
+}
+
+inline uint64_t swapll(const uint64_t n) {
+    return __builtin_bswap64(n);
+}
 
 #endif
