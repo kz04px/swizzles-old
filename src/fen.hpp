@@ -4,7 +4,7 @@
 #include <string>
 #include "position.hpp"
 
-bool set_fen(Position &pos, std::string fen);
+bool set_fen(Position &pos, const std::string &fen);
 std::string get_fen(const Position &pos);
 
 #endif
