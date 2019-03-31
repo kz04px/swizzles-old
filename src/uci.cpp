@@ -4,6 +4,7 @@
 #include "display.hpp"
 #include "fen.hpp"
 #include "makemove.hpp"
+#include "mcts-uct.hpp"
 #include "options.hpp"
 #include "protocols.hpp"
 #include "search.hpp"
@@ -99,9 +100,27 @@ void go(std::stringstream& ss, const Position& pos, Hashtable& tt) {
         }
     }
 
-    // Alpha-beta
-    search_thread = std::thread(
-        search, std::ref(pos), std::ref(tt), std::ref(stop_search), options);
+    if (options::combos["Search"].val_ == "mcts") {
+        search_thread = std::thread(mcts_uct,
+                                    std::ref(pos),
+                                    std::ref(tt),
+                                    std::ref(stop_search),
+                                    options.movetime,
+                                    options.nodes,
+                                    false,
+                                    options.wtime,
+                                    options.btime,
+                                    options.winc,
+                                    options.binc,
+                                    options.movestogo);
+    } else {
+        // Default search is alphabeta
+        search_thread = std::thread(search,
+                                    std::ref(pos),
+                                    std::ref(tt),
+                                    std::ref(stop_search),
+                                    options);
+    }
 }
 
 void isready() {
@@ -188,6 +207,8 @@ void setoption(std::stringstream& ss) {
 void listen() {
     // Create options
     options::spins["Hash"] = options::Spin(1, 128, 2048);
+    options::combos["Search"] =
+        options::Combo("alphabeta", {"alphabeta", "mcts"});
 
     std::cout << "id name Swizzles" << std::endl;
     std::cout << "id author kz04px" << std::endl;
