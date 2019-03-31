@@ -1,17 +1,12 @@
-#include "uci.hpp"
 #include <chrono>
 #include <iostream>
-#include <sstream>
 #include <thread>
 #include "display.hpp"
 #include "fen.hpp"
-#include "hashtable.hpp"
 #include "makemove.hpp"
-#include "position.hpp"
+#include "protocols.hpp"
 #include "search.hpp"
 
-Position pos;
-Hashtable tt;
 std::thread search_thread;
 bool stop_search = false;
 
@@ -19,11 +14,11 @@ namespace UCI {
 
 namespace Extension {
 
-void print() {
+void print(const Position& pos) {
     display(pos);
 }
 
-void perft(std::stringstream& ss) {
+void perft(std::stringstream& ss, const Position& pos) {
     int depth = 0;
     ss >> depth;
 
@@ -43,7 +38,7 @@ void perft(std::stringstream& ss) {
     std::cout << "nodes " << nodes << std::endl;
 }
 
-void ttperft(std::stringstream& ss) {
+void ttperft(std::stringstream& ss, const Position& pos, Hashtable& tt) {
 }
 
 }  // namespace Extension
@@ -56,13 +51,13 @@ void stop() {
     stop_search = false;
 }
 
-void ucinewgame() {
+void ucinewgame(Position& pos, Hashtable& tt) {
     stop();
     set_fen(pos, "startpos");
     tt.clear();
 }
 
-void go(std::stringstream& ss) {
+void go(std::stringstream& ss, const Position& pos, Hashtable& tt) {
     stop();
 
     SearchOptions options;
@@ -108,7 +103,7 @@ void isready() {
     std::cout << "readyok" << std::endl;
 }
 
-void moves(std::stringstream& ss) {
+void moves(std::stringstream& ss, Position& pos) {
     std::string word;
     while (ss >> word) {
         if (legal_move(pos, word) == false) {
@@ -118,36 +113,39 @@ void moves(std::stringstream& ss) {
     }
 }
 
-void position(std::stringstream& ss) {
+void position(std::stringstream& ss, Position& pos) {
     std::string fen = "";
     std::string word;
 
-    // Gather fen string
-    while (ss >> word && word != "moves") {
-        if (fen == "") {
-            fen = word;
-        } else {
-            fen += word;
+    ss >> word;
+
+    if (word == "startpos") {
+        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        ss >> word;
+    } else if (word == "fen") {
+        // Gather fen string
+        while (ss >> word && word != "moves") {
+            if (fen == "") {
+                fen = word;
+            } else {
+                fen += " " + word;
+            }
         }
     }
 
-    // Replacements
-    if (fen == "startpos") {
-        fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    if (fen == "") {
+        return;
     }
 
     // Set fen
-    if (fen != "") {
-        bool r = set_fen(pos, fen);
-        if (r == false) {
-            std::cout << "WARNING: set position error (" << r << ")"
-                      << std::endl;
-        }
+    bool r = set_fen(pos, fen);
+    if (!r) {
+        std::cout << "WARNING: set position error" << std::endl;
     }
 
     // Call moves() if found
     if (word == "moves") {
-        moves(ss);
+        moves(ss, pos);
     }
 }
 
@@ -176,10 +174,10 @@ void listen() {
         }
     }
 
+    Hashtable tt(128);
+    Position pos;
     set_fen(pos, "startpos");
-
-    tt.create(128);
-    ucinewgame();
+    ucinewgame(pos, tt);
 
     bool quit = false;
     while (!quit) {
@@ -188,25 +186,25 @@ void listen() {
         ss >> word;
 
         if (word == "go") {
-            go(ss);
+            go(ss, pos, tt);
         } else if (word == "isready") {
             isready();
         } else if (word == "moves") {
-            moves(ss);
+            moves(ss, pos);
         } else if (word == "perft") {
-            Extension::perft(ss);
+            Extension::perft(ss, pos);
         } else if (word == "position") {
-            position(ss);
+            position(ss, pos);
         } else if (word == "print") {
-            Extension::print();
+            Extension::print(pos);
         } else if (word == "quit") {
             quit = true;
         } else if (word == "stop") {
             stop();
         } else if (word == "ttperft") {
-            Extension::ttperft(ss);
+            Extension::ttperft(ss, pos, tt);
         } else if (word == "ucinewgame") {
-            ucinewgame();
+            ucinewgame(pos, tt);
         }
     }
 

@@ -1,7 +1,7 @@
 #include <iostream>
 #include "bitboards.hpp"
+#include "protocols.hpp"
 #include "test.hpp"
-#include "uci.hpp"
 #include "zobrist.hpp"
 
 int main() {
