@@ -5,6 +5,7 @@
 #include <vector>
 #include "fen.hpp"
 #include "makemove.hpp"
+#include "options.hpp"
 #include "protocols.hpp"
 #include "search.hpp"
 #include "zobrist.hpp"
@@ -127,10 +128,53 @@ bool test_uci_pos() {
     return true;
 }
 
+bool test_options() {
+    options::spins["val"] = options::Spin(1, 2, 3);
+    options::combos["A B"] = options::Combo("A", {"A", "B"});
+
+    if (options::spins["val"].min_ != 1) {
+        return false;
+    }
+    if (options::spins["val"].val_ != 2) {
+        return false;
+    }
+    if (options::spins["val"].max_ != 3) {
+        return false;
+    }
+
+    options::set("val", "1");
+    if (options::spins["val"].val_ != 1) {
+        return false;
+    }
+    options::set("val", "0");
+    if (options::spins["val"].val_ != 1) {
+        return false;
+    }
+    options::set("val", "4");
+    if (options::spins["val"].val_ != 1) {
+        return false;
+    }
+
+    if (options::combos["A B"].val_ != "A") {
+        return false;
+    }
+    options::set("A B", "B");
+    if (options::combos["A B"].val_ != "B") {
+        return false;
+    }
+    options::set("A B", "C");
+    if (options::combos["A B"].val_ != "B") {
+        return false;
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
+    std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
 }

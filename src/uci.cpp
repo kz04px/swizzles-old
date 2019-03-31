@@ -4,6 +4,7 @@
 #include "display.hpp"
 #include "fen.hpp"
 #include "makemove.hpp"
+#include "options.hpp"
 #include "protocols.hpp"
 #include "search.hpp"
 
@@ -13,6 +14,10 @@ bool stop_search = false;
 namespace UCI {
 
 namespace Extension {
+
+void options() {
+    options::uci::print();
+}
 
 void print(const Position& pos) {
     display(pos);
@@ -150,11 +155,45 @@ void position(std::stringstream& ss, Position& pos) {
 }
 
 void setoption(std::stringstream& ss) {
+    std::string word;
+    std::string name = "";
+    std::string value = "";
+
+    ss >> word;
+    if (word != "name") {
+        return;
+    }
+
+    // Gather option name
+    while (ss >> word && word != "value") {
+        if (name == "") {
+            name = word;
+        } else {
+            name += " " + word;
+        }
+    }
+
+    // Gather option value
+    while (ss >> word) {
+        if (value == "") {
+            value = word;
+        } else {
+            value += " " + word;
+        }
+    }
+
+    options::set(name, value);
 }
 
 void listen() {
+    // Create options
+    options::spins["Hash"] = options::Spin(1, 128, 2048);
+
     std::cout << "id name Swizzles" << std::endl;
     std::cout << "id author kz04px" << std::endl;
+
+    options::uci::print();
+
     std::cout << "uciok" << std::endl;
 
     std::string word;
@@ -174,7 +213,9 @@ void listen() {
         }
     }
 
-    Hashtable tt(128);
+    assert(options::spins["Hash"].val_ > 0);
+
+    Hashtable tt(options::spins["Hash"].val_);
     Position pos;
     set_fen(pos, "startpos");
     ucinewgame(pos, tt);
@@ -191,6 +232,8 @@ void listen() {
             isready();
         } else if (word == "moves") {
             moves(ss, pos);
+        } else if (word == "options") {
+            Extension::options();
         } else if (word == "perft") {
             Extension::perft(ss, pos);
         } else if (word == "position") {
