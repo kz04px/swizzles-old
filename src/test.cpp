@@ -1,9 +1,11 @@
 #include "test.hpp"
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include "fen.hpp"
 #include "makemove.hpp"
+#include "protocols.hpp"
 #include "search.hpp"
 #include "zobrist.hpp"
 
@@ -105,9 +107,30 @@ bool test_hash() {
     return true;
 }
 
+bool test_uci_pos() {
+    const std::pair<std::string, std::string> tests[] = {
+        {"startpos",
+         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+        {"startpos moves e2e4 c7c5",
+         "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2"},
+        {"fen rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"},
+    };
+    for (const auto &[input, fen] : tests) {
+        std::stringstream ss{input};
+        Position pos;
+        UCI::position(ss, pos);
+        if (get_fen(pos) != fen) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void test() {
-    std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing" << std::endl;
-    std::cout << (test_perft() ? "Y" : "N") << " -- Perft" << std::endl;
-    std::cout << (test_flip() ? "Y" : "N") << " -- Flip" << std::endl;
-    std::cout << (test_hash() ? "Y" : "N") << " -- Hash" << std::endl;
+    std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
+    std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
+    std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
+    std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
+    std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
 }
