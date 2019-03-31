@@ -10,7 +10,7 @@
 
 enum SearchType
 {
-    Time,
+    Time = 0,
     Movetime,
     Depth,
     Nodes
@@ -59,7 +59,7 @@ struct SearchStack {
 void search(const Position &pos,
             Hashtable &tt,
             bool &stop,
-            SearchOptions &options);
+            SearchOptions options);
 int alphabeta(const Position &pos,
               SearchInfo &info,
               SearchStack *ss,

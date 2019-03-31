@@ -13,7 +13,7 @@
 void search(const Position &pos,
             Hashtable &tt,
             bool &stop,
-            SearchOptions &options) {
+            SearchOptions options) {
     SearchInfo info;
     info.nodes = 0ULL;
     info.leafnodes = 0ULL;
@@ -76,7 +76,7 @@ void search(const Position &pos,
             options.depth = std::numeric_limits<int>::max();
             options.nodes = std::numeric_limits<uint64_t>::max();
             info.end = info.start + 1.0 * CLOCKS_PER_SEC;
-            return;
+            break;
     }
 
     PV pv;

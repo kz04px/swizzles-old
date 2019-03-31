@@ -100,11 +100,8 @@ void go(std::stringstream& ss) {
     }
 
     // Alpha-beta
-    search_thread = std::thread(search,
-                                std::ref(pos),
-                                std::ref(tt),
-                                std::ref(stop_search),
-                                std::ref(options));
+    search_thread = std::thread(
+        search, std::ref(pos), std::ref(tt), std::ref(stop_search), options);
 }
 
 void isready() {
