@@ -128,6 +128,33 @@ bool test_uci_pos() {
     return true;
 }
 
+bool test_uci_moves() {
+    const std::pair<std::string, std::string> tests[] = {
+        {"e2e4", "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"},
+        {"e2e4 c7c5",
+         "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2"},
+        {"e2e4 c7c5 g1f3",
+         "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"},
+        {"d2d4 g8f6 c2c4 c7c5 d4d5 e7e6 b1c3 e6d5 c4d5 d7d6 e2e4 g7g6",
+         "rnbqkb1r/pp3p1p/3p1np1/2pP4/4P3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 7"},
+        {"e2e4    ",
+         "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"},
+        {"e2e4 cat",
+         "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"},
+    };
+    for (const auto &[moves, fen] : tests) {
+        std::stringstream ss{moves};
+        Position pos;
+        set_fen(pos, "startpos");
+        UCI::moves(ss, pos);
+        if (get_fen(pos) != fen) {
+            std::cout << "Got: " << get_fen(pos) << std::endl;
+            return false;
+        }
+    }
+    return true;
+}
+
 bool test_options() {
     options::spins["val"] = options::Spin(1, 2, 3);
     options::combos["A B"] = options::Combo("A", {"A", "B"});
@@ -177,4 +204,5 @@ void test() {
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
+    std::cout << (test_uci_moves() ? "Y" : "N") << " -- UCI::moves\n";
 }
