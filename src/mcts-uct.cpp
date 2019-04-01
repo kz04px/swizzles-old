@@ -11,6 +11,7 @@
 #include "makemove.hpp"
 #include "move.hpp"
 #include "movegen.hpp"
+#include "options.hpp"
 #include "pv.hpp"
 #include "rollout.hpp"
 
@@ -282,7 +283,7 @@ void mcts_uct(const Position &pos,
         if (iteration == 1 || iteration % 5000 == 0) {
             double time = (double)(clock() - start) / CLOCKS_PER_SEC;
             int last_best = std::numeric_limits<int>::max();
-            for (int i = 0; i < 4; ++i) {
+            for (int i = 0; i < options::spins["MultiPV"].val_; ++i) {
                 Node *best_node = nullptr;
                 int current_best = std::numeric_limits<int>::lowest();
                 for (auto &node : root.children) {

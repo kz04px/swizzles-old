@@ -202,6 +202,7 @@ void listen() {
     options::spins["Hash"] = options::Spin(1, 128, 2048);
     options::combos["Search"] =
         options::Combo("alphabeta", {"alphabeta", "mcts"});
+    options::spins["MultiPV"] = options::Spin(1, 4, 16);
 
     std::cout << "id name Swizzles" << std::endl;
     std::cout << "id author kz04px" << std::endl;
@@ -228,6 +229,7 @@ void listen() {
     }
 
     assert(options::spins["Hash"].val_ > 0);
+    assert(options::spins["MultiPV"].val_ > 0);
 
     Hashtable tt(options::spins["Hash"].val_);
     Position pos;
