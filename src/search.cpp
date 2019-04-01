@@ -72,6 +72,11 @@ void search(const Position &pos,
             options.depth = std::numeric_limits<int>::max();
             info.end = std::numeric_limits<clock_t>::max();
             break;
+        case SearchType::Infinite:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            options.depth = std::numeric_limits<int>::max();
+            info.end = std::numeric_limits<clock_t>::max();
+            break;
         default:
             options.depth = std::numeric_limits<int>::max();
             options.nodes = std::numeric_limits<uint64_t>::max();

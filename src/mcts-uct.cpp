@@ -1,5 +1,6 @@
 #include "mcts-uct.hpp"
 #include <cassert>
+#include <climits>
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -224,44 +225,55 @@ void print_tree(Node node, int depth) {
 void mcts_uct(const Position &pos,
               Hashtable &tt,
               bool &stop,
-              int movetime,
-              int nodes,
-              bool infinite,
-              int wtime,
-              int btime,
-              int winc,
-              int binc,
-              int movestogo) {
+              SearchOptions options) {
     Node root = Node(pos, nullptr, NO_MOVE);
-    int iteration = 0;
+    uint64_t iteration = 0;
 
     clock_t start = clock();
     clock_t end_target = clock();
 
-    if (infinite == true) {
-        nodes = std::numeric_limits<int>::max();
-        end_target = std::numeric_limits<int>::max();
-    } else if (nodes > 0) {
-        end_target = std::numeric_limits<int>::max();
-    } else if (movetime > 0) {
-        nodes = std::numeric_limits<int>::max();
-        end_target = start + ((double)movetime / 1000.0) * CLOCKS_PER_SEC;
-    } else if (wtime > 0 && btime > 0) {
-        nodes = std::numeric_limits<int>::max();
-        if (pos.flipped) {
+    options.movetime = std::max(1, options.movetime);
+    options.movestogo = std::max(1, options.movestogo);
+    options.wtime = std::max(1, options.wtime);
+    options.btime = std::max(1, options.btime);
+    options.winc = std::max(0, options.binc);
+    options.binc = std::max(0, options.binc);
+
+    switch (options.type) {
+        case SearchType::Time:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            if (pos.flipped) {
+                end_target =
+                    start +
+                    ((double)(options.btime / options.movestogo) / 1000.0) *
+                        CLOCKS_PER_SEC;
+            } else {
+                end_target =
+                    start +
+                    ((double)(options.wtime / options.movestogo) / 1000.0) *
+                        CLOCKS_PER_SEC;
+            }
+            break;
+        case SearchType::Movetime:
+            options.nodes = std::numeric_limits<uint64_t>::max();
             end_target =
-                start + ((double)(btime / 30) / 1000.0) * CLOCKS_PER_SEC;
-        } else {
-            end_target =
-                start + ((double)(wtime / 30) / 1000.0) * CLOCKS_PER_SEC;
-        }
-    } else {
-        nodes = std::numeric_limits<int>::max();
-        end_target = start + ((double)5000 / 1000.0) * CLOCKS_PER_SEC;
+                start + ((double)options.movetime / 1000.0) * CLOCKS_PER_SEC;
+            break;
+        case SearchType::Nodes:
+            end_target = std::numeric_limits<clock_t>::max();
+            break;
+        case SearchType::Infinite:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            end_target = std::numeric_limits<clock_t>::max();
+            break;
+        default:
+            options.nodes = std::numeric_limits<int>::max();
+            end_target = start + 1.0 * CLOCKS_PER_SEC;
+            break;
     }
 
-    while (iteration == 0 ||
-           (iteration < nodes && clock() < end_target && stop == false)) {
+    while (iteration <= options.nodes && stop == false &&
+           clock() <= end_target) {
         Node *node = tree_policy(&root);
         float score = default_policy(tt, node->state.pos);
         backup_negamax(node, score);

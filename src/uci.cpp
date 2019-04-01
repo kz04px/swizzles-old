@@ -7,6 +7,7 @@
 #include "mcts-uct.hpp"
 #include "options.hpp"
 #include "protocols.hpp"
+#include "search-options.hpp"
 #include "search.hpp"
 
 std::thread search_thread;
@@ -72,8 +73,7 @@ void go(std::stringstream& ss, const Position& pos, Hashtable& tt) {
     std::string word;
     while (ss >> word) {
         if (word == "infinite") {
-            options.type = SearchType::Depth;
-            options.depth = MAX_DEPTH;
+            options.type = SearchType::Infinite;
         } else if (word == "depth") {
             options.type = SearchType::Depth;
             ss >> options.depth;
@@ -105,14 +105,7 @@ void go(std::stringstream& ss, const Position& pos, Hashtable& tt) {
                                     std::ref(pos),
                                     std::ref(tt),
                                     std::ref(stop_search),
-                                    options.movetime,
-                                    options.nodes,
-                                    false,
-                                    options.wtime,
-                                    options.btime,
-                                    options.winc,
-                                    options.binc,
-                                    options.movestogo);
+                                    options);
     } else {
         // Default search is alphabeta
         search_thread = std::thread(search,

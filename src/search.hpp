@@ -6,28 +6,8 @@
 #include "move.hpp"
 #include "position.hpp"
 #include "pv.hpp"
+#include "search-options.hpp"
 #include "types.hpp"
-
-enum SearchType
-{
-    Time = 0,
-    Movetime,
-    Depth,
-    Nodes
-};
-
-struct SearchOptions {
-   public:
-    SearchType type = SearchType::Depth;
-    int depth = 1;
-    int movetime = 0;
-    uint64_t nodes = 0;
-    int wtime = 0;
-    int btime = 0;
-    int winc = 0;
-    int binc = 0;
-    int movestogo = 30;
-};
 
 struct SearchInfo {
     SearchInfo()
