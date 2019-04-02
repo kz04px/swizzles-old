@@ -25,7 +25,8 @@ struct Entry {
         assert(depth_ >= 0);
         assert(flag_ == FLAGS::EXACT || flag_ == FLAGS::LOWERBOUND ||
                flag_ == FLAGS::UPPERBOUND);
-        assert(-INF <= eval && eval <= INF);
+        assert(-INF - MAX_DEPTH <= eval);
+        assert(eval <= INF + MAX_DEPTH);
     }
 
     uint64_t key() const {
