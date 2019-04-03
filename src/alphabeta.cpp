@@ -37,6 +37,10 @@ int alphabeta(const Position &pos,
               int depth) {
     assert(ss);
     assert(beta > alpha);
+    assert(-INF <= alpha);
+    assert(alpha <= INF);
+    assert(-INF <= beta);
+    assert(beta <= INF);
     assert(depth >= 0);
     assert(depth < MAX_DEPTH);
 
