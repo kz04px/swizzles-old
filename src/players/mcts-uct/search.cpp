@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include "../../eval.hpp"
 #include "../../pv.hpp"
 #include "../../rollout.hpp"
 #include "../all.hpp"
@@ -13,7 +14,8 @@ float score_ucb(const State &p, const State &c, const float cp) {
     assert(p.visits_ > 0);
     const float exploitation = c.reward_ / c.visits_;
     const float exploration = cp * sqrt(2.0 * log(p.visits_) / c.visits_);
-    return exploitation + exploration;
+    const float evaluation = -(float)eval(c.pos_) / 1000.0;
+    return exploitation + exploration + evaluation;
 }
 
 Node *best_child(Node *n, const float cp) {
