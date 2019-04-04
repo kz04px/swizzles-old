@@ -1,19 +1,22 @@
-#include "search.hpp"
 #include <cassert>
 #include <climits>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
-#include "attacks.hpp"
-#include "display.hpp"
-#include "makemove.hpp"
-#include "movegen.hpp"
-#include "pv.hpp"
+#include "../../attacks.hpp"
+#include "../../display.hpp"
+#include "../../makemove.hpp"
+#include "../../movegen.hpp"
+#include "../../pv.hpp"
+#include "../all.hpp"
+#include "alphabeta.hpp"
 
-void search(const Position &pos,
-            Hashtable &tt,
-            bool &stop,
-            SearchOptions options) {
+namespace player {
+
+void alphabeta(const Position &pos,
+               Hashtable &tt,
+               bool &stop,
+               SearchOptions options) {
     SearchInfo info;
     info.nodes = 0ULL;
     info.leafnodes = 0ULL;
@@ -189,3 +192,5 @@ void search(const Position &pos,
         }
     }
 }
+
+}  // namespace player

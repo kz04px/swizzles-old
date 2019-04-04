@@ -1,0 +1,193 @@
+#include <cassert>
+#include <chrono>
+#include <cmath>
+#include <iostream>
+#include <limits>
+#include "../../pv.hpp"
+#include "../../rollout.hpp"
+#include "../all.hpp"
+#include "node.hpp"
+
+float score_ucb(const State &p, const State &c, const float cp) {
+    assert(c.visits_ > 0);
+    assert(p.visits_ > 0);
+    const float exploitation = c.reward_ / c.visits_;
+    const float exploration = cp * sqrt(2.0 * log(p.visits_) / c.visits_);
+    return exploitation + exploration;
+}
+
+Node *best_child(Node *n, const float cp) {
+    assert(n);
+    float best_score = std::numeric_limits<float>::lowest();
+    std::vector<Node *> best_children;
+
+    for (auto &c : n->children_) {
+        const float score = score_ucb(n->state_, c.state_, cp);
+        if (score > best_score) {
+            best_score = score;
+            best_children.clear();
+            best_children.push_back(&c);
+        } else if (score == best_score) {
+            best_children.push_back(&c);
+        }
+    }
+
+    assert(best_children.size() > 0);
+    assert(best_score > std::numeric_limits<float>::lowest());
+
+    // Choose a child from the top scorers at random
+    int index = rand() % best_children.size();
+
+    return best_children[index];
+}
+
+float default_policy(const State &s) {
+    return 1.0 - rollout(s.pos_, 400);
+}
+
+Node *tree_policy(Node *n, const float cp) {
+    assert(n);
+    while (!n->terminal()) {
+        if (!n->fully_expanded()) {
+            assert(n);
+            return n->expand();
+        }
+        n = best_child(n, cp);
+    }
+    return n;
+}
+
+void backup_negamax(Node *n, float delta) {
+    assert(n);
+    while (n) {
+        n->state_.visits_ += 1;
+        n->state_.reward_ += delta;
+        delta = 1.0 - delta;
+        n = n->parent_;
+    }
+}
+
+PV get_pv(Node *node) {
+    assert(node);
+
+    PV pv;
+    while (node->children_.size() > 0) {
+        int best_index = 0;
+        float best_score = std::numeric_limits<float>::lowest();
+
+        for (unsigned int n = 0; n < node->children_.size(); ++n) {
+            assert(node->children_[n].state_.visits_ > 0);
+
+            const float score = node->children_[n].state_.visits_;
+
+            if (score >= best_score) {
+                best_index = n;
+                best_score = score;
+            }
+        }
+
+        if (pv.length < 8) {
+            pv.moves[pv.length] = node->children_[best_index].state_.move_;
+            pv.length++;
+        }
+
+        // Move on to the best child node
+        node = &(node->children_[best_index]);
+    }
+
+    return pv;
+}
+
+namespace player {
+
+void mcts(const Position &pos,
+          Hashtable &tt,
+          bool &stop,
+          SearchOptions options) {
+    // No moves possible if the game is already over
+    if (is_fifty_moves(pos) || repetitions(pos) == 3) {
+        std::cout << "bestmove 0000" << std::endl;
+        return;
+    }
+
+    Node root(pos, NO_MOVE, nullptr);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    auto end = start;
+
+    switch (options.type) {
+        case SearchType::Time:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            if (pos.flipped) {
+                end += std::chrono::milliseconds(options.btime /
+                                                 options.movestogo);
+            } else {
+                end += std::chrono::milliseconds(options.wtime /
+                                                 options.movestogo);
+            }
+            break;
+        case SearchType::Movetime:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            end += std::chrono::milliseconds(options.movetime);
+            break;
+        case SearchType::Nodes:
+            end += std::chrono::hours(1);
+            break;
+        case SearchType::Infinite:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            end += std::chrono::hours(1);
+            break;
+        default:
+            options.nodes = std::numeric_limits<uint64_t>::max();
+            end += std::chrono::milliseconds(1000);
+            break;
+    }
+
+    uint64_t nodes = 0ULL;
+    while (nodes < options.nodes && stop == false &&
+           std::chrono::high_resolution_clock::now() < end) {
+        Node *n = tree_policy(&root, 0.1);
+        assert(n);
+        const float delta = default_policy(n->state_);
+        backup_negamax(n, delta);
+
+        nodes++;
+
+        if (nodes == 1 || nodes % 1000 == 0) {
+            PV pv = get_pv(&root);
+            assert(pv.length > 0);
+
+            // Timing
+            auto now = std::chrono::high_resolution_clock::now();
+            auto diff = now - start;
+            auto elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(diff);
+
+            std::cout << "info";
+            std::cout << " nodes " << nodes;
+            std::cout << " time " << elapsed.count();
+            std::cout << " visits " << root.state_.visits_;
+            std::cout << " score "
+                      << 100 * (float)root.state_.reward_ / root.state_.visits_
+                      << "%";
+            if (elapsed.count() / 1000 > 0) {
+                std::cout << " nps " << nodes / (elapsed.count() / 1000);
+            }
+            if (pv.length > 0) {
+                std::cout << " pv " << pv.string(pos.flipped);
+            }
+            std::cout << std::endl;
+        }
+    }
+
+    PV pv = get_pv(&root);
+    if (pv.length > 0) {
+        std::cout << "bestmove " << move_uci(pv.moves[0], pos.flipped)
+                  << std::endl;
+    } else {
+        assert(false);
+        std::cout << "bestmove 0000" << std::endl;
+    }
+}
+
+}  // namespace player

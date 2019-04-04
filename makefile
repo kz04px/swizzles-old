@@ -11,14 +11,14 @@ SRCDIR     = src
 OBJDIR     = obj
 BINDIR     = bin
 
-SOURCES  := $(wildcard $(SRCDIR)/*.cpp)
-INCLUDES := $(wildcard $(SRCDIR)/*.hpp)
-OBJECTS  := $(SOURCES:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+SOURCES := $(shell find $(SRCDIR) -type f -name *.cpp)
+OBJECTS := $(patsubst $(SRCDIR)/%,$(OBJDIR)/%,$(SOURCES:.cpp=.o))
 
 $(BINDIR)/$(TARGET): $(BINDIR) $(OBJDIR) $(OBJECTS)
 	@$(LINKER) $@ $(OBJECTS) $(LFLAGS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 release:

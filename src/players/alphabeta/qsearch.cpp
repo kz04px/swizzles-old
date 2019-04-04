@@ -1,12 +1,12 @@
-#include "attacks.hpp"
-#include "eval.hpp"
-#include "makemove.hpp"
-#include "move.hpp"
-#include "movegen.hpp"
-#include "search.hpp"
-#include "see.hpp"
-#include "sort.hpp"
-#include "types.hpp"
+#include "qsearch.hpp"
+#include "../../attacks.hpp"
+#include "../../eval.hpp"
+#include "../../makemove.hpp"
+#include "../../move.hpp"
+#include "../../movegen.hpp"
+#include "../../see.hpp"
+#include "../../sort.hpp"
+#include "../../types.hpp"
 
 int qsearch(const Position &pos,
             SearchInfo &info,

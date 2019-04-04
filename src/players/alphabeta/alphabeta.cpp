@@ -1,32 +1,20 @@
-#include <climits>
+#include "alphabeta.hpp"
 #include <cstring>
 #include <iostream>
-#include "attacks.hpp"
-#include "display.hpp"
-#include "eval.hpp"
-#include "hashtable.hpp"
-#include "makemove.hpp"
-#include "move.hpp"
-#include "movegen.hpp"
-#include "other.hpp"
-#include "search.hpp"
-#include "sort.hpp"
-#include "types.hpp"
-#include "zobrist.hpp"
-
-int reduction(const bool pvnode,
-              const int move_num,
-              const int depth,
-              const int in_check,
-              const int move_type) {
-    if (pvnode || move_num < 4 || depth < 3 || in_check ||
-        move_type == MoveType::CAPTURE || move_type == MoveType::PROMO ||
-        move_type == MoveType::PROMO_CAPTURE) {
-        return 0;
-    }
-
-    return 1;
-}
+#include <limits>
+#include "../../attacks.hpp"
+#include "../../display.hpp"
+#include "../../eval.hpp"
+#include "../../hashtable.hpp"
+#include "../../makemove.hpp"
+#include "../../move.hpp"
+#include "../../movegen.hpp"
+#include "../../other.hpp"
+#include "../../sort.hpp"
+#include "../../types.hpp"
+#include "../../zobrist.hpp"
+#include "qsearch.hpp"
+#include "reduction.hpp"
 
 int alphabeta(const Position &pos,
               SearchInfo &info,
@@ -60,7 +48,7 @@ int alphabeta(const Position &pos,
 
     bool in_check = check(pos, Colour::US);
     bool pvnode = (beta != alpha + 1);
-    int best_score = INT_MIN;
+    int best_score = std::numeric_limits<int>::min();
     Move tt_move = NO_MOVE;
     Move best_move = NO_MOVE;
     int alpha_original = alpha;
@@ -100,7 +88,6 @@ int alphabeta(const Position &pos,
                     pv.length = 1;
                     pv.moves[0] = tt_move;
                     return score;
-                    break;
                 case FLAGS::LOWERBOUND:
                     alpha = (alpha > score ? alpha : score);
                     break;

@@ -6,8 +6,8 @@
 #include "fen.hpp"
 #include "makemove.hpp"
 #include "options.hpp"
+#include "perft/perft.hpp"
 #include "protocols.hpp"
-#include "search.hpp"
 #include "zobrist.hpp"
 
 bool test_fen() {

@@ -4,11 +4,11 @@
 #include "display.hpp"
 #include "fen.hpp"
 #include "makemove.hpp"
-#include "mcts-uct.hpp"
 #include "options.hpp"
+#include "perft/perft.hpp"
+#include "players/all.hpp"
 #include "protocols.hpp"
 #include "search-options.hpp"
-#include "search.hpp"
 
 std::thread search_thread;
 bool stop_search = false;
@@ -100,21 +100,23 @@ void go(std::stringstream& ss, const Position& pos, Hashtable& tt) {
         }
     }
 
-    if (options::combos["Search"].val_ == "mcts") {
-        search_thread = std::thread(mcts_uct,
+    if (options::combos["Player"].val_ == "mcts") {
+        search_thread = std::thread(player::mcts,
                                     std::ref(pos),
                                     std::ref(tt),
                                     std::ref(stop_search),
                                     options);
+    } else if (options::combos["Player"].val_ == "random") {
+        search_thread = std::thread(player::random, std::ref(pos));
     } else {
-        // Default search is alphabeta
-        search_thread = std::thread(search,
+        search_thread = std::thread(player::alphabeta,
                                     std::ref(pos),
                                     std::ref(tt),
                                     std::ref(stop_search),
                                     options);
     }
-}
+
+}  // namespace UCI
 
 void isready() {
     std::cout << "readyok" << std::endl;
@@ -200,8 +202,8 @@ void setoption(std::stringstream& ss) {
 void listen() {
     // Create options
     options::spins["Hash"] = options::Spin(1, 128, 2048);
-    options::combos["Search"] =
-        options::Combo("alphabeta", {"alphabeta", "mcts"});
+    options::combos["Player"] =
+        options::Combo("alphabeta", {"alphabeta", "mcts", "random"});
     options::spins["MultiPV"] = options::Spin(1, 4, 16);
 
     std::cout << "id name Swizzles" << std::endl;
