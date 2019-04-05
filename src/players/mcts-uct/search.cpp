@@ -182,6 +182,58 @@ void mcts(const Position &pos,
         }
     }
 
+#ifndef NDEBUG
+    // Print the top children
+    std::vector<Node *> indices;
+    for (auto &c : root.children_) {
+        indices.push_back(&c);
+    }
+    std::cout << "N   move   score     visits  pv" << std::endl;
+    for (unsigned int a = 0; a < indices.size(); ++a) {
+        // Score
+        int best_score = indices[a]->state_.visits_;
+        int index = a;
+        for (unsigned int b = a + 1; b < indices.size(); ++b) {
+            int score = indices[b]->state_.visits_;
+            if (score > best_score) {
+                best_score = score;
+                index = b;
+            }
+        }
+
+        // Swap
+        Node *store = indices[a];
+        indices[a] = indices[index];
+        indices[index] = store;
+
+        // Details
+        PV pv = get_pv(indices[a]);
+        float score = 100 * (float)indices[a]->state_.reward_ /
+                      indices[a]->state_.visits_;
+
+        // Print -- move number
+        std::cout << std::left << std::setw(3) << a + 1 << " ";
+
+        // Print -- move
+        std::cout << std::left << std::setw(6)
+                  << move_uci(indices[a]->state_.move_, pos.flipped);
+
+        // Print -- score
+        std::cout << std::right << std::setw(6) << std::fixed
+                  << std::setprecision(2) << score << "%";
+
+        // Print -- visits
+        std::cout << std::right << std::setw(10) << indices[a]->state_.visits_;
+
+        // Print -- pv
+        if (pv.length > 0) {
+            std::cout << "  " << pv.string(indices[a]->state_.pos_.flipped);
+        }
+
+        std::cout << std::endl;
+    }
+#endif
+
     PV pv = get_pv(&root);
     if (pv.length > 0) {
         std::cout << "bestmove " << move_uci(pv.moves[0], pos.flipped)
