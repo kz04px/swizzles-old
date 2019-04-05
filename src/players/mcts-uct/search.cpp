@@ -1,6 +1,7 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <iomanip>
 #include <iostream>
 #include <limits>
 #include "../../eval.hpp"
@@ -155,7 +156,7 @@ void mcts(const Position &pos,
 
         nodes++;
 
-        if (nodes == 1 || nodes % 1000 == 0) {
+        if (nodes == 1 || nodes % 10000 == 0) {
             PV pv = get_pv(&root);
             assert(pv.length > 0);
 
@@ -168,8 +169,7 @@ void mcts(const Position &pos,
             std::cout << "info";
             std::cout << " nodes " << nodes;
             std::cout << " time " << elapsed.count();
-            std::cout << " visits " << root.state_.visits_;
-            std::cout << " score "
+            std::cout << " score " << std::setprecision(4)
                       << 100 * (float)root.state_.reward_ / root.state_.visits_
                       << "%";
             if (elapsed.count() / 1000 > 0) {
