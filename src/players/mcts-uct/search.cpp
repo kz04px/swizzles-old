@@ -4,19 +4,21 @@
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include "../../attacks.hpp"
 #include "../../eval.hpp"
 #include "../../pv.hpp"
 #include "../../rollout.hpp"
 #include "../all.hpp"
 #include "node.hpp"
 
+#define SIGMOID(x) (1.0 / (1.0 + exp(-x)))
+
 float score_ucb(const State &p, const State &c, const float cp) {
     assert(c.visits_ > 0);
     assert(p.visits_ > 0);
     const float exploitation = c.reward_ / c.visits_;
     const float exploration = cp * sqrt(2.0 * log(p.visits_) / c.visits_);
-    const float evaluation = -(float)eval(c.pos_) / 1000.0;
-    return exploitation + exploration + evaluation;
+    return exploitation + exploration;
 }
 
 Node *best_child(Node *n, const float cp) {
@@ -45,7 +47,27 @@ Node *best_child(Node *n, const float cp) {
 }
 
 float default_policy(const State &s) {
-    return 1.0 - rollout(s.pos_, 400);
+    float score = 0.0;
+
+    // Game over
+    if (s.moves_.size() == 0) {
+        const bool in_check = check(s.pos_, Colour::US);
+        if (in_check) {
+            score = -INF;
+        } else {
+            score = 0;
+        }
+    }
+    // Draw score
+    else if (is_fifty_moves(s.pos_) || repetitions(s.pos_) == 2) {
+        score = 0.0;
+    }
+    // Eval
+    else {
+        score = 0.001 * eval(s.pos_);
+    }
+
+    return 1.0 - SIGMOID(score);
 }
 
 Node *tree_policy(Node *n, const float cp) {
