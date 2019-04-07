@@ -181,6 +181,7 @@ void mcts(const Position &pos,
         if (nodes == 1 || nodes % 10000 == 0) {
             PV pv = get_pv(&root);
             assert(pv.length > 0);
+            assert(pv.legal(pos));
 
             // Timing
             auto now = std::chrono::high_resolution_clock::now();
@@ -230,6 +231,7 @@ void mcts(const Position &pos,
 
         // Details
         PV pv = get_pv(indices[a]);
+        assert(pv.legal(indices[a]->state_.pos_));
         float score = 100 * (float)indices[a]->state_.reward_ /
                       indices[a]->state_.visits_;
 
@@ -257,6 +259,9 @@ void mcts(const Position &pos,
 #endif
 
     PV pv = get_pv(&root);
+    assert(pv.length > 0);
+    assert(pv.legal(pos));
+
     if (pv.length > 0) {
         std::cout << "bestmove " << move_uci(pv.moves[0], pos.flipped)
                   << std::endl;
