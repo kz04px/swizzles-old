@@ -130,7 +130,7 @@ void mcts(const Position &pos,
           bool &stop,
           SearchOptions options) {
     // No moves possible if the game is already over
-    if (is_fifty_moves(pos) || repetitions(pos) == 3) {
+    if (is_fifty_moves(pos) || repetitions(pos) == 2) {
         std::cout << "bestmove 0000" << std::endl;
         return;
     }

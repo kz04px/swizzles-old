@@ -9,7 +9,7 @@ State::State(const Position &pos, const Move &move)
     assert(legal_position(pos));
 
     // No moves possible if the game is already over
-    if (is_fifty_moves(pos) || repetitions(pos) == 3) {
+    if (is_fifty_moves(pos) || repetitions(pos) == 2) {
         return;
     }
 
