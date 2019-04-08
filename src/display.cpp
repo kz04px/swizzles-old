@@ -89,4 +89,6 @@ void display(const Position &pos) {
     std::cout << "Fullmoves: " << pos.fullmoves << std::endl;
     std::cout << "Phase: " << phase(pos) << std::endl;
     std::cout << "Hash: " << calculate_hash(pos) << std::endl;
+    std::cout << "Repeats: " << repetitions(pos) << std::endl;
+    std::cout << "50moves: " << is_fifty_moves(pos) << std::endl;
 }
