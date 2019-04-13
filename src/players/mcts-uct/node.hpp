@@ -1,20 +1,13 @@
 #ifndef MCTS_UCT_NODE_HPP
 #define MCTS_UCT_NODE_HPP
 
-#include <vector>
-#include "../../position.hpp"
-#include "state.hpp"
+#include <cstdint>
 
 struct Node {
-    Node(const Position &pos, const Move &move, Node *parent);
-    ~Node();
-    Node *expand();
-    bool fully_expanded() const;
-    bool terminal() const;
-
-    State state_;
-    Node *parent_;
-    std::vector<Node> children_;
+    int visits_{0};
+    float reward_{0.0};
+    // bool terminal_{false};
+    // bool fully_expanded_{false};
 };
 
 #endif

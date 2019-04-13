@@ -1,127 +1,23 @@
 #include <cassert>
 #include <chrono>
-#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <limits>
-#include "../../attacks.hpp"
-#include "../../eval.hpp"
+#include <vector>
+#include "../../cache/lru.hpp"
 #include "../../pv.hpp"
-#include "../../rollout.hpp"
 #include "../all.hpp"
+#include "backup_negamax.hpp"
+#include "best_child.hpp"
+#include "default_policy.hpp"
+#include "expand.hpp"
 #include "node.hpp"
+#include "pv.hpp"
+#include "stack.hpp"
+#include "tree_policy.hpp"
+#include "ucb.hpp"
 
-#define SIGMOID(x) (1.0 / (1.0 + exp(-x)))
-
-float score_ucb(const State &p, const State &c, const float cp) {
-    assert(c.visits_ > 0);
-    assert(p.visits_ > 0);
-    const float exploitation = c.reward_ / c.visits_;
-    const float exploration = cp * sqrt(2.0 * log(p.visits_) / c.visits_);
-    return exploitation + exploration;
-}
-
-Node *best_child(Node *n, const float cp) {
-    assert(n);
-    float best_score = std::numeric_limits<float>::lowest();
-    std::vector<Node *> best_children;
-
-    for (auto &c : n->children_) {
-        const float score = score_ucb(n->state_, c.state_, cp);
-        if (score > best_score) {
-            best_score = score;
-            best_children.clear();
-            best_children.push_back(&c);
-        } else if (score == best_score) {
-            best_children.push_back(&c);
-        }
-    }
-
-    assert(best_children.size() > 0);
-    assert(best_score > std::numeric_limits<float>::lowest());
-
-    // Choose a child from the top scorers at random
-    int index = rand() % best_children.size();
-
-    return best_children[index];
-}
-
-float default_policy(const State &s) {
-    float score = 0.0;
-
-    // Game over
-    if (s.moves_.size() == 0) {
-        const bool in_check = check(s.pos_, Colour::US);
-        if (in_check) {
-            score = -INF;
-        } else {
-            score = 0;
-        }
-    }
-    // Draw score
-    else if (is_fifty_moves(s.pos_) || repetitions(s.pos_) == 2) {
-        score = 0.0;
-    }
-    // Eval
-    else {
-        score = 0.001 * eval(s.pos_);
-    }
-
-    return 1.0 - SIGMOID(score);
-}
-
-Node *tree_policy(Node *n, const float cp) {
-    assert(n);
-    while (!n->terminal()) {
-        if (!n->fully_expanded()) {
-            assert(n);
-            return n->expand();
-        }
-        n = best_child(n, cp);
-    }
-    return n;
-}
-
-void backup_negamax(Node *n, float delta) {
-    assert(n);
-    while (n) {
-        n->state_.visits_ += 1;
-        n->state_.reward_ += delta;
-        delta = 1.0 - delta;
-        n = n->parent_;
-    }
-}
-
-PV get_pv(Node *node) {
-    assert(node);
-
-    PV pv;
-    while (node->children_.size() > 0) {
-        int best_index = 0;
-        float best_score = std::numeric_limits<float>::lowest();
-
-        for (unsigned int n = 0; n < node->children_.size(); ++n) {
-            assert(node->children_[n].state_.visits_ > 0);
-
-            const float score = node->children_[n].state_.visits_;
-
-            if (score >= best_score) {
-                best_index = n;
-                best_score = score;
-            }
-        }
-
-        if (pv.length < 8) {
-            pv.moves[pv.length] = node->children_[best_index].state_.move_;
-            pv.length++;
-        }
-
-        // Move on to the best child node
-        node = &(node->children_[best_index]);
-    }
-
-    return pv;
-}
+cache::lru<std::uint64_t, Node> node_cache(10000);
 
 namespace player {
 
@@ -135,14 +31,20 @@ void mcts(const Position &pos,
         return;
     }
 
-    Node root(pos, NO_MOVE, nullptr);
+    const std::uint64_t hash = calculate_hash(pos);
+    auto root = node_cache.get(hash);
+
+    // Add the root node to the cache if it's not there already
+    if (!root) {
+        node_cache.add(hash, Node{});
+    }
 
     auto start = std::chrono::high_resolution_clock::now();
     auto end = start;
 
     switch (options.type) {
         case SearchType::Time:
-            options.nodes = std::numeric_limits<uint64_t>::max();
+            options.nodes = std::numeric_limits<std::uint64_t>::max();
             if (pos.flipped) {
                 end += std::chrono::milliseconds(options.btime /
                                                  options.movestogo);
@@ -152,36 +54,69 @@ void mcts(const Position &pos,
             }
             break;
         case SearchType::Movetime:
-            options.nodes = std::numeric_limits<uint64_t>::max();
+            options.nodes = std::numeric_limits<std::uint64_t>::max();
             end += std::chrono::milliseconds(options.movetime);
             break;
         case SearchType::Nodes:
             end += std::chrono::hours(1);
             break;
         case SearchType::Infinite:
-            options.nodes = std::numeric_limits<uint64_t>::max();
+            options.nodes = std::numeric_limits<std::uint64_t>::max();
             end += std::chrono::hours(1);
             break;
         default:
-            options.nodes = std::numeric_limits<uint64_t>::max();
+            options.nodes = std::numeric_limits<std::uint64_t>::max();
             end += std::chrono::milliseconds(1000);
             break;
     }
+    /*
+        std::cout << "Size: " << node_cache.max_size() * sizeof(Node) / 1024 /
+       1024
+                  << "MB" << std::endl;
+    */
+    // Prepare search stack
+    Stack ss;
 
-    uint64_t nodes = 0ULL;
+    int seldepth = 0;
+
+    std::cout << "info string iteration" << std::endl;
+    std::uint64_t nodes = 0ULL;
     while (nodes < options.nodes && stop == false &&
            std::chrono::high_resolution_clock::now() < end) {
-        Node *n = tree_policy(&root, 0.1);
-        assert(n);
-        const float delta = default_policy(n->state_);
-        backup_negamax(n, delta);
+        assert(node_cache.has(hash));
+
+        // Clear search stack
+        ss.positions.clear();
+        ss.moves.clear();
+
+        // We start with only the root position in the stack
+        ss.ply = 1;
+        ss.positions.push_back(pos);
+
+        tree_policy(node_cache, ss, 0.1);
+        assert(ss.ply > 0);
+        const float delta = default_policy(ss.positions.back());
+        backup_negamax(node_cache, ss, delta);
 
         nodes++;
 
         if (nodes == 1 || nodes % 10000 == 0) {
-            PV pv = get_pv(&root);
+            PV pv = get_pv(node_cache, pos);
             assert(pv.length > 0);
             assert(pv.legal(pos));
+
+            seldepth = std::max(ss.ply, seldepth);
+
+            const std::uint64_t hash = calculate_hash(pos);
+            auto entry = node_cache.get(hash);
+
+            if (!entry) {
+                continue;
+            }
+
+            Node *n = entry.value();
+            assert(n);
+            assert(n->visits_ > 0);
 
             // Timing
             auto now = std::chrono::high_resolution_clock::now();
@@ -192,12 +127,17 @@ void mcts(const Position &pos,
             std::cout << "info";
             std::cout << " nodes " << nodes;
             std::cout << " time " << elapsed.count();
-            std::cout << " score " << std::setprecision(4)
-                      << 100 * (float)root.state_.reward_ / root.state_.visits_
-                      << "%";
-            if (elapsed.count() / 1000 > 0) {
-                std::cout << " nps " << nodes / (elapsed.count() / 1000);
+            std::cout << " score " << std::setprecision(2) << std::fixed
+                      << 100 * (float)n->reward_ / n->visits_ << "%";
+            if (elapsed.count() > 0) {
+                std::cout << " nps "
+                          << static_cast<std::uint64_t>(
+                                 nodes / (elapsed.count() / 1000.0));
             }
+            std::cout << " cache " << std::setprecision(2) << std::fixed
+                      << 100.0 * node_cache.size() / node_cache.max_size()
+                      << "%";
+            std::cout << " seldepth " << seldepth;
             if (pv.length > 0) {
                 std::cout << " pv " << pv.string(pos.flipped);
             }
@@ -207,58 +147,52 @@ void mcts(const Position &pos,
 
 #ifndef NDEBUG
     // Print the top children
-    std::vector<Node *> indices;
-    for (auto &c : root.children_) {
-        indices.push_back(&c);
-    }
-    std::cout << "N   move   score     visits  pv" << std::endl;
-    for (unsigned int a = 0; a < indices.size(); ++a) {
-        // Score
-        int best_score = indices[a]->state_.visits_;
-        int index = a;
-        for (unsigned int b = a + 1; b < indices.size(); ++b) {
-            int score = indices[b]->state_.visits_;
-            if (score > best_score) {
-                best_score = score;
-                index = b;
+    std::cout << "move   score     visits  pv" << std::endl;
+    Move moves[MAX_MOVES];
+    int num_moves = movegen(pos, moves);
+    for (int i = 0; i < num_moves; ++i) {
+        Position npos = pos;
+        make_move(npos, moves[i]);
+        if (check(npos, Colour::THEM)) {
+            continue;
+        }
+
+        const std::uint64_t hash = calculate_hash(npos);
+        auto entry = node_cache.get(hash);
+
+        if (entry) {
+            Node *n = entry.value();
+            assert(n);
+
+            // Details
+            PV pv = get_pv(node_cache, npos);
+            assert(pv.legal(npos));
+            float score = 100 * (float)n->reward_ / n->visits_;
+
+            // Print -- move number
+            // std::cout << std::left << std::setw(3) << a + 1 << " ";
+
+            // Print -- move
+            std::cout << std::left << std::setw(6)
+                      << move_uci(moves[i], pos.flipped);
+
+            // Print -- score
+            std::cout << std::right << std::setw(6) << std::fixed
+                      << std::setprecision(2) << score << "%";
+
+            // Print -- visits
+            std::cout << std::right << std::setw(10) << n->visits_;
+
+            // Print -- pv
+            if (pv.length > 0) {
+                std::cout << "  " << pv.string(npos.flipped);
             }
+            std::cout << std::endl;
         }
-
-        // Swap
-        Node *store = indices[a];
-        indices[a] = indices[index];
-        indices[index] = store;
-
-        // Details
-        PV pv = get_pv(indices[a]);
-        assert(pv.legal(indices[a]->state_.pos_));
-        float score = 100 * (float)indices[a]->state_.reward_ /
-                      indices[a]->state_.visits_;
-
-        // Print -- move number
-        std::cout << std::left << std::setw(3) << a + 1 << " ";
-
-        // Print -- move
-        std::cout << std::left << std::setw(6)
-                  << move_uci(indices[a]->state_.move_, pos.flipped);
-
-        // Print -- score
-        std::cout << std::right << std::setw(6) << std::fixed
-                  << std::setprecision(2) << score << "%";
-
-        // Print -- visits
-        std::cout << std::right << std::setw(10) << indices[a]->state_.visits_;
-
-        // Print -- pv
-        if (pv.length > 0) {
-            std::cout << "  " << pv.string(indices[a]->state_.pos_.flipped);
-        }
-
-        std::cout << std::endl;
     }
 #endif
 
-    PV pv = get_pv(&root);
+    PV pv = get_pv(node_cache, pos);
     assert(pv.length > 0);
     assert(pv.legal(pos));
 
