@@ -1,5 +1,6 @@
 #include "display.hpp"
 #include <iostream>
+#include "fen.hpp"
 #include "other.hpp"
 #include "phase.hpp"
 #include "position.hpp"
@@ -91,4 +92,5 @@ void display(const Position &pos) {
     std::cout << "Hash: " << calculate_hash(pos) << std::endl;
     std::cout << "Repeats: " << repetitions(pos) << std::endl;
     std::cout << "50moves: " << is_fifty_moves(pos) << std::endl;
+    std::cout << "FEN: " << get_fen(pos) << std::endl;
 }
