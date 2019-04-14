@@ -16,6 +16,13 @@ void tree_policy(cache::lru<std::uint64_t, Node> &node_cache,
     while (ss.ply < MAX_DEPTH) {
         assert(ss.ply > 0);
         assert(ss.positions.size() > 0);
+
+        // No moves possible if the game is already over
+        if (is_fifty_moves(ss.positions.back()) ||
+            repetitions(ss.positions.back()) == 2) {
+            return;
+        }
+
         const std::uint64_t hash = calculate_hash(ss.positions.back());
 
         // Probe cache
