@@ -2,6 +2,7 @@
 #define SEARCH_INFO_HPP
 
 #include <cstdint>
+#include <ctime>
 #include "../../hashtable.hpp"
 
 struct SearchInfo {

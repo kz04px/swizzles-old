@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include "bitboards.hpp"
 #include "hashtable.hpp"
