@@ -197,11 +197,37 @@ bool test_options() {
     return true;
 }
 
+bool test_threefold() {
+    std::vector<std::tuple<std::string, int, std::vector<std::string>>> tests =
+        {
+            {"startpos", 0, {""}},
+            {"startpos", 0, {"e2e4", "c7c5"}},
+            {"startpos", 1, {"g1f3", "g8f6", "f3g1", "f6g8"}},
+            {"startpos",
+             2,
+             {"g1f3", "g8f6", "f3g1", "f6g8", "g1f3", "g8f6", "f3g1", "f6g8"}},
+        };
+
+    for (const auto &[fen, threefold, moves] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+        for (const auto &move : moves) {
+            make_move(pos, move);
+        }
+        if (repetitions(pos) != threefold) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
+    std::cout << (test_threefold() ? "Y" : "N") << " -- Threefold\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
     std::cout << (test_uci_moves() ? "Y" : "N") << " -- UCI::moves\n";
