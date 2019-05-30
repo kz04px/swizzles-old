@@ -11,6 +11,8 @@
 const int turn_value = 10;
 const int open_file_value = 20;
 const int rook_7th_value = 10;
+// Piece values
+const int values[5] = {100, 300, 325, 500, 900};
 // Piece pairs
 const int bishop_pair_value = 20;
 const int knight_pair_value = 15;
@@ -60,17 +62,16 @@ int eval(const Position &pos) {
             U64_CENTER & pawn_holes & pawns_attacking_them;
         uint64_t copy = 0ULL;
 
+        // Count pieces
+        int counts[6] = {0};
+        for (int p = 0; p < 5; ++p) {
+            counts[p] = popcountll(npos.colour[Colour::US] & npos.pieces[p]);
+        }
+
         // Material
-        score += 100 * popcountll(npos.colour[Colour::US] &
-                                  npos.pieces[PieceType::PAWN]);
-        score += 300 * popcountll(npos.colour[Colour::US] &
-                                  npos.pieces[PieceType::KNIGHT]);
-        score += 325 * popcountll(npos.colour[Colour::US] &
-                                  npos.pieces[PieceType::BISHOP]);
-        score += 500 * popcountll(npos.colour[Colour::US] &
-                                  npos.pieces[PieceType::ROOK]);
-        score += 900 * popcountll(npos.colour[Colour::US] &
-                                  npos.pieces[PieceType::QUEEN]);
+        for (int p = 0; p < 5; ++p) {
+            score += values[p] * counts[p];
+        }
 
         // Midgame piece square tables
         mid_score += score_pst(npos, 0, PieceType::PAWN);
@@ -95,14 +96,12 @@ int eval(const Position &pos) {
         mid_score += piece_mobility(npos);
 
         // Knight pair
-        if (popcountll(npos.colour[Colour::US] &
-                       npos.pieces[PieceType::KNIGHT]) > 1) {
+        if (counts[PieceType::KNIGHT] > 1) {
             score += knight_pair_value;
         }
 
         // Bishop pair
-        if (popcountll(npos.colour[Colour::US] &
-                       npos.pieces[PieceType::BISHOP]) > 1) {
+        if (counts[PieceType::BISHOP] > 1) {
             score += bishop_pair_value;
         }
 
