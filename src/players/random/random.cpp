@@ -25,6 +25,7 @@ void random(const Position &pos) {
     // Return a null move if we have no legal moves
     if (num_moves == 0) {
         std::cout << "bestmove 0000" << std::endl;
+        return;
     }
 
     // Return random move from legal moves
