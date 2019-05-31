@@ -117,9 +117,8 @@ void alphabeta(const Position &pos,
 
         double time_taken = (double)(clock() - info.start) / CLOCKS_PER_SEC;
 
-        std::cout << "info"
-                  << " depth " << d << " nodes " << info.nodes << " time "
-                  << (int)(1000 * time_taken);
+        std::cout << "info";
+        std::cout << " depth " << d;
 
         if (score > INF - MAX_DEPTH) {
             std::cout << " score mate " << (INF - score + 1) / 2;
@@ -128,6 +127,12 @@ void alphabeta(const Position &pos,
         } else {
             std::cout << " score cp " << score;
         }
+
+        std::cout << " nodes " << info.nodes;
+        if (time_taken > 0) {
+            std::cout << " nps " << int(info.nodes / time_taken);
+        }
+        std::cout << " time " << (int)(1000 * time_taken);
 
         if (pv.length > 0) {
             std::cout << " pv " + pv.string(pos.flipped);
