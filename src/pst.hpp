@@ -1,7 +1,7 @@
 #ifndef PST_HPP
 #define PST_HPP
 
-#include "position.hpp"
+struct Position;
 
 // clang-format off
 const int PST[6][2][64] =

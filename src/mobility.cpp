@@ -1,6 +1,7 @@
 #include "mobility.hpp"
 #include "bitboards.hpp"
 #include "other.hpp"
+#include "position.hpp"
 
 int piece_mobility(const Position &pos) {
     uint64_t moves = 0;

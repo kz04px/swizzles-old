@@ -1,5 +1,6 @@
 #include "pst.hpp"
 #include "other.hpp"
+#include "position.hpp"
 #include "types.hpp"
 
 int score_pst(const Position &pos, const int stage, const int piece) {

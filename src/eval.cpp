@@ -6,6 +6,7 @@
 #include "mobility.hpp"
 #include "other.hpp"
 #include "phase.hpp"
+#include "position.hpp"
 #include "pst.hpp"
 
 const int turn_value = 10;

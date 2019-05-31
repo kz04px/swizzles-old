@@ -7,6 +7,7 @@
 #include "makemove.hpp"
 #include "options.hpp"
 #include "perft/perft.hpp"
+#include "position.hpp"
 #include "protocols.hpp"
 #include "zobrist.hpp"
 

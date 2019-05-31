@@ -3,7 +3,8 @@
 
 #include <sstream>
 #include "hashtable.hpp"
-#include "position.hpp"
+
+struct Position;
 
 namespace UCI {
 

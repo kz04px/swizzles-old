@@ -1,7 +1,7 @@
 #ifndef PHASE_HPP
 #define PHASE_HPP
 
-#include "position.hpp"
+struct Position;
 
 int phase(const Position &pos);
 

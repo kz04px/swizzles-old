@@ -1,4 +1,10 @@
 #include "see.hpp"
+#include <cassert>
+#include "bitboards.hpp"
+#include "eval.hpp"
+#include "other.hpp"
+#include "position.hpp"
+#include "types.hpp"
 
 int see(int sq,
         int side,

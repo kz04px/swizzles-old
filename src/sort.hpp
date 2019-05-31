@@ -2,7 +2,8 @@
 #define SORT_HPP
 
 #include "move.hpp"
-#include "position.hpp"
+
+struct Position;
 
 void sort(const Position &pos,
           Move *moves,

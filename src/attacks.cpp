@@ -1,6 +1,7 @@
 #include "attacks.hpp"
 #include "bitboards.hpp"
 #include "other.hpp"
+#include "position.hpp"
 
 uint64_t squares_attacked(const Position &pos, const Colour side) {
     uint64_t attacks = 0ULL;

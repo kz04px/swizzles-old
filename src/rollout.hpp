@@ -1,7 +1,7 @@
 #ifndef ROLLOUT_HPP_INCLUDED
 #define ROLLOUT_HPP_INCLUDED
 
-#include "position.hpp"
+struct Position;
 
 float rollout(const Position &pos, const int length);
 

@@ -3,6 +3,7 @@
 #include "attacks.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
+#include "position.hpp"
 #include "types.hpp"
 
 float rollout(const Position &pos, const int length) {

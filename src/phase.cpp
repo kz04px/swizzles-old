@@ -1,5 +1,6 @@
 #include "phase.hpp"
 #include "other.hpp"
+#include "position.hpp"
 #include "types.hpp"
 
 int phase(const Position &pos) {

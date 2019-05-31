@@ -1,5 +1,6 @@
 #include "sort.hpp"
 #include <cassert>
+#include "position.hpp"
 #include "pst.hpp"
 #include "see.hpp"
 #include "types.hpp"

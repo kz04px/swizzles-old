@@ -1,7 +1,7 @@
 #ifndef DISPLAY_HPP
 #define DISPLAY_HPP
 
-#include "position.hpp"
+struct Position;
 
 void display(const Position &pos);
 

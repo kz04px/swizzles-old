@@ -4,6 +4,7 @@
 #include <cassert>
 #include "makemove.hpp"
 #include "move.hpp"
+#include "position.hpp"
 
 struct PV {
     PV() : length(0), moves{} {

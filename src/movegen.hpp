@@ -2,7 +2,8 @@
 #define MOVEGEN_HPP
 
 #include "move.hpp"
-#include "position.hpp"
+
+struct Position;
 
 int movegen(const Position &pos, Move *movelist);
 int movegen_captures(const Position &pos, Move *movelist);

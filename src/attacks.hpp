@@ -1,8 +1,9 @@
 #ifndef ATTACKS_HPP
 #define ATTACKS_HPP
 
-#include "position.hpp"
 #include "types.hpp"
+
+struct Position;
 
 uint64_t squares_attacked(const Position &pos, const Colour side);
 uint64_t attackers(const Position &pos, const Square sq, const Colour side);

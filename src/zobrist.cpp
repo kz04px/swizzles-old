@@ -1,6 +1,7 @@
 #include "zobrist.hpp"
 #include <random>
 #include "other.hpp"
+#include "position.hpp"
 #include "types.hpp"
 
 std::uint64_t keys_flipped;

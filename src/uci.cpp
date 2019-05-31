@@ -7,6 +7,7 @@
 #include "options.hpp"
 #include "perft/perft.hpp"
 #include "players/all.hpp"
+#include "position.hpp"
 #include "protocols.hpp"
 #include "search-options.hpp"
 

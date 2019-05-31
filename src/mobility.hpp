@@ -1,7 +1,7 @@
 #ifndef MOBILITY_HPP_INCLUDED
 #define MOBILITY_HPP_INCLUDED
 
-#include "position.hpp"
+struct Position;
 
 int piece_mobility(const Position &pos);
 

@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstdint>
 #include "movegen.hpp"
+#include "position.hpp"
 #include "types.hpp"
 #include "zobrist.hpp"
 
