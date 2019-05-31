@@ -16,6 +16,8 @@ int qsearch(const Position &pos,
     assert(ss);
     assert(beta > alpha);
 
+    info.seldepth = std::max(info.seldepth, ss->ply);
+
     if (ss->ply >= MAX_DEPTH) {
         return eval(pos);
     }

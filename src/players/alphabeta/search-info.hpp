@@ -18,6 +18,7 @@ struct SearchInfo {
 
     std::uint64_t nodes;
     std::uint64_t leafnodes;
+    int seldepth;
     clock_t start;
     clock_t end;
     bool *stop;

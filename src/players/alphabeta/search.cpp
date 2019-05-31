@@ -20,6 +20,7 @@ void alphabeta(const Position &pos,
     SearchInfo info;
     info.nodes = 0ULL;
     info.leafnodes = 0ULL;
+    info.seldepth = 0;
     info.start = clock();
     info.stop = &stop;
     info.tt = &tt;
@@ -114,11 +115,13 @@ void alphabeta(const Position &pos,
 
         assert(pv.length > 0);
         assert(pv.legal(pos) == true);
+        assert(info.seldepth >= d);
 
         double time_taken = (double)(clock() - info.start) / CLOCKS_PER_SEC;
 
         std::cout << "info";
         std::cout << " depth " << d;
+        std::cout << " seldepth " << info.seldepth;
 
         if (score > INF - MAX_DEPTH) {
             std::cout << " score mate " << (INF - score + 1) / 2;
