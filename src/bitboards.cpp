@@ -337,6 +337,15 @@ bool is_backward_pawn_them(int sq, uint64_t friendly, uint64_t enemy) {
     return !(passed_pawn_blockers[US][sq + 8] & friendly);
 }
 
+uint64_t passed_pawns(const uint64_t us, const uint64_t them) {
+    uint64_t mask =
+        ((them >> 9) & ~U64_FILE_H) | ((them >> 7) & ~U64_FILE_A) | them;
+    mask |= mask >> 8;
+    mask |= mask >> 16;
+    mask |= mask >> 32;
+    return (~mask) & us;
+}
+
 uint64_t get_file(int file) {
     return files[file];
 }

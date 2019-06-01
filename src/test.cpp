@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "bitboards.hpp"
 #include "fen.hpp"
 #include "makemove.hpp"
 #include "options.hpp"
@@ -223,12 +224,35 @@ bool test_threefold() {
     return true;
 }
 
+bool test_passers() {
+    std::vector<std::pair<std::string, uint64_t>> tests = {
+        {"startpos", 0ULL},
+        {"4k3/2P5/8/Pp6/1p3p1P/2P2P1p/3P4/4K3 w - -", 0x4000180000800},
+        {"4k3/2p2p2/1pP4p/3p4/8/8/p3P3/4K3 b - -", 0x1000000820000},
+    };
+
+    for (const auto &[fen, answer] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+        const uint64_t us =
+            pos.colour[Colour::US] & pos.pieces[PieceType::PAWN];
+        const uint64_t them =
+            pos.colour[Colour::THEM] & pos.pieces[PieceType::PAWN];
+        if (answer != passed_pawns(us, them)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
     std::cout << (test_threefold() ? "Y" : "N") << " -- Threefold\n";
+    std::cout << (test_passers() ? "Y" : "N") << " -- Passed pawns\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
     std::cout << (test_uci_moves() ? "Y" : "N") << " -- UCI::moves\n";
