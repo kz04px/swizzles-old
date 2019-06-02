@@ -1,5 +1,6 @@
 #include <ctime>
 #include <iostream>
+#include "benchmark.hpp"
 #include "bitboards.hpp"
 #include "hashtable.hpp"
 #include "players/mcts-uct/node.hpp"
@@ -22,6 +23,8 @@ int main() {
         std::cout << "xboard protocol not supported" << std::endl;
     } else if (mode == "test") {
         test();
+    } else if (mode == "benchmark" || mode == "bench") {
+        benchmark();
     } else if (mode == "about") {
         std::cout << "Chess engine written in C++" << std::endl;
         std::cout << "By kz04px" << std::endl;
