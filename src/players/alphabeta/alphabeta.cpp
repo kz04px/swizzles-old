@@ -46,12 +46,12 @@ int alphabeta(const Position &pos,
         return 0;
     }
 
-    bool in_check = check(pos, Colour::US);
-    bool pvnode = (beta != alpha + 1);
+    const bool in_check = check(pos, Colour::US);
+    const bool pvnode = (beta != alpha + 1);
     int best_score = std::numeric_limits<int>::min();
     Move tt_move = NO_MOVE;
     Move best_move = NO_MOVE;
-    int alpha_original = alpha;
+    const int alpha_original = alpha;
 
     // Check extension
     if (in_check == true && depth < MAX_DEPTH) {
@@ -67,7 +67,7 @@ int alphabeta(const Position &pos,
     const uint64_t key = pos.history[pos.history_size - 1];
 
     // Check the hash table
-    Entry entry = info.tt->probe(key);
+    const Entry entry = info.tt->probe(key);
     if (key == entry.key()) {
         tt_move = entry.move();
 
