@@ -1,9 +1,9 @@
 #ifndef QSEARCH_HPP
 #define QSEARCH_HPP
 
-#include "../../position.hpp"
-#include "search-info.hpp"
-#include "search-stack.hpp"
+struct Position;
+struct SearchInfo;
+struct SearchStack;
 
 int qsearch(const Position &pos,
             SearchInfo &info,

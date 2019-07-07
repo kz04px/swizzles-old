@@ -4,9 +4,12 @@
 #include "../../makemove.hpp"
 #include "../../move.hpp"
 #include "../../movegen.hpp"
+#include "../../position.hpp"
 #include "../../see.hpp"
 #include "../../sort.hpp"
 #include "../../types.hpp"
+#include "search-info.hpp"
+#include "search-stack.hpp"
 
 int qsearch(const Position &pos,
             SearchInfo &info,
