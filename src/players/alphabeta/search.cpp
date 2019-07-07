@@ -34,8 +34,8 @@ void alphabeta(const Position &pos,
     for (int i = 0; i < MAX_DEPTH + 1; ++i) {
         ss[i].ply = i;
         ss[i].nullmove = true;
-        ss[i].killer1 = 0;
-        ss[i].killer2 = 0;
+        ss[i].killer1 = NO_MOVE;
+        ss[i].killer2 = NO_MOVE;
     }
 
     options.depth = std::max(1, options.depth);

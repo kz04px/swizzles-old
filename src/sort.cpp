@@ -16,7 +16,7 @@ void sort(const Position &pos,
     assert(moves);
     assert(num < MAX_MOVES);
 
-    int scores[num] = {0};
+    int scores[num];
 
     for (int i = 0; i < num; ++i) {
         if (moves[i] == tt_move) {
@@ -62,6 +62,7 @@ void sort(const Position &pos,
 
 void sort_see(const Position &pos, Move *moves, int *scores, const int num) {
     assert(moves);
+    assert(scores);
     assert(num < MAX_MOVES);
 
     for (int i = 0; i < num; ++i) {
@@ -77,13 +78,8 @@ void sort_see(const Position &pos, Move *moves, int *scores, const int num) {
             }
         }
 
-        Move store = moves[idx];
-        moves[idx] = moves[a];
-        moves[a] = store;
-
-        int store2 = scores[idx];
-        scores[idx] = scores[a];
-        scores[a] = store2;
+        std::swap(moves[idx], moves[a]);
+        std::swap(scores[idx], scores[a]);
     }
 
 #ifndef NDEBUG

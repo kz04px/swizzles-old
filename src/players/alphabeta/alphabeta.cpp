@@ -81,7 +81,7 @@ int alphabeta(const Position &pos,
 
         if (!pvnode && entry.depth() >= depth &&
             legal_move(pos, tt_move) == true) {
-            int score = eval_from_tt(entry.eval(), ss->ply);
+            const int score = eval_from_tt(entry.eval(), ss->ply);
 
             switch (entry.flag()) {
                 case FLAGS::EXACT:
@@ -142,7 +142,7 @@ int alphabeta(const Position &pos,
         npos.history_size++;
 
         (ss + 1)->nullmove = false;
-        int score = -alphabeta(
+        const int score = -alphabeta(
             npos, info, ss + 1, npv, -beta, -beta + 1, depth - 1 - R);
         (ss + 1)->nullmove = true;
 
