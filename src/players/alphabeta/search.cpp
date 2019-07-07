@@ -152,6 +152,10 @@ void alphabeta(const Position &pos,
     }
 
 #ifndef NDEBUG
+    std::cout << "info string TT hits " << info.hash_hits << std::endl;
+    std::cout << "info string TT collisions " << info.hash_collisions
+              << std::endl;
+
     uint64_t sum = 0ULL;
     for (int i = 0; i < MAX_MOVES; ++i) {
         sum += info.cutoffs[i];

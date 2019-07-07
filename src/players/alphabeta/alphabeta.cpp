@@ -72,11 +72,10 @@ int alphabeta(const Position &pos,
         tt_move = entry.move();
 
 #ifndef NDEBUG
-        // info.hash_hits++;
-        // if(legal_move(pos, tt_move) == false)
-        //{
-        //    info.hash_collisions++;
-        //}
+        info.hash_hits++;
+        if (legal_move(pos, tt_move) == false) {
+            info.hash_collisions++;
+        }
 #endif
 
         if (!pvnode && entry.depth() >= depth &&
