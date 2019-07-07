@@ -9,7 +9,7 @@
 #include "zobrist.hpp"
 
 PieceType piece_get(const Position &pos, const Square sq) {
-    uint64_t bb = 1ULL << sq;
+    const uint64_t bb = 1ULL << sq;
 
     for (int i = PieceType::PAWN; i <= PieceType::KING; ++i) {
         if (pos.pieces[i] & bb) {

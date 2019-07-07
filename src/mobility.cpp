@@ -6,7 +6,7 @@
 int piece_mobility(const Position &pos) {
     uint64_t moves = 0;
     uint64_t copy = 0;
-    uint64_t allowed = ~pos.colour[Colour::US];
+    const uint64_t allowed = ~pos.colour[Colour::US];
     int from = 0;
 
     // Knights
@@ -44,7 +44,7 @@ int piece_mobility(const Position &pos) {
         copy &= copy - 1;
     }
 
-    int count = popcountll(moves);
+    const int count = popcountll(moves);
 
     return 4 * count;
 }
