@@ -49,13 +49,8 @@ void sort(const Position &pos,
             }
         }
 
-        Move store = moves[idx];
-        moves[idx] = moves[a];
-        moves[a] = store;
-
-        int store2 = scores[idx];
-        scores[idx] = scores[a];
-        scores[a] = store2;
+        std::swap(moves[idx], moves[a]);
+        std::swap(scores[idx], scores[a]);
     }
 
 #ifndef NDEBUG
