@@ -7,6 +7,7 @@
 #include "players/mcts-uct/state.hpp"
 #include "protocols.hpp"
 #include "test.hpp"
+#include "tuner/tune.hpp"
 #include "zobrist.hpp"
 
 int main() {
@@ -23,6 +24,8 @@ int main() {
         std::cout << "xboard protocol not supported" << std::endl;
     } else if (mode == "test") {
         test();
+    } else if (mode == "tune") {
+        tune("training.epd", 3);
     } else if (mode == "benchmark" || mode == "bench") {
         benchmark();
     } else if (mode == "about") {
