@@ -5,6 +5,7 @@
 #include <future>
 #include <iostream>
 #include <sstream>
+#include <stack>
 #include <string>
 #include <vector>
 #include "../fen.hpp"
@@ -141,6 +142,11 @@ void tune(const std::string &path, const int num_threads) {
 
     const auto start = std::chrono::high_resolution_clock::now();
 
+    std::stack<int> increments({1, 2, 5, 10, 20});
+
+    int inc = increments.top();
+    increments.pop();
+
     // Run
     bool improved = true;
     while (improved) {
@@ -157,6 +163,7 @@ void tune(const std::string &path, const int num_threads) {
 
             std::cout << "Iteration: " << num_iterations << std::endl;
             std::cout << "Error: " << best_e << std::endl;
+            std::cout << "Increment: " << inc << std::endl;
             std::cout << "Values:";
             for (const auto &val : values) {
                 std::cout << " " << val;
@@ -170,22 +177,34 @@ void tune(const std::string &path, const int num_threads) {
             std::cout << std::endl;
         }
 
+        // Try improve
         for (auto &val : values) {
-            val += 1;
+            val += inc;
             auto new_e = get(num_threads, entries, values);
             if (new_e < best_e) {
                 best_e = new_e;
                 improved = true;
             } else {
-                val -= 2;
+                val -= 2 * inc;
                 new_e = get(num_threads, entries, values);
                 if (new_e < best_e) {
                     best_e = new_e;
                     improved = true;
                 } else {
-                    val += 1;
+                    val += inc;
                 }
             }
+        }
+
+        // Lower increment if we can
+        if (!improved && !increments.empty()) {
+            std::cout << "Reducing increment size from " << inc << " to "
+                      << increments.top() << std::endl;
+            std::cout << std::endl;
+
+            inc = increments.top();
+            increments.pop();
+            improved = true;
         }
     }
 }
