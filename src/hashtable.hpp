@@ -69,7 +69,7 @@ class Hashtable {
 
     void create(const int mb) {
         num_entries = mb * (1024 * 1024) / sizeof(Entry);
-        entries = new Entry[num_entries];
+        entries = new Entry[num_entries]();
         assert(entries);
     }
 

@@ -148,8 +148,10 @@ int eval(const Position &pos) {
                 assert(promo_sq >= Square::A8);
                 assert(promo_sq <= Square::H8);
                 assert(promo_bb & U64_RANK_8);
+                assert(promo_bb & infront);
                 assert(infront);
                 assert(behind);
+                assert(infront & promo_bb);
                 assert((behind | infront | bb) == file);
 
                 // Bonus for how advanced we are

@@ -1,4 +1,5 @@
 #include "qsearch.hpp"
+#include <cassert>
 #include "../../attacks.hpp"
 #include "../../eval.hpp"
 #include "../../makemove.hpp"
@@ -29,7 +30,7 @@ int qsearch(const Position &pos,
         return 0;
     }
 
-    int stand_pat = eval(pos);
+    const int stand_pat = eval(pos);
 
     if (stand_pat >= beta) {
         return beta;
@@ -40,7 +41,7 @@ int qsearch(const Position &pos,
     }
 
     Move moves[128];
-    int num_moves = movegen_captures(pos, moves);
+    const int num_moves = movegen_captures(pos, moves);
     if (num_moves == 0) {
         return alpha;
     }
