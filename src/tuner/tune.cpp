@@ -18,8 +18,8 @@ struct Data {
     float score_;
 };
 
-float sigmoid(const float k) {
-    return 1.0 / (1.0 + pow(10, -k / 400.0));
+float sigmoid(const float s, const float k = 1.13) {
+    return 1.0 / (1.0 + pow(10, s * -k / 400.0));
 }
 
 float E(const std::vector<int> &values,
