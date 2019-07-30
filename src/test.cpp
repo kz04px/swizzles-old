@@ -246,13 +246,36 @@ bool test_passers() {
     return true;
 }
 
+bool test_chains() {
+    std::vector<std::pair<std::string, uint64_t>> tests = {
+        {"startpos", 0ULL},
+        {"4k3/2P5/8/Pp6/1p3p1P/2P2P1p/3P4/4K3 w - -", 0x40000},
+        {"4k3/2p2p2/1pP4p/3p4/8/8/p3P3/4K3 b - -", 0x20000},
+        {"4k3/8/8/P6P/P6P/P6P/P6P/4K3 w - -", 0x0},
+        {"4k3/8/8/3PP3/2P2P2/1P4P1/P6P/4K3 w - -", 0x1824420000},
+    };
+
+    for (const auto &[fen, answer] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+        const uint64_t pawns =
+            pos.colour[Colour::US] & pos.pieces[PieceType::PAWN];
+        if (answer != chained_pawns(pawns)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
     std::cout << (test_threefold() ? "Y" : "N") << " -- Threefold\n";
-    std::cout << (test_passers() ? "Y" : "N") << " -- Passed pawns\n";
+    std::cout << (test_passers() ? "Y" : "N") << " -- Pawns - passed\n";
+    std::cout << (test_chains() ? "Y" : "N") << " -- Pawns - chained\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
     std::cout << (test_uci_moves() ? "Y" : "N") << " -- UCI::moves\n";

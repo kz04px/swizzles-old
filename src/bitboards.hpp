@@ -17,6 +17,7 @@ bool is_passed_pawn(int side, int sq, uint64_t blockers);
 bool is_backward_pawn_us(int sq, uint64_t friendly, uint64_t enemy);
 bool is_backward_pawn_them(int sq, uint64_t friendly, uint64_t enemy);
 uint64_t passed_pawns(const uint64_t us, const uint64_t them);
+uint64_t chained_pawns(const uint64_t pawns);
 int sq_to_file(int sq);
 int sq_to_rank(int sq);
 

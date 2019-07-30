@@ -346,6 +346,11 @@ uint64_t passed_pawns(const uint64_t us, const uint64_t them) {
     return (~mask) & us;
 }
 
+uint64_t chained_pawns(const uint64_t pawns) {
+    return ((pawns << 9) & (~U64_FILE_A) & pawns) |
+           ((pawns << 7) & (~U64_FILE_H) & pawns);
+}
+
 uint64_t get_file(int file) {
     return files[file];
 }
