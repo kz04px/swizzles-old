@@ -94,3 +94,16 @@ void display(const Position &pos) {
     std::cout << "50moves: " << is_fifty_moves(pos) << std::endl;
     std::cout << "FEN: " << get_fen(pos) << std::endl;
 }
+
+void display_u64(const std::uint64_t bb) {
+    for (int sq = A8; sq >= 0; ++sq) {
+        const uint64_t n = (uint64_t)1 << sq;
+
+        std::cout << static_cast<bool>(n & bb);
+
+        if (sq % 8 == 7) {
+            std::cout << std::endl;
+            sq -= 16;
+        }
+    }
+}
