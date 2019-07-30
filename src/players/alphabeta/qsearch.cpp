@@ -42,9 +42,9 @@ int qsearch(const Position &pos,
 
     Move moves[128];
     const int num_moves = movegen_captures(pos, moves);
-    if (num_moves == 0) {
-        return alpha;
-    }
+    // if (num_moves == 0) {
+    //    return alpha;
+    //}
     // int scores[128];
     // sort_see(pos, moves, scores, num_moves);
 
