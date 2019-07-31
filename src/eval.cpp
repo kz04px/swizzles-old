@@ -49,18 +49,8 @@ int eval(const Position &pos) {
 
     for (int i = 0; i < 2; ++i) {
         const bool our_turn = (i == 0);
-        const int their_king_sq =
-            lsbll(npos.pieces[PieceType::KING] & npos.colour[Colour::THEM]);
-        const uint64_t pawns_attacking = pawn_attacks(npos, Colour::US);
-        const uint64_t pawns_attacking_them = pawn_attacks(npos, Colour::THEM);
         const uint64_t pawns =
             npos.pieces[PieceType::PAWN] & npos.colour[Colour::US];
-        const uint64_t pawn_holes = ~(
-            pawns_attacking | (pawns_attacking << 8) | (pawns_attacking << 16) |
-            (pawns_attacking << 24) | (pawns_attacking << 32) |
-            (pawns_attacking << 40) | (pawns_attacking << 48));
-        const uint64_t outposts =
-            U64_CENTER & pawn_holes & pawns_attacking_them;
         uint64_t copy = 0ULL;
 
         // Count pieces
@@ -105,11 +95,6 @@ int eval(const Position &pos) {
         if (counts[PieceType::BISHOP] > 1) {
             score += bishop_pair_value;
         }
-
-        // Knight outposts
-        score += -knight_outpost_value *
-                 popcountll(outposts & npos.pieces[PieceType::KNIGHT] &
-                            npos.colour[Colour::THEM]);
 
         copy = pawns;
         while (copy) {
@@ -156,27 +141,9 @@ int eval(const Position &pos) {
 
                 // Bonus for how advanced we are
                 end_score += passer_rank_value[r];
-
-                // Bonus when the enemy king can't reach us in time to promote
-                if (king_distance(promo_sq, their_king_sq) -
-                        (our_turn ? 0 : 1) >
-                    std::min(5, 7 - r)) {
-                    end_score += unreachable_pawn_value;
-                }
-
-                // Defended passed pawn
-                if (bb & pawns_attacking) {
-                    score += passer_rank_value[r] / 2;
-                }
             }
 
             copy &= copy - 1;
-        }
-
-        // Rook on the 7th
-        if (U64_RANK_7 & npos.pieces[PieceType::ROOK] &
-            npos.colour[Colour::US]) {
-            score += rook_7th_value;
         }
 
         // Each file
