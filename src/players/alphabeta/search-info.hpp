@@ -1,6 +1,7 @@
 #ifndef SEARCH_INFO_HPP
 #define SEARCH_INFO_HPP
 
+#include <chrono>
 #include <cstdint>
 #include <ctime>
 #include "../../hashtable.hpp"
@@ -9,8 +10,6 @@ struct SearchInfo {
     SearchInfo()
         : nodes(0ULL),
           leafnodes(0ULL),
-          start(0),
-          end(0),
           stop(nullptr),
           tt(nullptr),
           hash_hits(0ULL),
@@ -21,8 +20,8 @@ struct SearchInfo {
     std::uint64_t nodes;
     std::uint64_t leafnodes;
     int seldepth;
-    clock_t start;
-    clock_t end;
+    std::chrono::high_resolution_clock::time_point start;
+    std::chrono::high_resolution_clock::time_point end;
     bool *stop;
     Hashtable *tt;
     std::uint64_t hash_hits;

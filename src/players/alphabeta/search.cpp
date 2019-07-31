@@ -1,4 +1,5 @@
 #include <cassert>
+#include <chrono>
 #include <climits>
 #include <cstdint>
 #include <cstring>
@@ -11,6 +12,9 @@
 #include "../all.hpp"
 #include "alphabeta.hpp"
 
+using clockz = std::chrono::high_resolution_clock;
+using ms = std::chrono::milliseconds;
+
 namespace player {
 
 void alphabeta(const Position &pos,
@@ -21,7 +25,7 @@ void alphabeta(const Position &pos,
     info.nodes = 0ULL;
     info.leafnodes = 0ULL;
     info.seldepth = 0;
-    info.start = clock();
+    info.start = clockz::now();
     info.stop = &stop;
     info.tt = &tt;
 #ifndef NDEBUG
@@ -51,40 +55,35 @@ void alphabeta(const Position &pos,
             options.depth = std::numeric_limits<int>::max();
             options.nodes = std::numeric_limits<uint64_t>::max();
             if (pos.flipped) {
-                info.end =
-                    info.start +
-                    ((double)(options.btime / options.movestogo) / 1000.0) *
-                        CLOCKS_PER_SEC;
+                const int use = (float)options.btime / options.movestogo;
+                info.end = info.start + ms(use);
             } else {
-                info.end =
-                    info.start +
-                    ((double)(options.wtime / options.movestogo) / 1000.0) *
-                        CLOCKS_PER_SEC;
+                const int use = (float)options.wtime / options.movestogo;
+                info.end = info.start + ms(use);
             }
             break;
         case SearchType::Movetime:
             options.depth = std::numeric_limits<int>::max();
             options.nodes = std::numeric_limits<uint64_t>::max();
-            info.end = info.start +
-                       ((double)options.movetime / 1000.0) * CLOCKS_PER_SEC;
+            info.end = info.start + ms(options.movetime);
             break;
         case SearchType::Depth:
             options.nodes = std::numeric_limits<uint64_t>::max();
-            info.end = std::numeric_limits<clock_t>::max();
+            info.end = info.start + std::chrono::hours(24);
             break;
         case SearchType::Nodes:
             options.depth = std::numeric_limits<int>::max();
-            info.end = std::numeric_limits<clock_t>::max();
+            info.end = info.start + std::chrono::hours(24);
             break;
         case SearchType::Infinite:
             options.nodes = std::numeric_limits<uint64_t>::max();
             options.depth = std::numeric_limits<int>::max();
-            info.end = std::numeric_limits<clock_t>::max();
+            info.end = info.start + std::chrono::hours(24);
             break;
         default:
             options.depth = std::numeric_limits<int>::max();
             options.nodes = std::numeric_limits<uint64_t>::max();
-            info.end = info.start + 1.0 * CLOCKS_PER_SEC;
+            info.end = info.start + ms(1000);
             break;
     }
 
@@ -105,8 +104,10 @@ void alphabeta(const Position &pos,
             }
         }
 
+        const auto now = clockz::now();
+
         // If we ran out of time or were asked to stop, discard the result
-        if (d > 1 && (clock() >= info.end || *info.stop == true)) {
+        if (d > 1 && (now >= info.end || *info.stop == true)) {
             break;
         }
 
@@ -117,7 +118,8 @@ void alphabeta(const Position &pos,
         assert(pv.legal(pos) == true);
         assert(info.seldepth >= d);
 
-        double time_taken = (double)(clock() - info.start) / CLOCKS_PER_SEC;
+        const auto time_taken =
+            std::chrono::duration_cast<ms>(now - info.start);
 
         std::cout << "info";
         std::cout << " depth " << d;
@@ -132,22 +134,22 @@ void alphabeta(const Position &pos,
         }
 
         std::cout << " nodes " << info.nodes;
-        if (time_taken > 0) {
-            std::cout << " nps " << int(info.nodes / time_taken);
+        if (time_taken.count() > 0) {
+            std::cout << " nps " << 1000 * int(info.nodes / time_taken.count());
         }
-        std::cout << " time " << (int)(1000 * time_taken);
+        std::cout << " time " << time_taken.count();
 
         if (pv.length > 0) {
             std::cout << " pv " + pv.string(pos.flipped);
         }
 
         std::cout << std::endl;
+
         /*
-                // Try and predict if we have enough time for the next iteration
-                if(info.start + 4*time_taken*CLOCKS_PER_SEC > info.end)
-                {
-                    break;
-                }
+        // Try and predict if we have enough time for the next iteration
+        if (info.start + 4 * time_taken * CLOCKS_PER_SEC > info.end) {
+            break;
+        }
         */
     }
 

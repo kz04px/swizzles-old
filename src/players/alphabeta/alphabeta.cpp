@@ -1,4 +1,5 @@
 #include "alphabeta.hpp"
+#include <chrono>
 #include <cstring>
 #include <iostream>
 #include <limits>
@@ -16,6 +17,8 @@
 #include "qsearch.hpp"
 #include "reduction.hpp"
 
+using clockz = std::chrono::high_resolution_clock;
+
 int alphabeta(const Position &pos,
               SearchInfo &info,
               SearchStack *ss,
@@ -32,7 +35,7 @@ int alphabeta(const Position &pos,
     assert(depth >= 0);
     assert(depth < MAX_DEPTH);
 
-    if (*info.stop == true || clock() > info.end) {
+    if (*info.stop == true || clockz::now() >= info.end) {
         return 0;
     }
 

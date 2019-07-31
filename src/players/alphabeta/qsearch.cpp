@@ -1,5 +1,6 @@
 #include "qsearch.hpp"
 #include <cassert>
+#include <chrono>
 #include "../../attacks.hpp"
 #include "../../eval.hpp"
 #include "../../makemove.hpp"
@@ -11,6 +12,8 @@
 #include "../../types.hpp"
 #include "search-info.hpp"
 #include "search-stack.hpp"
+
+using clockz = std::chrono::high_resolution_clock;
 
 int qsearch(const Position &pos,
             SearchInfo &info,
@@ -26,7 +29,7 @@ int qsearch(const Position &pos,
         return eval(pos);
     }
 
-    if (*info.stop == true || clock() > info.end) {
+    if (*info.stop == true || clockz::now() >= info.end) {
         return 0;
     }
 
