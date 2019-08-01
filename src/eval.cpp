@@ -13,7 +13,7 @@ const int turn_value = 10;
 const int open_file_value = 20;
 const int rook_7th_value = 10;
 // Piece values
-const int values[5] = {100, 300, 325, 500, 900};
+const int piece_value[5] = {100, 300, 325, 500, 900};
 // Piece pairs
 const int bishop_pair_value = 20;
 const int knight_pair_value = 15;
@@ -61,7 +61,7 @@ int eval(const Position &pos) {
 
         // Material
         for (int p = 0; p < 5; ++p) {
-            score += values[p] * counts[p];
+            score += piece_value[p] * counts[p];
         }
 
         // Midgame piece square tables

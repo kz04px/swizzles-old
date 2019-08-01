@@ -6,6 +6,8 @@
 #include "position.hpp"
 #include "types.hpp"
 
+const int piece_value[7] = {100, 300, 325, 500, 900, 1000000, 0};
+
 int see(int sq,
         int side,
         int captured,
