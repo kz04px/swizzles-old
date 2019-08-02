@@ -136,7 +136,7 @@ int alphabeta(const Position &pos,
 
         // Make nullmove
         flip(npos);
-        npos.enpassant = Square::OFFSQ;
+        npos.enpassant = Square::A1;
         npos.halfmoves = 0;
         npos.fullmoves = 0;
         const std::uint64_t hash = calculate_hash(npos);

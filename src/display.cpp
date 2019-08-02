@@ -82,7 +82,7 @@ void display(const Position &pos) {
     std::cout << "Turn: " << (pos.flipped == true ? "b" : "w") << std::endl;
     std::cout << "Castling:  " << part << std::endl;
     std::cout << "Enpassant: "
-              << (npos.enpassant == Square::OFFSQ
+              << (npos.enpassant == Square::A1
                       ? "-"
                       : SquareString[npos.enpassant])
               << std::endl;

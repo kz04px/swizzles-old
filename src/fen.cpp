@@ -24,7 +24,7 @@ bool set_fen(Position &pos, const std::string &fen) {
     pos.castling[usQSC] = false;
     pos.castling[themKSC] = false;
     pos.castling[themQSC] = false;
-    pos.enpassant = Square::OFFSQ;
+    pos.enpassant = Square::A1;
     pos.flipped = false;
     pos.halfmoves = 0;
     pos.fullmoves = 0;
@@ -148,7 +148,7 @@ bool set_fen(Position &pos, const std::string &fen) {
     // Part 4 -- En passant square
     if (ss >> word) {
         if (word == "-") {
-            pos.enpassant = OFFSQ;
+            pos.enpassant = A1;
         } else {
             for (int sq = 0; sq < 64; ++sq) {
                 if (SquareString[sq] == word) {
@@ -296,7 +296,7 @@ std::string get_fen(const Position &pos) {
     fen += " " + part;
 
     // Part 4 -- En passant square
-    if (pos.enpassant == Square::OFFSQ) {
+    if (pos.enpassant == Square::A1) {
         fen += " -";
     } else {
         fen += " " + SquareString[npos.enpassant];

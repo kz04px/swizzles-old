@@ -100,7 +100,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
     }
 
     // Enpassant
-    if (pos.enpassant != Square::OFFSQ) {
+    if (pos.enpassant != Square::A1) {
         uint64_t moves = magic_moves_pawn(THEM, pos.enpassant) &
                          pos.pieces[PieceType::PAWN] & pos.colour[US];
         while (moves) {

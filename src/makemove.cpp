@@ -19,7 +19,7 @@ void make_move(Position &pos, const Move m) {
     assert(piece != PieceType::NONE);
     assert(captured != PieceType::KING);
 
-    pos.enpassant = Square::OFFSQ;
+    pos.enpassant = Square::A1;
     pos.fullmoves += pos.flipped;
 
     // Remove the piece

@@ -352,7 +352,7 @@ bool legal_position(const Position &pos) {
     }
 
     // En passant square
-    if (pos.enpassant != Square::OFFSQ) {
+    if (pos.enpassant != Square::A1) {
         if (pos.enpassant < Square::A6 || pos.enpassant > Square::H6) {
             return false;
         }
@@ -377,7 +377,7 @@ bool legal_position(const Position &pos) {
     }
 
     // Needs to be a pawn below the EP square
-    if (pos.enpassant != Square::OFFSQ) {
+    if (pos.enpassant != Square::A1) {
         if (((1ULL << (pos.enpassant - 8)) &
              (pos.pieces[PieceType::PAWN] & pos.colour[Colour::THEM])) ==
             0ULL) {
@@ -425,7 +425,7 @@ void flip(Position &pos) {
     pos.colour[Colour::THEM] = store;
 
     // Enpassant
-    if (pos.enpassant != Square::OFFSQ) {
+    if (pos.enpassant != Square::A1) {
         pos.enpassant = Square(pos.enpassant ^ 56);
     }
 

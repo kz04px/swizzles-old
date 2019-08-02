@@ -61,7 +61,7 @@ std::uint64_t calculate_hash(const Position &pos) {
     }
 
     // En passant
-    if (pos.enpassant != Square::OFFSQ) {
+    if (pos.enpassant != Square::A1) {
         int file = pos.enpassant % 8;
         hash ^= keys_enpassant[file];
     }
