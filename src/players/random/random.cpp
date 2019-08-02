@@ -30,7 +30,7 @@ void random(const Position &pos) {
 
     // Return random move from legal moves
     const int n = rand() % num_moves;
-    std::cout << "bestmove " << move_uci(moves[n], pos.flipped) << std::endl;
+    std::cout << "bestmove " << moves[n].uci(pos.flipped) << std::endl;
 }
 
 }  // namespace player

@@ -23,25 +23,25 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
         Square from = Square(to - 8);
 
         if (Square::A8 <= to && to <= Square::H8) {
-            movelist[num_moves + 0] = move(from,
+            movelist[num_moves + 0] = Move(from,
                                            to,
                                            PROMO,
                                            PieceType::PAWN,
                                            PieceType::NONE,
                                            PieceType::QUEEN);
-            movelist[num_moves + 1] = move(from,
+            movelist[num_moves + 1] = Move(from,
                                            to,
                                            PROMO,
                                            PieceType::PAWN,
                                            PieceType::NONE,
                                            PieceType::ROOK);
-            movelist[num_moves + 2] = move(from,
+            movelist[num_moves + 2] = Move(from,
                                            to,
                                            PROMO,
                                            PieceType::PAWN,
                                            PieceType::NONE,
                                            PieceType::BISHOP);
-            movelist[num_moves + 3] = move(from,
+            movelist[num_moves + 3] = Move(from,
                                            to,
                                            PROMO,
                                            PieceType::PAWN,
@@ -49,7 +49,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
                                            PieceType::KNIGHT);
             num_moves += 4;
         } else {
-            movelist[num_moves] = move(from, to, QUIET, PieceType::PAWN);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::PAWN);
             num_moves++;
         }
 
@@ -68,7 +68,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
     while (copy) {
         Square to = Square(lsbll(copy));
         Square from = Square(to - 16);
-        movelist[num_moves] = move(from, to, DOUBLE, PieceType::PAWN);
+        movelist[num_moves] = Move(from, to, DOUBLE, PieceType::PAWN);
         num_moves++;
         copy &= copy - 1;
     }
@@ -81,7 +81,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 
         while (moves) {
             Square to = Square(lsbll(moves));
-            movelist[num_moves] = move(from, to, QUIET, PieceType::KNIGHT);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::KNIGHT);
             num_moves++;
             moves &= moves - 1;
         }
@@ -99,7 +99,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 
         while (moves) {
             Square to = Square(lsbll(moves));
-            movelist[num_moves] = move(from, to, QUIET, PieceType::BISHOP);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::BISHOP);
             num_moves++;
             moves &= moves - 1;
         }
@@ -117,7 +117,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 
         while (moves) {
             Square to = Square(lsbll(moves));
-            movelist[num_moves] = move(from, to, QUIET, PieceType::ROOK);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::ROOK);
             num_moves++;
             moves &= moves - 1;
         }
@@ -135,7 +135,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 
         while (moves) {
             Square to = Square(lsbll(moves));
-            movelist[num_moves] = move(from, to, QUIET, PieceType::QUEEN);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::QUEEN);
             num_moves++;
             moves &= moves - 1;
         }
@@ -153,7 +153,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 
         while (moves) {
             Square to = Square(lsbll(moves));
-            movelist[num_moves] = move(from, to, QUIET, PieceType::QUEEN);
+            movelist[num_moves] = Move(from, to, QUIET, PieceType::QUEEN);
             num_moves++;
             moves &= moves - 1;
         }
@@ -166,7 +166,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
     uint64_t moves = magic_moves_king(from) & allowed;
     while (moves) {
         Square to = Square(lsbll(moves));
-        movelist[num_moves] = move(from, to, QUIET, PieceType::KING);
+        movelist[num_moves] = Move(from, to, QUIET, PieceType::KING);
         num_moves++;
         moves &= moves - 1;
     }
@@ -184,7 +184,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
                U64_RANK_1);
 
         movelist[num_moves] =
-            move(Square::E1, Square::G1, KSC, PieceType::KING);
+            Move(Square::E1, Square::G1, KSC, PieceType::KING);
         num_moves++;
     }
 
@@ -202,7 +202,7 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
                U64_RANK_1);
 
         movelist[num_moves] =
-            move(Square::E1, Square::C1, QSC, PieceType::KING);
+            Move(Square::E1, Square::C1, QSC, PieceType::KING);
         num_moves++;
     }
 
@@ -212,12 +212,12 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
 #ifndef NDEBUG
     for (int n = 0; n < num_moves; ++n) {
         assert(pseudolegal_move(pos, movelist[n]) == true);
-        assert(move_captured(movelist[n]) == PieceType::NONE);
-        assert(move_type(movelist[n]) == MoveType::QUIET ||
-               move_type(movelist[n]) == MoveType::DOUBLE ||
-               move_type(movelist[n]) == MoveType::KSC ||
-               move_type(movelist[n]) == MoveType::QSC ||
-               move_type(movelist[n]) == MoveType::PROMO);
+        assert(movelist[n].captured() == PieceType::NONE);
+        assert(movelist[n].type() == MoveType::QUIET ||
+               movelist[n].type() == MoveType::DOUBLE ||
+               movelist[n].type() == MoveType::KSC ||
+               movelist[n].type() == MoveType::QSC ||
+               movelist[n].type() == MoveType::PROMO);
     }
 #endif
 

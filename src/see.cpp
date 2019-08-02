@@ -83,32 +83,32 @@ int see(int sq,
 
 int see_capture(const Position &pos, const Move &move) {
     Position npos = pos;
-    uint64_t from_bb = 1ULL << move_from(move);
+    uint64_t from_bb = 1ULL << move.from();
 
     // Make move
-    npos.pieces[move_piece(move)] ^= from_bb;
+    npos.pieces[move.piece()] ^= from_bb;
     npos.colour[npos.flipped] ^= from_bb;
 
-    int value = piece_value[move_captured(move)] - see(move_to(move),
-                                                       1 - npos.flipped,
-                                                       move_piece(move),
-                                                       npos.colour,
-                                                       npos.pieces);
+    int value = piece_value[move.captured()] - see(move.to(),
+                                                   1 - npos.flipped,
+                                                   move.piece(),
+                                                   npos.colour,
+                                                   npos.pieces);
 
     return value;
 }
 
 int see_quiet(const Position &pos, const Move &move) {
     Position npos = pos;
-    uint64_t from_bb = 1ULL << move_from(move);
+    uint64_t from_bb = 1ULL << move.from();
 
     // Make move
-    npos.pieces[move_piece(move)] ^= from_bb;
+    npos.pieces[move.piece()] ^= from_bb;
     npos.colour[npos.flipped] ^= from_bb;
 
-    int value = 0 - see(move_to(move),
+    int value = 0 - see(move.to(),
                         1 - npos.flipped,
-                        move_piece(move),
+                        move.piece(),
                         npos.colour,
                         npos.pieces);
 

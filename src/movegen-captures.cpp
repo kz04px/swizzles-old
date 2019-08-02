@@ -24,25 +24,25 @@ int movegen_captures(const Position &pos, Move *movelist) {
         PieceType captured = piece_get(pos, to);
 
         if (Square::A8 <= to && to <= Square::H8) {
-            movelist[num_moves + 0] = move(from,
+            movelist[num_moves + 0] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::QUEEN);
-            movelist[num_moves + 1] = move(from,
+            movelist[num_moves + 1] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::ROOK);
-            movelist[num_moves + 2] = move(from,
+            movelist[num_moves + 2] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::BISHOP);
-            movelist[num_moves + 3] = move(from,
+            movelist[num_moves + 3] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
@@ -51,7 +51,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             num_moves += 4;
         } else {
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::PAWN, captured);
+                Move(from, to, CAPTURE, PieceType::PAWN, captured);
             num_moves++;
         }
         copy &= copy - 1;
@@ -66,25 +66,25 @@ int movegen_captures(const Position &pos, Move *movelist) {
         PieceType captured = piece_get(pos, to);
 
         if (Square::A8 <= to && to <= Square::H8) {
-            movelist[num_moves + 0] = move(from,
+            movelist[num_moves + 0] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::QUEEN);
-            movelist[num_moves + 1] = move(from,
+            movelist[num_moves + 1] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::ROOK);
-            movelist[num_moves + 2] = move(from,
+            movelist[num_moves + 2] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
                                            captured,
                                            PieceType::BISHOP);
-            movelist[num_moves + 3] = move(from,
+            movelist[num_moves + 3] = Move(from,
                                            to,
                                            PROMO_CAPTURE,
                                            PieceType::PAWN,
@@ -93,7 +93,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             num_moves += 4;
         } else {
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::PAWN, captured);
+                Move(from, to, CAPTURE, PieceType::PAWN, captured);
             num_moves++;
         }
         copy &= copy - 1;
@@ -105,12 +105,12 @@ int movegen_captures(const Position &pos, Move *movelist) {
                          pos.pieces[PieceType::PAWN] & pos.colour[US];
         while (moves) {
             Square from = Square(lsbll(moves));
-            movelist[num_moves] = move(from,
+            movelist[num_moves] = Move(from,
                                        pos.enpassant,
                                        ENPASSANT,
                                        PieceType::PAWN,
                                        PieceType::PAWN);
-            assert(move_captured(movelist[num_moves]) == PieceType::PAWN);
+            assert(movelist[num_moves].captured() == PieceType::PAWN);
             num_moves++;
             moves &= moves - 1;
         }
@@ -126,7 +126,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             Square to = Square(lsbll(moves));
             PieceType captured = piece_get(pos, to);
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::KNIGHT, captured);
+                Move(from, to, CAPTURE, PieceType::KNIGHT, captured);
             num_moves++;
             moves &= moves - 1;
         }
@@ -146,7 +146,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             Square to = Square(lsbll(moves));
             PieceType captured = piece_get(pos, to);
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::BISHOP, captured);
+                Move(from, to, CAPTURE, PieceType::BISHOP, captured);
             num_moves++;
             moves &= moves - 1;
         }
@@ -166,7 +166,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             Square to = Square(lsbll(moves));
             PieceType captured = piece_get(pos, to);
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::ROOK, captured);
+                Move(from, to, CAPTURE, PieceType::ROOK, captured);
             num_moves++;
             moves &= moves - 1;
         }
@@ -186,7 +186,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             Square to = Square(lsbll(moves));
             PieceType captured = piece_get(pos, to);
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::QUEEN, captured);
+                Move(from, to, CAPTURE, PieceType::QUEEN, captured);
             num_moves++;
             moves &= moves - 1;
         }
@@ -206,7 +206,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
             Square to = Square(lsbll(moves));
             PieceType captured = piece_get(pos, to);
             movelist[num_moves] =
-                move(from, to, CAPTURE, PieceType::QUEEN, captured);
+                Move(from, to, CAPTURE, PieceType::QUEEN, captured);
             num_moves++;
             moves &= moves - 1;
         }
@@ -221,7 +221,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
         Square to = Square(lsbll(moves));
         PieceType captured = piece_get(pos, to);
         movelist[num_moves] =
-            move(from, to, CAPTURE, PieceType::KING, captured);
+            Move(from, to, CAPTURE, PieceType::KING, captured);
         num_moves++;
         moves &= moves - 1;
     }
@@ -232,10 +232,10 @@ int movegen_captures(const Position &pos, Move *movelist) {
 #ifndef NDEBUG
     for (int n = 0; n < num_moves; ++n) {
         assert(pseudolegal_move(pos, movelist[n]) == true);
-        assert(move_captured(movelist[n]) != PieceType::NONE);
-        assert(move_type(movelist[n]) == MoveType::CAPTURE ||
-               move_type(movelist[n]) == MoveType::ENPASSANT ||
-               move_type(movelist[n]) == MoveType::PROMO_CAPTURE);
+        assert(movelist[n].captured() != PieceType::NONE);
+        assert(movelist[n].type() == MoveType::CAPTURE ||
+               movelist[n].type() == MoveType::ENPASSANT ||
+               movelist[n].type() == MoveType::PROMO_CAPTURE);
     }
 #endif
 

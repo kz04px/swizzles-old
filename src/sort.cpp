@@ -21,7 +21,7 @@ void sort(const Position &pos,
     for (int i = 0; i < num; ++i) {
         if (moves[i] == tt_move) {
             scores[i] = 2000000;
-        } else if (move_type(moves[i]) == MoveType::CAPTURE) {
+        } else if (moves[i].type() == MoveType::CAPTURE) {
             scores[i] = 1000000 + see_capture(pos, moves[i]);
             assert(scores[i] > 0);
             assert(scores[i] < 2000000);
@@ -32,8 +32,8 @@ void sort(const Position &pos,
         } else {
             scores[i] = 0;
             // scores[i] = see_quiet(pos, moves[i]);
-            // scores[i] = PST[move_piece(moves[i])][0][move_to(moves[i])] -
-            // PST[move_piece(moves[i])][0][move_from(moves[i])];
+            // scores[i] = PST[move.piece(moves[i])][0][move.to(moves[i])] -
+            // PST[move.piece(moves[i])][0][move.from(moves[i])];
             assert(scores[i] < 999998);
         }
 

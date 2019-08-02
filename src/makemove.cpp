@@ -7,11 +7,11 @@
 #include "zobrist.hpp"
 
 void make_move(Position &pos, const Move m) {
-    const Square from = move_from(m);
-    const Square to = move_to(m);
-    const MoveType type = move_type(m);
-    const PieceType piece = move_piece(m);
-    const PieceType captured = move_captured(m);
+    const Square from = m.from();
+    const Square to = m.to();
+    const MoveType type = m.type();
+    const PieceType piece = m.piece();
+    const PieceType captured = m.captured();
 
     assert(Square::A1 <= from && from <= Square::H8);
     assert(Square::A1 <= to && to <= Square::H8);
@@ -57,7 +57,7 @@ void make_move(Position &pos, const Move m) {
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << to;
         // Add the promoted piece
-        pos.pieces[move_promo(m)] ^= 1ULL << to;
+        pos.pieces[m.promo()] ^= 1ULL << to;
     } else if (type == MoveType::PROMO_CAPTURE) {
         assert(piece == PieceType::PAWN);
         assert(captured != PieceType::NONE);
@@ -69,7 +69,7 @@ void make_move(Position &pos, const Move m) {
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << to;
         // Add the promoted piece
-        pos.pieces[move_promo(m)] ^= 1ULL << to;
+        pos.pieces[m.promo()] ^= 1ULL << to;
         // Remove the captured piece
         pos.pieces[captured] ^= 1ULL << to;
         pos.colour[Colour::THEM] ^= 1ULL << to;
@@ -141,7 +141,7 @@ bool make_move(Position &pos, const std::string &move_string) {
     int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
-        if (move_uci(moves[i], pos.flipped) == move_string) {
+        if (moves[i].uci(pos.flipped) == move_string) {
             make_move(pos, moves[i]);
             return true;
         }

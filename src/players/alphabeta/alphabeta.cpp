@@ -188,7 +188,7 @@ int alphabeta(const Position &pos,
                 -alphabeta(npos, info, ss + 1, npv, -beta, -alpha, depth - 1);
         } else {
             int r = reduction(
-                pvnode, legal_moves - 1, depth, in_check, move_type(moves[i]));
+                pvnode, legal_moves - 1, depth, in_check, moves[i].type());
             score = -alphabeta(
                 npos, info, ss + 1, npv, -alpha - 1, -alpha, depth - 1 - r);
 
@@ -211,7 +211,7 @@ int alphabeta(const Position &pos,
                 alpha = score;
 
                 if (alpha >= beta) {
-                    if (move_type(moves[i]) != MoveType::CAPTURE) {
+                    if (moves[i].type() != MoveType::CAPTURE) {
                         ss->killer2 = ss->killer1;
                         ss->killer1 = moves[i];
                     }

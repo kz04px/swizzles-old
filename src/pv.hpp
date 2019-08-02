@@ -28,7 +28,7 @@ struct PV {
             if (n > 0) {
                 str += " ";
             }
-            str += move_uci(moves[n], flipped);
+            str += moves[n].uci(flipped);
             flipped = !flipped;
         }
         return str;

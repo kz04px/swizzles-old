@@ -13,7 +13,7 @@ enum FLAGS
 
 struct Entry {
    public:
-    Entry() : key_(0ULL), move_(0), depth_(0), eval_(0), flag_(FLAGS::EXACT) {
+    Entry() : key_(0ULL), move_{}, depth_(0), eval_(0), flag_(FLAGS::EXACT) {
     }
 
     Entry(const uint64_t key,
@@ -81,7 +81,7 @@ class Hashtable {
 
     void clear() {
         for (int n = 0; n < num_entries; ++n) {
-            entries[n] = Entry(0ULL, 0, 0, 0, 0);
+            entries[n] = Entry(0ULL, NO_MOVE, 0, 0, 0);
         }
     }
 

@@ -240,7 +240,7 @@ void mcts(const Position &pos,
 
         // Print -- move
         std::cout << std::left << std::setw(6)
-                  << move_uci(indices[a]->state_.move_, pos.flipped);
+                  << indices[a]->state_.move_.uci(pos.flipped);
 
         // Print -- score
         std::cout << std::right << std::setw(6) << std::fixed
@@ -263,8 +263,7 @@ void mcts(const Position &pos,
     assert(pv.legal(pos));
 
     if (pv.length > 0) {
-        std::cout << "bestmove " << move_uci(pv.moves[0], pos.flipped)
-                  << std::endl;
+        std::cout << "bestmove " << pv.moves[0].uci(pos.flipped) << std::endl;
     } else {
         assert(false);
         std::cout << "bestmove 0000" << std::endl;

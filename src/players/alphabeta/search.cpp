@@ -175,8 +175,7 @@ void alphabeta(const Position &pos,
 #endif
 
     if (pv.length > 0) {
-        std::cout << "bestmove " << move_uci(pv.moves[0], pos.flipped)
-                  << std::endl;
+        std::cout << "bestmove " << pv.moves[0].uci(pos.flipped) << std::endl;
     } else {
         // Ideally we should never find any legal moves here
         // if it does happen then there's almost certainly a bug somewhere
@@ -199,8 +198,7 @@ void alphabeta(const Position &pos,
         assert(best_move == NO_MOVE);
 
         if (best_move != NO_MOVE) {
-            std::cout << "bestmove " << move_uci(best_move, pos.flipped)
-                      << std::endl;
+            std::cout << "bestmove " << best_move.uci(pos.flipped) << std::endl;
         } else {
             std::cout << "bestmove 0000" << std::endl;
         }

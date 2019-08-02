@@ -130,7 +130,7 @@ bool legal_move(const Position &pos, const std::string &move) {
     int num_moves = movegen(pos, moves);
 
     for (int i = 0; i < num_moves; ++i) {
-        if (move == move_uci(moves[i], pos.flipped)) {
+        if (move == moves[i].uci(pos.flipped)) {
             Position npos = pos;
             make_move(npos, moves[i]);
             return !check(npos, Colour::THEM);
@@ -153,11 +153,11 @@ bool legal_move(const Position &pos, const std::string &move) {
 // - Captured pieces need to be there
 // - Etc
 bool pseudolegal_move(const Position &pos, const Move &move) {
-    const Square from = move_from(move);
-    const Square to = move_to(move);
-    const MoveType type = move_type(move);
-    const PieceType piece = move_piece(move);
-    const PieceType captured = move_captured(move);
+    const Square from = move.from();
+    const Square to = move.to();
+    const MoveType type = move.type();
+    const PieceType piece = move.piece();
+    const PieceType captured = move.captured();
     const uint64_t from_bb = 1ULL << from;
     const uint64_t to_bb = 1ULL << to;
 
