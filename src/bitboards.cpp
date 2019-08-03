@@ -15,32 +15,38 @@ uint64_t king_mask[64];
 uint64_t passed_pawn_blockers[2][64];
 uint64_t outpost_attackers[2][64];
 
-const uint64_t files[8] = {U64_FILE_A,
-                           U64_FILE_B,
-                           U64_FILE_C,
-                           U64_FILE_D,
-                           U64_FILE_E,
-                           U64_FILE_F,
-                           U64_FILE_G,
-                           U64_FILE_H};
+const uint64_t files[8] = {
+    U64_FILE_A,
+    U64_FILE_B,
+    U64_FILE_C,
+    U64_FILE_D,
+    U64_FILE_E,
+    U64_FILE_F,
+    U64_FILE_G,
+    U64_FILE_H,
+};
 
-const uint64_t ranks[8] = {U64_RANK_1,
-                           U64_RANK_2,
-                           U64_RANK_3,
-                           U64_RANK_4,
-                           U64_RANK_5,
-                           U64_RANK_6,
-                           U64_RANK_7,
-                           U64_RANK_8};
+const uint64_t ranks[8] = {
+    U64_RANK_1,
+    U64_RANK_2,
+    U64_RANK_3,
+    U64_RANK_4,
+    U64_RANK_5,
+    U64_RANK_6,
+    U64_RANK_7,
+    U64_RANK_8,
+};
 
-const uint64_t adj_files[8] = {U64_FILE_B,
-                               U64_FILE_A | U64_FILE_C,
-                               U64_FILE_B | U64_FILE_D,
-                               U64_FILE_C | U64_FILE_E,
-                               U64_FILE_D | U64_FILE_F,
-                               U64_FILE_E | U64_FILE_G,
-                               U64_FILE_F | U64_FILE_H,
-                               U64_FILE_G};
+const uint64_t adj_files[8] = {
+    U64_FILE_B,
+    U64_FILE_A | U64_FILE_C,
+    U64_FILE_B | U64_FILE_D,
+    U64_FILE_C | U64_FILE_E,
+    U64_FILE_D | U64_FILE_F,
+    U64_FILE_E | U64_FILE_G,
+    U64_FILE_F | U64_FILE_H,
+    U64_FILE_G,
+};
 
 const uint64_t bishop_magic[64] = {
     0x404040404040ULL,   0xa060401007fcULL,  0x401020200000ULL,
@@ -64,7 +70,8 @@ const uint64_t bishop_magic[64] = {
     0x404040404000ULL,   0x6020601803f4ULL,  0x3ffdfdfc28048ULL,
     0x820820020ULL,      0x10108060ULL,      0x00084030ULL,
     0x01002020ULL,       0x40408020ULL,      0x4040404040ULL,
-    0x404040404040ULL};
+    0x404040404040ULL,
+};
 
 const uint64_t *bishop_offsets[64] = {
     magic_moves + 33104, magic_moves + 4094,  magic_moves + 24764,
@@ -88,7 +95,8 @@ const uint64_t *bishop_offsets[64] = {
     magic_moves + 11620, magic_moves + 15925, magic_moves + 32528,
     magic_moves + 12196, magic_moves + 32720, magic_moves + 26781,
     magic_moves + 19817, magic_moves + 24732, magic_moves + 25468,
-    magic_moves + 10186};
+    magic_moves + 10186,
+};
 
 const uint64_t rook_magic[64] = {
     0x280077ffebfffeULL, 0x2004010201097fffULL, 0x10020010053fffULL,
@@ -112,7 +120,8 @@ const uint64_t rook_magic[64] = {
     0x3fffc0c480048ULL,  0x1ffffafd7ffd8ULL,    0xffffe4ffdfa3baULL,
     0x7fffef7ff3d3daULL, 0x3fffbfdfeff7faULL,   0x1fffeff7fbfc22ULL,
     0x20408001001ULL,    0x7fffeffff77fdULL,    0x3ffffbf7dfeecULL,
-    0x1ffff9dffa333ULL};
+    0x1ffff9dffa333ULL,
+};
 
 const uint64_t *rook_offsets[64] = {
     magic_moves + 41305, magic_moves + 14326, magic_moves + 24477,
@@ -136,7 +145,8 @@ const uint64_t *rook_offsets[64] = {
     magic_moves + 59381, magic_moves + 84404, magic_moves + 45811,
     magic_moves + 62898, magic_moves + 45796, magic_moves + 66994,
     magic_moves + 67204, magic_moves + 32448, magic_moves + 62946,
-    magic_moves + 17005};
+    magic_moves + 17005,
+};
 
 uint64_t permute(uint64_t set, uint64_t subset) {
     return (subset - set) & set;
