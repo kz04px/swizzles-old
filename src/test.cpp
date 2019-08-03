@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "bitboards.hpp"
+#include "display.hpp"
 #include "fen.hpp"
 #include "makemove.hpp"
 #include "options.hpp"
@@ -286,6 +287,28 @@ bool test_chains() {
     return true;
 }
 
+bool test_backwards() {
+    std::vector<std::pair<std::string, uint64_t>> tests = {
+        {"startpos", 0ULL},
+        {"4k3/8/8/8/p2p2p1/8/1PP2P2/4K3 w - -", 0x2000},
+        {"4k3/1p6/4p3/3P4/6Pp/8/P1P2P2/4K3 w - -", 0ULL},
+    };
+
+    for (const auto &[fen, answer] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+        const uint64_t us =
+            pos.colour[Colour::US] & pos.pieces[PieceType::PAWN];
+        const uint64_t them =
+            pos.colour[Colour::THEM] & pos.pieces[PieceType::PAWN];
+        if (answer != backward_pawns(us, them)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void test() {
     std::cout << (test_fen() ? "Y" : "N") << " -- FEN parsing\n";
     std::cout << (test_perft() ? "Y" : "N") << " -- Perft\n";
@@ -295,6 +318,7 @@ void test() {
     std::cout << (test_files() ? "Y" : "N") << " -- Files\n";
     std::cout << (test_passers() ? "Y" : "N") << " -- Pawns - passed\n";
     std::cout << (test_chains() ? "Y" : "N") << " -- Pawns - chained\n";
+    std::cout << (test_backwards() ? "Y" : "N") << " -- Pawns - backwards\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";
     std::cout << (test_uci_pos() ? "Y" : "N") << " -- UCI::position\n";
     std::cout << (test_uci_moves() ? "Y" : "N") << " -- UCI::moves\n";

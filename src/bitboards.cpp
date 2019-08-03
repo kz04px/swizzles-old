@@ -368,6 +368,15 @@ uint64_t open_files(uint64_t bb) {
     return ~(static_cast<uint8_t>(bb) * 0x0101010101010101ULL);
 }
 
+uint64_t backward_pawns(const uint64_t us, const uint64_t them) {
+    const uint64_t stops = us << 8;
+    const uint64_t attacks_us =
+        ((us << 9) & (~U64_FILE_A)) | ((us << 7) & (~U64_FILE_H));
+    const uint64_t attacks_them =
+        ((them >> 9) & (~U64_FILE_H)) | ((them >> 7) & (~U64_FILE_A));
+    return (stops & attacks_them & (~attacks_us)) >> 8;
+}
+
 uint64_t get_file(int file) {
     return files[file];
 }
