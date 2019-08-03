@@ -224,6 +224,24 @@ bool test_threefold() {
     return true;
 }
 
+bool test_files() {
+    std::vector<std::pair<std::string, uint64_t>> tests = {
+        {"startpos", 0ULL},
+        {"4k3/4p1p1/8/8/8/8/PP6/4K3 w - -",
+         U64_FILE_C | U64_FILE_D | U64_FILE_F | U64_FILE_H},
+    };
+
+    for (const auto &[fen, answer] : tests) {
+        Position pos;
+        set_fen(pos, fen);
+        if (answer != open_files(pos.pieces[PieceType::PAWN])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 bool test_passers() {
     std::vector<std::pair<std::string, uint64_t>> tests = {
         {"startpos", 0ULL},
@@ -274,6 +292,7 @@ void test() {
     std::cout << (test_flip() ? "Y" : "N") << " -- Flip\n";
     std::cout << (test_hash() ? "Y" : "N") << " -- Hash\n";
     std::cout << (test_threefold() ? "Y" : "N") << " -- Threefold\n";
+    std::cout << (test_files() ? "Y" : "N") << " -- Files\n";
     std::cout << (test_passers() ? "Y" : "N") << " -- Pawns - passed\n";
     std::cout << (test_chains() ? "Y" : "N") << " -- Pawns - chained\n";
     std::cout << (test_options() ? "Y" : "N") << " -- Options\n";

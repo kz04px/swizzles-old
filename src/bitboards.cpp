@@ -351,6 +351,13 @@ uint64_t chained_pawns(const uint64_t pawns) {
            ((pawns << 7) & (~U64_FILE_H) & pawns);
 }
 
+uint64_t open_files(uint64_t bb) {
+    bb |= (bb >> 8);
+    bb |= (bb >> 16);
+    bb |= (bb >> 32);
+    return ~(static_cast<uint8_t>(bb) * 0x0101010101010101ULL);
+}
+
 uint64_t get_file(int file) {
     return files[file];
 }
