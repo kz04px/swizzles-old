@@ -14,7 +14,7 @@ std::uint64_t calculate_hash(const Position &pos) {
         while (copy) {
             const int sq = lsbll(copy);
 
-            hash ^= keys::piece[sq][i][Colour::US];
+            hash ^= keys::piece[sq][i][pos.flipped];
 
             copy &= copy - 1;
         }
@@ -23,7 +23,7 @@ std::uint64_t calculate_hash(const Position &pos) {
         while (copy) {
             const int sq = lsbll(copy);
 
-            hash ^= keys::piece[sq][i][Colour::THEM];
+            hash ^= keys::piece[sq ^ 56][i][!pos.flipped];
 
             copy &= copy - 1;
         }
@@ -31,22 +31,22 @@ std::uint64_t calculate_hash(const Position &pos) {
 
     // En passant
     if (pos.enpassant != Square::A1) {
-        int file = pos.enpassant % 8;
+        const int file = pos.enpassant % 8;
         hash ^= keys::enpassant[file];
     }
 
     // Castling
     if (pos.castling[Castling::usKSC] == true) {
-        hash ^= keys::castling[Castling::usKSC];
+        hash ^= keys::castling[0][pos.flipped];
     }
     if (pos.castling[Castling::usQSC] == true) {
-        hash ^= keys::castling[Castling::usQSC];
+        hash ^= keys::castling[1][pos.flipped];
     }
     if (pos.castling[Castling::themKSC] == true) {
-        hash ^= keys::castling[Castling::themKSC];
+        hash ^= keys::castling[0][!pos.flipped];
     }
     if (pos.castling[Castling::themQSC] == true) {
-        hash ^= keys::castling[Castling::themQSC];
+        hash ^= keys::castling[1][!pos.flipped];
     }
 
     // Flipped

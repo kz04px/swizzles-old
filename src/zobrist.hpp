@@ -10,7 +10,7 @@ namespace zobrist {
 namespace keys {
 
 const std::uint64_t flipped = 0xa76c5a9b990e89a7ULL;
-const std::uint64_t castling[4] = {
+const std::uint64_t castling[2][2] = {
     0x6cf916069491ae6ULL,
     0xa696a2a079a075c6ULL,
     0xe27b282b1f1125aULL,

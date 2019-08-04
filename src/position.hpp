@@ -13,6 +13,7 @@ struct Position {
     bool castling[4];
     uint64_t colour[2];
     uint64_t pieces[6];
+    uint64_t hash;
     int history_size;
     std::uint64_t history[128];
 };

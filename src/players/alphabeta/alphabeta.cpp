@@ -140,8 +140,8 @@ int alphabeta(const Position &pos,
         npos.enpassant = Square::A1;
         npos.halfmoves = 0;
         npos.fullmoves = 0;
-        const std::uint64_t hash = zobrist::calculate_hash(npos);
-        npos.history[npos.history_size] = hash;
+        npos.hash = zobrist::calculate_hash(npos);
+        npos.history[npos.history_size] = npos.hash;
         npos.history_size++;
 
         (ss + 1)->nullmove = false;
