@@ -1,4 +1,4 @@
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include "attacks.hpp"
 #include "bitboards.hpp"
@@ -9,7 +9,7 @@
 #include "types.hpp"
 
 int movegen_noncaptures(const Position &pos, Move *movelist) {
-    assert(movelist);
+    UCI_ASSERT(movelist);
 
     int num_moves = 0;
     uint64_t copy = 0ULL;
@@ -178,9 +178,9 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
         attacked(pos, Square::E1, Colour::THEM) == false &&
         attacked(pos, Square::F1, Colour::THEM) == false &&
         attacked(pos, Square::G1, Colour::THEM) == false) {
-        assert(pos.colour[US] & pos.pieces[PieceType::ROOK] & U64_FILE_H &
+        UCI_ASSERT(pos.colour[US] & pos.pieces[PieceType::ROOK] & U64_FILE_H &
                U64_RANK_1);
-        assert(pos.colour[US] & pos.pieces[PieceType::KING] & U64_FILE_E &
+        UCI_ASSERT(pos.colour[US] & pos.pieces[PieceType::KING] & U64_FILE_E &
                U64_RANK_1);
 
         movelist[num_moves] =
@@ -196,9 +196,9 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
         attacked(pos, Square::E1, Colour::THEM) == false &&
         attacked(pos, Square::D1, Colour::THEM) == false &&
         attacked(pos, Square::C1, Colour::THEM) == false) {
-        assert(pos.colour[US] & pos.pieces[PieceType::ROOK] & U64_FILE_A &
+        UCI_ASSERT(pos.colour[US] & pos.pieces[PieceType::ROOK] & U64_FILE_A &
                U64_RANK_1);
-        assert(pos.colour[US] & pos.pieces[PieceType::KING] & U64_FILE_E &
+        UCI_ASSERT(pos.colour[US] & pos.pieces[PieceType::KING] & U64_FILE_E &
                U64_RANK_1);
 
         movelist[num_moves] =
@@ -206,14 +206,14 @@ int movegen_noncaptures(const Position &pos, Move *movelist) {
         num_moves++;
     }
 
-    assert(num_moves >= 0);
-    assert(num_moves < MAX_MOVES);
+    UCI_ASSERT(num_moves >= 0);
+    UCI_ASSERT(num_moves < MAX_MOVES);
 
 #ifndef NDEBUG
     for (int n = 0; n < num_moves; ++n) {
-        assert(pseudolegal_move(pos, movelist[n]) == true);
-        assert(movelist[n].captured() == PieceType::NONE);
-        assert(movelist[n].type() == MoveType::QUIET ||
+        UCI_ASSERT(pseudolegal_move(pos, movelist[n]) == true);
+        UCI_ASSERT(movelist[n].captured() == PieceType::NONE);
+        UCI_ASSERT(movelist[n].type() == MoveType::QUIET ||
                movelist[n].type() == MoveType::DOUBLE ||
                movelist[n].type() == MoveType::KSC ||
                movelist[n].type() == MoveType::QSC ||

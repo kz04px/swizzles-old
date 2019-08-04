@@ -1,5 +1,5 @@
 #include "rollout.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include "attacks.hpp"
 #include "makemove.hpp"
 #include "movegen.hpp"
@@ -7,8 +7,8 @@
 #include "types.hpp"
 
 float rollout(const Position &pos, const int length) {
-    assert(legal_position(pos) == true);
-    assert(length > 0);
+    UCI_ASSERT(legal_position(pos) == true);
+    UCI_ASSERT(length > 0);
 
     Position main_pos = pos;
     Position npos;
@@ -35,7 +35,7 @@ float rollout(const Position &pos, const int length) {
 
             make_move(npos, moves[i]);
             if (check(npos, Colour::THEM) == true) {
-                assert(num_moves > 0);
+                UCI_ASSERT(num_moves > 0);
                 moves[i] = moves[num_moves - 1];
                 num_moves--;
                 continue;
@@ -56,13 +56,13 @@ float rollout(const Position &pos, const int length) {
         }
 
         make_move(main_pos, best_move);
-        assert(check(main_pos, Colour::THEM) == false);
+        UCI_ASSERT(check(main_pos, Colour::THEM) == false);
 
         n++;
     }
 
-    assert(r >= 0.0);
-    assert(r <= 1.0);
+    UCI_ASSERT(r >= 0.0);
+    UCI_ASSERT(r <= 1.0);
 
     if (main_pos.flipped == pos.flipped) {
         return r;

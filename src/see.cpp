@@ -1,5 +1,5 @@
 #include "see.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include "bitboards.hpp"
 #include "eval.hpp"
 #include "other.hpp"

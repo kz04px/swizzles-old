@@ -1,7 +1,7 @@
 #ifndef OTHER_HPP_INCLUDED
 #define OTHER_HPP_INCLUDED
 
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 
 inline int popcountll(const uint64_t n) {
@@ -9,7 +9,7 @@ inline int popcountll(const uint64_t n) {
 }
 
 inline int lsbll(const uint64_t n) {
-    assert(n);
+    UCI_ASSERT(n);
     return __builtin_ctzll(n);
 }
 

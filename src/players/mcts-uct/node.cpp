@@ -1,5 +1,5 @@
 #include "node.hpp"
-#include <cassert>
+#include "../../assert.hpp"
 #include "../../makemove.hpp"
 
 Node::Node(const Position &pos, const Move &move, Node *parent)
@@ -10,12 +10,12 @@ Node::~Node() {
 }
 
 Node *Node::expand() {
-    assert(!terminal());
-    assert(!fully_expanded());
+    UCI_ASSERT(!terminal());
+    UCI_ASSERT(!fully_expanded());
 
     Move move = state_.next();
     Position npos = state_.pos_;
-    assert(legal_move(state_.pos_, move));
+    UCI_ASSERT(legal_move(state_.pos_, move));
     make_move(npos, move);
     Node child(npos, move, this);
     children_.push_back(child);

@@ -1,6 +1,6 @@
 #include "qsearch.hpp"
-#include <cassert>
 #include <chrono>
+#include "../../assert.hpp"
 #include "../../attacks.hpp"
 #include "../../eval.hpp"
 #include "../../makemove.hpp"
@@ -20,8 +20,8 @@ int qsearch(const Position &pos,
             SearchStack *ss,
             int alpha,
             int beta) {
-    assert(ss);
-    assert(beta > alpha);
+    UCI_ASSERT(ss);
+    UCI_ASSERT(beta > alpha);
 
     info.seldepth = std::max(info.seldepth, ss->ply);
 

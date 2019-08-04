@@ -1,5 +1,5 @@
 #include "position.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include "attacks.hpp"
 #include "makemove.hpp"
@@ -161,19 +161,19 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
     const uint64_t from_bb = 1ULL << from;
     const uint64_t to_bb = 1ULL << to;
 
-    assert(move != NO_MOVE);
-    assert(from != to);
-    assert(from >= Square::A1);
-    assert(from <= Square::H8);
-    assert(to >= Square::A1);
-    assert(to <= Square::H8);
-    assert(captured == PieceType::PAWN || captured == PieceType::KNIGHT ||
+    UCI_ASSERT(move != NO_MOVE);
+    UCI_ASSERT(from != to);
+    UCI_ASSERT(from >= Square::A1);
+    UCI_ASSERT(from <= Square::H8);
+    UCI_ASSERT(to >= Square::A1);
+    UCI_ASSERT(to <= Square::H8);
+    UCI_ASSERT(captured == PieceType::PAWN || captured == PieceType::KNIGHT ||
            captured == PieceType::BISHOP || captured == PieceType::ROOK ||
            captured == PieceType::QUEEN || captured == PieceType::NONE);
-    assert(piece == PieceType::PAWN || piece == PieceType::KNIGHT ||
+    UCI_ASSERT(piece == PieceType::PAWN || piece == PieceType::KNIGHT ||
            piece == PieceType::BISHOP || piece == PieceType::ROOK ||
            piece == PieceType::QUEEN || piece == PieceType::KING);
-    assert(type == MoveType::QUIET || type == MoveType::DOUBLE ||
+    UCI_ASSERT(type == MoveType::QUIET || type == MoveType::DOUBLE ||
            type == MoveType::CAPTURE || type == MoveType::ENPASSANT ||
            type == MoveType::KSC || type == MoveType::QSC ||
            type == MoveType::PROMO || type == MoveType::PROMO_CAPTURE);
@@ -185,15 +185,15 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
 
     // We captured something
     if (captured != PieceType::NONE) {
-        assert(captured == PieceType::PAWN || captured == PieceType::KNIGHT ||
+        UCI_ASSERT(captured == PieceType::PAWN || captured == PieceType::KNIGHT ||
                captured == PieceType::BISHOP || captured == PieceType::ROOK ||
                captured == PieceType::QUEEN);
-        assert(type == MoveType::CAPTURE || type == MoveType::ENPASSANT ||
+        UCI_ASSERT(type == MoveType::CAPTURE || type == MoveType::ENPASSANT ||
                type == MoveType::PROMO_CAPTURE);
 
         if (type == MoveType::ENPASSANT) {
-            assert(piece == PieceType::PAWN);
-            assert(captured == PieceType::PAWN);
+            UCI_ASSERT(piece == PieceType::PAWN);
+            UCI_ASSERT(captured == PieceType::PAWN);
 
             // Enpassant has to be legal
             // This will tell us that the destination square is empty
@@ -210,8 +210,8 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
     }
     // We didn't capture anything
     else {
-        assert(captured == PieceType::NONE);
-        assert(type == MoveType::QUIET || type == MoveType::DOUBLE ||
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(type == MoveType::QUIET || type == MoveType::DOUBLE ||
                type == MoveType::KSC || type == MoveType::QSC ||
                type == MoveType::PROMO);
 
@@ -221,7 +221,7 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
         }
 
         if (type == MoveType::DOUBLE) {
-            assert(piece == PieceType::PAWN);
+            UCI_ASSERT(piece == PieceType::PAWN);
 
             // We can't double pawn move through another piece
             if ((to_bb >> 8) &
@@ -232,10 +232,10 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
     }
 
     if (type == MoveType::KSC) {
-        assert(piece == PieceType::KING);
-        assert(captured == PieceType::NONE);
-        assert(to_bb == U64_G1);
-        assert(from_bb == U64_E1);
+        UCI_ASSERT(piece == PieceType::KING);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(to_bb == U64_G1);
+        UCI_ASSERT(from_bb == U64_E1);
 
         // We can only castle if we have permission to
         // This will tell us that the king & rook are where they're meant to be
@@ -255,10 +255,10 @@ bool pseudolegal_move(const Position &pos, const Move &move) {
         }
     }
     if (type == MoveType::QSC) {
-        assert(piece == PieceType::KING);
-        assert(captured == PieceType::NONE);
-        assert(to_bb == U64_C1);
-        assert(from_bb == U64_E1);
+        UCI_ASSERT(piece == PieceType::KING);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(to_bb == U64_C1);
+        UCI_ASSERT(from_bb == U64_E1);
 
         if (pos.castling[Castling::usQSC] == false ||
             !(U64_E1 &

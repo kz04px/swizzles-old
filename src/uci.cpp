@@ -231,8 +231,8 @@ void listen() {
         }
     }
 
-    assert(options::spins["Hash"].val_ > 0);
-    assert(options::spins["MultiPV"].val_ > 0);
+    UCI_ASSERT(options::spins["Hash"].val_ > 0);
+    UCI_ASSERT(options::spins["MultiPV"].val_ > 0);
 
     Hashtable tt(options::spins["Hash"].val_);
     Position pos;

@@ -1,8 +1,8 @@
 #ifndef TUNER_QSEARCH_HPP
 #define TUNER_QSEARCH_HPP
 
-#include <cassert>
 #include <vector>
+#include "../assert.hpp"
 #include "../attacks.hpp"
 #include "../makemove.hpp"
 #include "../move.hpp"
@@ -17,7 +17,7 @@ int tune_qsearch(const Position &pos,
                  int alpha,
                  int beta,
                  const std::vector<int> &values) {
-    assert(beta > alpha);
+    UCI_ASSERT(beta > alpha);
 
     const int stand_pat = tune_eval(pos, values);
 

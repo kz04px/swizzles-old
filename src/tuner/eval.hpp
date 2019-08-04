@@ -1,8 +1,8 @@
 #ifndef TUNER_EVAL_HPP
 #define TUNER_EVAL_HPP
 
-#include <cassert>
 #include <vector>
+#include "../assert.hpp"
 #include "../attacks.hpp"
 #include "../bitboards.hpp"
 #include "../king-safety.hpp"
@@ -35,10 +35,10 @@ const int passer_rank_value[8] = {0, 10, 10, 15, 25, 40, 60, 0};
 const int passer_file_value[8] = {10, 5, 0, 0, 0, 0, 5, 10};
 
 int tune_king_distance(const int sq1, const int sq2) {
-    assert(sq1 >= Square::A1);
-    assert(sq1 <= Square::H8);
-    assert(sq2 >= Square::A1);
-    assert(sq2 <= Square::H8);
+    UCI_ASSERT(sq1 >= Square::A1);
+    UCI_ASSERT(sq1 <= Square::H8);
+    UCI_ASSERT(sq2 >= Square::A1);
+    UCI_ASSERT(sq2 <= Square::H8);
 
     const int dx = abs(sq_to_file(sq1) - sq_to_file(sq2));
     const int dy = abs(sq_to_rank(sq1) - sq_to_rank(sq2));
@@ -165,24 +165,24 @@ int tune_eval(const Position &pos, const std::vector<int> &tuned) {
                                sq,
                                npos.pieces[PieceType::PAWN] &
                                    npos.colour[Colour::THEM]) == true) {
-                assert(0 < r && r < 7);
-                assert(Square::A2 <= sq && sq <= Square::H7);
-                assert(8 * (8 - r) < 64);
-                assert(8 * (r + 1) < 64);
+                UCI_ASSERT(0 < r && r < 7);
+                UCI_ASSERT(Square::A2 <= sq && sq <= Square::H7);
+                UCI_ASSERT(8 * (8 - r) < 64);
+                UCI_ASSERT(8 * (r + 1) < 64);
 
                 const int promo_sq = Square::A8 + f;
                 const uint64_t promo_bb = 1ULL << promo_sq;
                 const uint64_t behind = file >> (8 * (8 - r));
                 const uint64_t infront = file << (8 * (r + 1));
 
-                assert(promo_sq >= Square::A8);
-                assert(promo_sq <= Square::H8);
-                assert(promo_bb & U64_RANK_8);
-                assert(promo_bb & infront);
-                assert(infront);
-                assert(behind);
-                assert(infront & promo_bb);
-                assert((behind | infront | bb) == file);
+                UCI_ASSERT(promo_sq >= Square::A8);
+                UCI_ASSERT(promo_sq <= Square::H8);
+                UCI_ASSERT(promo_bb & U64_RANK_8);
+                UCI_ASSERT(promo_bb & infront);
+                UCI_ASSERT(infront);
+                UCI_ASSERT(behind);
+                UCI_ASSERT(infront & promo_bb);
+                UCI_ASSERT((behind | infront | bb) == file);
 
                 /*
                 // Enemy piece behind
@@ -304,8 +304,8 @@ int tune_eval(const Position &pos, const std::vector<int> &tuned) {
     int p = phase(pos);
     score += ((mid_score * (256 - p)) + (end_score * p)) / 256;
 
-    assert(score >= -INF);
-    assert(score <= INF);
+    UCI_ASSERT(score >= -INF);
+    UCI_ASSERT(score <= INF);
 
     return score;
 }

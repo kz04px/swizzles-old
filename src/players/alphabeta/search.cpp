@@ -1,9 +1,9 @@
-#include <cassert>
 #include <chrono>
 #include <climits>
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include "../../assert.hpp"
 #include "../../attacks.hpp"
 #include "../../display.hpp"
 #include "../../makemove.hpp"
@@ -114,9 +114,8 @@ void alphabeta(const Position &pos,
         memcpy(pv.moves, npv.moves, npv.length * sizeof(Move));
         pv.length = npv.length;
 
-        assert(pv.length > 0);
-        assert(pv.legal(pos) == true);
-        assert(info.seldepth >= d);
+        UCI_ASSERT(pv.length > 0);
+        UCI_ASSERT(pv.legal(pos) == true);
 
         const auto time_taken =
             std::chrono::duration_cast<ms>(now - info.start);
@@ -195,7 +194,7 @@ void alphabeta(const Position &pos,
             break;
         }
 
-        assert(best_move == NO_MOVE);
+        UCI_ASSERT(best_move == NO_MOVE);
 
         if (best_move != NO_MOVE) {
             std::cout << "bestmove " << best_move.uci(pos.flipped) << std::endl;

@@ -1,12 +1,12 @@
 #include "state.hpp"
-#include <cassert>
+#include "../../assert.hpp"
 #include "../../attacks.hpp"
 #include "../../makemove.hpp"
 #include "../../movegen.hpp"
 
 State::State(const Position &pos, const Move &move)
     : pos_(pos), move_(move), moves_(), visits_(0), reward_(0.0) {
-    assert(legal_position(pos));
+    UCI_ASSERT(legal_position(pos));
 
     // No moves possible if the game is already over
     if (is_fifty_moves(pos) || repetitions(pos) == 2) {
@@ -25,11 +25,11 @@ State::State(const Position &pos, const Move &move)
         }
     }
 
-    assert(moves_.size() <= MAX_MOVES);
+    UCI_ASSERT(moves_.size() <= MAX_MOVES);
 }
 
 Move State::next() {
-    assert(moves_.size() > 0);
+    UCI_ASSERT(moves_.size() > 0);
     Move n = moves_.back();
     moves_.pop_back();
     return n;

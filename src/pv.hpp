@@ -1,7 +1,7 @@
 #ifndef PV_HPP
 #define PV_HPP
 
-#include <cassert>
+#include "assert.hpp"
 #include "makemove.hpp"
 #include "move.hpp"
 #include "position.hpp"
@@ -37,7 +37,7 @@ struct PV {
     void add(const Move m) {
         moves[length] = m;
         length++;
-        assert(length < 64);
+        UCI_ASSERT(length < 64);
     }
 
     int length;

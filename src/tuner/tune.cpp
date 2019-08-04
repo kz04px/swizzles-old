@@ -8,6 +8,7 @@
 #include <stack>
 #include <string>
 #include <vector>
+#include "../assert.hpp"
 #include "../fen.hpp"
 #include "qsearch.hpp"
 
@@ -25,7 +26,7 @@ float sigmoid(const float s, const float k = 1.13) {
 float E(const std::vector<int> &values,
         std::vector<Data>::const_iterator start,
         std::vector<Data>::const_iterator end) {
-    assert(start < end);
+    UCI_ASSERT(start < end);
     float sum = 0.0;
 
     while (start != end) {
@@ -39,7 +40,7 @@ float E(const std::vector<int> &values,
         start++;
     }
 
-    assert(sum >= 0.0);
+    UCI_ASSERT(sum >= 0.0);
     return sum;
 }
 
@@ -122,8 +123,8 @@ void tune(const std::string &path, const int num_threads) {
             Position pos;
             const auto n = set_fen(pos, fen);
 
-            assert(n);
-            assert(score > -1.5);
+            UCI_ASSERT(n);
+            UCI_ASSERT(score > -1.5);
 
             // Store
             entries.push_back(Data{.pos_ = pos, .score_ = score});

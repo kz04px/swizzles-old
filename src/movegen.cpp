@@ -1,16 +1,16 @@
 #include "movegen.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include "position.hpp"
 
 int movegen(const Position &pos, Move *movelist) {
-    assert(movelist);
+    UCI_ASSERT(movelist);
 
     int num_moves = 0;
     num_moves += movegen_captures(pos, &movelist[0]);
     num_moves += movegen_noncaptures(pos, &movelist[num_moves]);
 
-    assert(num_moves >= 0);
-    assert(num_moves < MAX_MOVES);
+    UCI_ASSERT(num_moves >= 0);
+    UCI_ASSERT(num_moves < MAX_MOVES);
 
     return num_moves;
 }

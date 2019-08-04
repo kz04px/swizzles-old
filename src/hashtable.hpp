@@ -1,7 +1,7 @@
 #ifndef HASHTABLE_HPP_INCLUDED
 #define HASHTABLE_HPP_INCLUDED
 
-#include <cassert>
+#include "assert.hpp"
 #include "move.hpp"
 
 enum FLAGS
@@ -22,11 +22,11 @@ struct Entry {
           const int eval,
           const int flag)
         : key_(key), move_(move), depth_(depth), eval_(eval), flag_(flag) {
-        assert(depth_ >= 0);
-        assert(flag_ == FLAGS::EXACT || flag_ == FLAGS::LOWERBOUND ||
+        UCI_ASSERT(depth_ >= 0);
+        UCI_ASSERT(flag_ == FLAGS::EXACT || flag_ == FLAGS::LOWERBOUND ||
                flag_ == FLAGS::UPPERBOUND);
-        assert(-INF - MAX_DEPTH <= eval);
-        assert(eval <= INF + MAX_DEPTH);
+        UCI_ASSERT(-INF - MAX_DEPTH <= eval);
+        UCI_ASSERT(eval <= INF + MAX_DEPTH);
     }
 
     uint64_t key() const {
@@ -70,7 +70,7 @@ class Hashtable {
     void create(const int mb) {
         num_entries = mb * (1024 * 1024) / sizeof(Entry);
         entries = new Entry[num_entries]();
-        assert(entries);
+        UCI_ASSERT(entries);
     }
 
     ~Hashtable() {
@@ -86,7 +86,7 @@ class Hashtable {
     }
 
     int index(const uint64_t key) const {
-        assert(num_entries > 0);
+        UCI_ASSERT(num_entries > 0);
         return key % num_entries;
     }
 

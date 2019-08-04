@@ -1,5 +1,5 @@
 #include "makemove.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include "movegen.hpp"
 #include "position.hpp"
@@ -13,11 +13,11 @@ void make_move(Position &pos, const Move m) {
     const PieceType piece = m.piece();
     const PieceType captured = m.captured();
 
-    assert(Square::A1 <= from && from <= Square::H8);
-    assert(Square::A1 <= to && to <= Square::H8);
-    assert(from != to);
-    assert(piece != PieceType::NONE);
-    assert(captured != PieceType::KING);
+    UCI_ASSERT(Square::A1 <= from && from <= Square::H8);
+    UCI_ASSERT(Square::A1 <= to && to <= Square::H8);
+    UCI_ASSERT(from != to);
+    UCI_ASSERT(piece != PieceType::NONE);
+    UCI_ASSERT(captured != PieceType::KING);
 
     pos.enpassant = Square::A1;
     pos.fullmoves += pos.flipped;
@@ -31,40 +31,40 @@ void make_move(Position &pos, const Move m) {
     pos.colour[Colour::US] ^= 1ULL << to;
 
     if (type == MoveType::CAPTURE) {
-        assert(captured != PieceType::NONE);
+        UCI_ASSERT(captured != PieceType::NONE);
 
         // Remove the captured piece
         pos.pieces[captured] ^= 1ULL << to;
         pos.colour[Colour::THEM] ^= 1ULL << to;
     } else if (type == MoveType::DOUBLE) {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::NONE);
-        assert(Square::A4 <= to);
-        assert(to <= Square::H4);
-        assert(Square::A2 <= from);
-        assert(from <= Square::H2);
+        UCI_ASSERT(piece == PieceType::PAWN);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(Square::A4 <= to);
+        UCI_ASSERT(to <= Square::H4);
+        UCI_ASSERT(Square::A2 <= from);
+        UCI_ASSERT(from <= Square::H2);
 
         // Add the enpassant square
         pos.enpassant = Square(to - 8);
     } else if (type == MoveType::PROMO) {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-        assert(Square::A7 <= from);
-        assert(from <= Square::H7);
+        UCI_ASSERT(piece == PieceType::PAWN);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(Square::A8 <= to);
+        UCI_ASSERT(to <= Square::H8);
+        UCI_ASSERT(Square::A7 <= from);
+        UCI_ASSERT(from <= Square::H7);
 
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << to;
         // Add the promoted piece
         pos.pieces[m.promo()] ^= 1ULL << to;
     } else if (type == MoveType::PROMO_CAPTURE) {
-        assert(piece == PieceType::PAWN);
-        assert(captured != PieceType::NONE);
-        assert(Square::A8 <= to);
-        assert(to <= Square::H8);
-        assert(Square::A7 <= from);
-        assert(from <= Square::H7);
+        UCI_ASSERT(piece == PieceType::PAWN);
+        UCI_ASSERT(captured != PieceType::NONE);
+        UCI_ASSERT(Square::A8 <= to);
+        UCI_ASSERT(to <= Square::H8);
+        UCI_ASSERT(Square::A7 <= from);
+        UCI_ASSERT(from <= Square::H7);
 
         // Guess we should remove the pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << to;
@@ -74,9 +74,9 @@ void make_move(Position &pos, const Move m) {
         pos.pieces[captured] ^= 1ULL << to;
         pos.colour[Colour::THEM] ^= 1ULL << to;
     } else if (type == MoveType::KSC) {
-        assert(piece == PieceType::KING);
-        assert(captured == PieceType::NONE);
-        assert(pos.castling[usKSC] == true);
+        UCI_ASSERT(piece == PieceType::KING);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(pos.castling[usKSC] == true);
 
         // Remove the rook
         pos.pieces[PieceType::ROOK] ^= 1ULL << Square::H1;
@@ -85,9 +85,9 @@ void make_move(Position &pos, const Move m) {
         pos.pieces[PieceType::ROOK] ^= 1ULL << Square::F1;
         pos.colour[Colour::US] ^= 1ULL << Square::F1;
     } else if (type == MoveType::QSC) {
-        assert(piece == PieceType::KING);
-        assert(captured == PieceType::NONE);
-        assert(pos.castling[usQSC] == true);
+        UCI_ASSERT(piece == PieceType::KING);
+        UCI_ASSERT(captured == PieceType::NONE);
+        UCI_ASSERT(pos.castling[usQSC] == true);
 
         // Remove the rook
         pos.pieces[PieceType::ROOK] ^= 1ULL << Square::A1;
@@ -96,14 +96,14 @@ void make_move(Position &pos, const Move m) {
         pos.pieces[PieceType::ROOK] ^= 1ULL << Square::D1;
         pos.colour[Colour::US] ^= 1ULL << Square::D1;
     } else if (type == MoveType::ENPASSANT) {
-        assert(piece == PieceType::PAWN);
-        assert(captured == PieceType::PAWN);
+        UCI_ASSERT(piece == PieceType::PAWN);
+        UCI_ASSERT(captured == PieceType::PAWN);
 
         // Remove the enemy pawn
         pos.pieces[PieceType::PAWN] ^= 1ULL << (to - 8);
         pos.colour[Colour::THEM] ^= 1ULL << (to - 8);
     } else {
-        assert(type == MoveType::QUIET);
+        UCI_ASSERT(type == MoveType::QUIET);
     }
 
     // Castling permissions
@@ -130,10 +130,10 @@ void make_move(Position &pos, const Move m) {
     std::uint64_t hash = calculate_hash(pos);
     pos.history[pos.history_size] = hash;
     pos.history_size++;
-    assert(pos.history_size >= 1);
-    assert(pos.history_size <= 128);
+    UCI_ASSERT(pos.history_size >= 1);
+    UCI_ASSERT(pos.history_size <= 128);
 
-    assert(legal_position(pos) == true);
+    UCI_ASSERT(legal_position(pos) == true);
 }
 
 bool make_move(Position &pos, const std::string &move_string) {

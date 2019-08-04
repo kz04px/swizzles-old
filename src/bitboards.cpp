@@ -1,5 +1,5 @@
 #include "bitboards.hpp"
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include <iostream>
 #include "other.hpp"
@@ -297,8 +297,8 @@ uint64_t calculate_bishop_moves(int sq, uint64_t blockers) {
 }
 
 uint64_t magic_moves_pawn(bool side, int sq) {
-    assert(side == Colour::US || side == Colour::THEM);
-    assert(Square::A1 <= sq && sq <= Square::H8);
+    UCI_ASSERT(side == Colour::US || side == Colour::THEM);
+    UCI_ASSERT(Square::A1 <= sq && sq <= Square::H8);
 
     return pawn_mask[side][sq];
 }

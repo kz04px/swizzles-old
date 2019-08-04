@@ -1,4 +1,4 @@
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include "attacks.hpp"
 #include "bitboards.hpp"
@@ -9,7 +9,7 @@
 #include "types.hpp"
 
 int movegen_captures(const Position &pos, Move *movelist) {
-    assert(movelist);
+    UCI_ASSERT(movelist);
 
     int num_moves = 0;
     uint64_t copy = 0ULL;
@@ -110,7 +110,7 @@ int movegen_captures(const Position &pos, Move *movelist) {
                                        ENPASSANT,
                                        PieceType::PAWN,
                                        PieceType::PAWN);
-            assert(movelist[num_moves].captured() == PieceType::PAWN);
+            UCI_ASSERT(movelist[num_moves].captured() == PieceType::PAWN);
             num_moves++;
             moves &= moves - 1;
         }
@@ -226,14 +226,14 @@ int movegen_captures(const Position &pos, Move *movelist) {
         moves &= moves - 1;
     }
 
-    assert(num_moves >= 0);
-    assert(num_moves <= 128);
+    UCI_ASSERT(num_moves >= 0);
+    UCI_ASSERT(num_moves <= 128);
 
 #ifndef NDEBUG
     for (int n = 0; n < num_moves; ++n) {
-        assert(pseudolegal_move(pos, movelist[n]) == true);
-        assert(movelist[n].captured() != PieceType::NONE);
-        assert(movelist[n].type() == MoveType::CAPTURE ||
+        UCI_ASSERT(pseudolegal_move(pos, movelist[n]) == true);
+        UCI_ASSERT(movelist[n].captured() != PieceType::NONE);
+        UCI_ASSERT(movelist[n].type() == MoveType::CAPTURE ||
                movelist[n].type() == MoveType::ENPASSANT ||
                movelist[n].type() == MoveType::PROMO_CAPTURE);
     }

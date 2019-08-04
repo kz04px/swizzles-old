@@ -1,7 +1,7 @@
 #ifndef MOVE_HPP
 #define MOVE_HPP
 
-#include <cassert>
+#include "assert.hpp"
 #include <cstdint>
 #include <string>
 #include "types.hpp"
@@ -33,12 +33,12 @@ struct Move {
         // Promotion
         data_ |= (PieceType::NONE & 0x7) << 22;
 
-        assert(this->to() == to);
-        assert(this->from() == from);
-        assert(this->type() == type);
-        assert(this->piece() == piece);
-        assert(this->captured() == PieceType::NONE);
-        assert(this->promo() == PieceType::NONE);
+        UCI_ASSERT(this->to() == to);
+        UCI_ASSERT(this->from() == from);
+        UCI_ASSERT(this->type() == type);
+        UCI_ASSERT(this->piece() == piece);
+        UCI_ASSERT(this->captured() == PieceType::NONE);
+        UCI_ASSERT(this->promo() == PieceType::NONE);
     }
 
     Move(const Square from,
@@ -64,12 +64,12 @@ struct Move {
         // Promotion
         data_ |= (PieceType::NONE & 0x7) << 22;
 
-        assert(this->to() == to);
-        assert(this->from() == from);
-        assert(this->type() == type);
-        assert(this->piece() == piece);
-        assert(this->captured() == captured);
-        assert(this->promo() == PieceType::NONE);
+        UCI_ASSERT(this->to() == to);
+        UCI_ASSERT(this->from() == from);
+        UCI_ASSERT(this->type() == type);
+        UCI_ASSERT(this->piece() == piece);
+        UCI_ASSERT(this->captured() == captured);
+        UCI_ASSERT(this->promo() == PieceType::NONE);
     }
 
     Move(const Square from,
@@ -96,12 +96,12 @@ struct Move {
         // Promotion
         data_ |= (promo & 0x7) << 22;
 
-        assert(this->to() == to);
-        assert(this->from() == from);
-        assert(this->type() == type);
-        assert(this->piece() == piece);
-        assert(this->captured() == captured);
-        assert(this->promo() == promo);
+        UCI_ASSERT(this->to() == to);
+        UCI_ASSERT(this->from() == from);
+        UCI_ASSERT(this->type() == type);
+        UCI_ASSERT(this->piece() == piece);
+        UCI_ASSERT(this->captured() == captured);
+        UCI_ASSERT(this->promo() == promo);
     }
 
     [[nodiscard]] Square to() const noexcept {
@@ -155,7 +155,7 @@ struct Move {
                     ans += "n";
                     break;
                 default:
-                    assert(false);
+                    UCI_ASSERT(false);
                     break;
             }
         }

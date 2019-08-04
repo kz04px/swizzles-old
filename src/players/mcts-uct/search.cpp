@@ -1,9 +1,9 @@
-#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <limits>
+#include "../../assert.hpp"
 #include "../../attacks.hpp"
 #include "../../eval.hpp"
 #include "../../pv.hpp"
@@ -14,15 +14,15 @@
 #define SIGMOID(x) (1.0 / (1.0 + exp(-x)))
 
 float score_ucb(const State &p, const State &c, const float cp) {
-    assert(c.visits_ > 0);
-    assert(p.visits_ > 0);
+    UCI_ASSERT(c.visits_ > 0);
+    UCI_ASSERT(p.visits_ > 0);
     const float exploitation = c.reward_ / c.visits_;
     const float exploration = cp * sqrt(2.0 * log(p.visits_) / c.visits_);
     return exploitation + exploration;
 }
 
 Node *best_child(Node *n, const float cp) {
-    assert(n);
+    UCI_ASSERT(n);
     float best_score = std::numeric_limits<float>::lowest();
     std::vector<Node *> best_children;
 
@@ -37,8 +37,8 @@ Node *best_child(Node *n, const float cp) {
         }
     }
 
-    assert(best_children.size() > 0);
-    assert(best_score > std::numeric_limits<float>::lowest());
+    UCI_ASSERT(best_children.size() > 0);
+    UCI_ASSERT(best_score > std::numeric_limits<float>::lowest());
 
     // Choose a child from the top scorers at random
     int index = rand() % best_children.size();
@@ -71,10 +71,10 @@ float default_policy(const State &s) {
 }
 
 Node *tree_policy(Node *n, const float cp) {
-    assert(n);
+    UCI_ASSERT(n);
     while (!n->terminal()) {
         if (!n->fully_expanded()) {
-            assert(n);
+            UCI_ASSERT(n);
             return n->expand();
         }
         n = best_child(n, cp);
@@ -83,7 +83,7 @@ Node *tree_policy(Node *n, const float cp) {
 }
 
 void backup_negamax(Node *n, float delta) {
-    assert(n);
+    UCI_ASSERT(n);
     while (n) {
         n->state_.visits_ += 1;
         n->state_.reward_ += delta;
@@ -93,7 +93,7 @@ void backup_negamax(Node *n, float delta) {
 }
 
 PV get_pv(Node *node) {
-    assert(node);
+    UCI_ASSERT(node);
 
     PV pv;
     while (node->children_.size() > 0) {
@@ -101,7 +101,7 @@ PV get_pv(Node *node) {
         float best_score = std::numeric_limits<float>::lowest();
 
         for (unsigned int n = 0; n < node->children_.size(); ++n) {
-            assert(node->children_[n].state_.visits_ > 0);
+            UCI_ASSERT(node->children_[n].state_.visits_ > 0);
 
             const float score = node->children_[n].state_.visits_;
 
@@ -172,7 +172,7 @@ void mcts(const Position &pos,
     while (nodes < options.nodes && stop == false &&
            std::chrono::high_resolution_clock::now() < end) {
         Node *n = tree_policy(&root, 0.1);
-        assert(n);
+        UCI_ASSERT(n);
         const float delta = default_policy(n->state_);
         backup_negamax(n, delta);
 
@@ -180,8 +180,8 @@ void mcts(const Position &pos,
 
         if (nodes == 1 || nodes % 10000 == 0) {
             PV pv = get_pv(&root);
-            assert(pv.length > 0);
-            assert(pv.legal(pos));
+            UCI_ASSERT(pv.length > 0);
+            UCI_ASSERT(pv.legal(pos));
 
             // Timing
             auto now = std::chrono::high_resolution_clock::now();
@@ -231,7 +231,7 @@ void mcts(const Position &pos,
 
         // Details
         PV pv = get_pv(indices[a]);
-        assert(pv.legal(indices[a]->state_.pos_));
+        UCI_ASSERT(pv.legal(indices[a]->state_.pos_));
         float score = 100 * (float)indices[a]->state_.reward_ /
                       indices[a]->state_.visits_;
 
@@ -259,13 +259,13 @@ void mcts(const Position &pos,
 #endif
 
     PV pv = get_pv(&root);
-    assert(pv.length > 0);
-    assert(pv.legal(pos));
+    UCI_ASSERT(pv.length > 0);
+    UCI_ASSERT(pv.legal(pos));
 
     if (pv.length > 0) {
         std::cout << "bestmove " << pv.moves[0].uci(pos.flipped) << std::endl;
     } else {
-        assert(false);
+        UCI_ASSERT(false);
         std::cout << "bestmove 0000" << std::endl;
     }
 }

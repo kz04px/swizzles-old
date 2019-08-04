@@ -3,6 +3,7 @@
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include "../../assert.hpp"
 #include "../../attacks.hpp"
 #include "../../display.hpp"
 #include "../../eval.hpp"
@@ -26,14 +27,14 @@ int alphabeta(const Position &pos,
               int alpha,
               int beta,
               int depth) {
-    assert(ss);
-    assert(beta > alpha);
-    assert(-INF <= alpha);
-    assert(alpha <= INF);
-    assert(-INF <= beta);
-    assert(beta <= INF);
-    assert(depth >= 0);
-    assert(depth < MAX_DEPTH);
+    UCI_ASSERT(ss);
+    UCI_ASSERT(beta > alpha);
+    UCI_ASSERT(-INF <= alpha);
+    UCI_ASSERT(alpha <= INF);
+    UCI_ASSERT(-INF <= beta);
+    UCI_ASSERT(beta <= INF);
+    UCI_ASSERT(depth >= 0);
+    UCI_ASSERT(depth < MAX_DEPTH);
 
     if (*info.stop == true || clockz::now() >= info.end) {
         return 0;
@@ -66,7 +67,7 @@ int alphabeta(const Position &pos,
         return qsearch(pos, info, ss, alpha, beta);
     }
 
-    assert(pos.history_size > 0);
+    UCI_ASSERT(pos.history_size > 0);
     const uint64_t key = pos.history[pos.history_size - 1];
 
     // Check the hash table
@@ -97,7 +98,7 @@ int alphabeta(const Position &pos,
                     beta = (beta < score ? beta : score);
                     break;
                 default:
-                    assert(false);
+                    UCI_ASSERT(false);
                     break;
             }
 
@@ -168,7 +169,7 @@ int alphabeta(const Position &pos,
 
     int legal_moves = 0;
     for (int i = 0; i < num_moves; ++i) {
-        assert(moves[i] != NO_MOVE);
+        UCI_ASSERT(moves[i] != NO_MOVE);
 
         Position npos = pos;
         make_move(npos, moves[i]);
@@ -247,12 +248,12 @@ int alphabeta(const Position &pos,
 
 #ifndef NDEBUG
     Entry test_entry = info.tt->probe(key);
-    // assert(test_entry == Entry(key, move, depth, eval, flag));
-    assert(test_entry.key() == key);
-    assert(test_entry.depth() == depth);
-    assert(eval_from_tt(test_entry.eval(), ss->ply) == best_score);
-    assert(test_entry.move() == best_move);
-    assert(test_entry.flag() == flag);
+    // UCI_ASSERT(test_entry == Entry(key, move, depth, eval, flag));
+    UCI_ASSERT(test_entry.key() == key);
+    UCI_ASSERT(test_entry.depth() == depth);
+    UCI_ASSERT(eval_from_tt(test_entry.eval(), ss->ply) == best_score);
+    UCI_ASSERT(test_entry.move() == best_move);
+    UCI_ASSERT(test_entry.flag() == flag);
 #endif
 
     return alpha;
