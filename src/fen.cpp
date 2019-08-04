@@ -172,7 +172,7 @@ bool set_fen(Position &pos, const std::string &fen) {
     }
 
     // Add position to history
-    std::uint64_t hash = calculate_hash(pos);
+    std::uint64_t hash = zobrist::calculate_hash(pos);
     pos.history[pos.history_size] = hash;
     pos.history_size++;
 

@@ -372,7 +372,7 @@ bool legal_position(const Position &pos) {
     }
 
     // These need to match
-    if (pos.history[pos.history_size - 1] != calculate_hash(pos)) {
+    if (pos.history[pos.history_size - 1] != zobrist::calculate_hash(pos)) {
         return false;
     }
 

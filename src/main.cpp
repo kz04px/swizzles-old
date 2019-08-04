@@ -13,7 +13,6 @@
 int main() {
     srand(time(0));
     bitboards_init();
-    zobrist_init();
 
     std::string mode;
     std::cin >> mode;

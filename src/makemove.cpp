@@ -127,7 +127,7 @@ void make_move(Position &pos, const Move m) {
         pos.history_size = 0;
     }
 
-    std::uint64_t hash = calculate_hash(pos);
+    std::uint64_t hash = zobrist::calculate_hash(pos);
     pos.history[pos.history_size] = hash;
     pos.history_size++;
     UCI_ASSERT(pos.history_size >= 1);

@@ -85,7 +85,7 @@ bool test_hash() {
     for (const auto &fen : fens) {
         Position pos;
         set_fen(pos, fen);
-        hashes.push_back(calculate_hash(pos));
+        hashes.push_back(zobrist::calculate_hash(pos));
     }
 
     for (unsigned int a = 0; a < hashes.size() - 1; ++a) {
@@ -104,7 +104,7 @@ bool test_hash() {
     make_move(pos, "g8f6");
     make_move(pos, "f3g1");
     make_move(pos, "f6g8");
-    if (calculate_hash(pos) != calculate_hash(npos)) {
+    if (zobrist::calculate_hash(pos) != zobrist::calculate_hash(npos)) {
         return false;
     }
 
