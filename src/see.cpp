@@ -2,6 +2,7 @@
 #include "assert.hpp"
 #include "bitboards.hpp"
 #include "eval.hpp"
+#include "move.hpp"
 #include "other.hpp"
 #include "position.hpp"
 #include "types.hpp"

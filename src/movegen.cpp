@@ -1,5 +1,6 @@
 #include "movegen.hpp"
 #include "assert.hpp"
+#include "move.hpp"
 #include "position.hpp"
 
 int movegen(const Position &pos, Move *movelist) {

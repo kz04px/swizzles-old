@@ -1,7 +1,7 @@
 #ifndef SEARCH_ALPHABETA_REDUCTION_HPP
 #define SEARCH_ALPHABETA_REDUCTION_HPP
 
-#include "../../move.hpp"
+#include "../../types.hpp"
 
 int reduction(const bool pvnode,
               const int move_num,

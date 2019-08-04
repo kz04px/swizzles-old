@@ -2,8 +2,10 @@
 #define MCTS_UCT_NODE_HPP
 
 #include <vector>
-#include "../../position.hpp"
 #include "state.hpp"
+
+struct Position;
+struct Move;
 
 struct Node {
     Node(const Position &pos, const Move &move, Node *parent);

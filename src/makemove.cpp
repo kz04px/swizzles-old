@@ -1,6 +1,6 @@
 #include "makemove.hpp"
-#include "assert.hpp"
 #include <cstdint>
+#include "assert.hpp"
 #include "movegen.hpp"
 #include "position.hpp"
 #include "types.hpp"

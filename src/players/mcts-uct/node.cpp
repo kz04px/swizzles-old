@@ -1,6 +1,8 @@
 #include "node.hpp"
 #include "../../assert.hpp"
 #include "../../makemove.hpp"
+#include "../../move.hpp"
+#include "../../position.hpp"
 
 Node::Node(const Position &pos, const Move &move, Node *parent)
     : state_(pos, move), parent_(parent) {
